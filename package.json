@@ -1,0 +1,32 @@
+{
+  "name": "kontest-app",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev:server": "bun run --watch server/src/index.ts",
+    "dev:client": "bunx --bun vite dev client",
+    "build:client": "bunx --bun vite build client",
+    "build:server": "bun build server/src/index.ts --target bun --outdir ./server/dist",
+    "start:server": "NODE_ENV=production bun server/dist/index.js",
+    "serve": "bun serve"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@tanstack/router-plugin": "^1.113.0",
+    "@types/bun": "latest",
+    "vite": "^6.2.1",
+    "vite-plugin-solid": "^2.11.6"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@elysiajs/static": "^1.2.0",
+    "@tailwindcss/vite": "^4.0.12",
+    "@tanstack/solid-router": "^1.112.18",
+    "elysia": "^1.2.25",
+    "solid-js": "^1.9.5",
+    "tailwindcss": "^4.0.12"
+  }
+}
