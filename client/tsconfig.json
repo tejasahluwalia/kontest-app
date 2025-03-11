@@ -2,6 +2,12 @@
   "extends": ["../tsconfig.json"],
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "baseUrl": "../",
+    "paths": {
+      "@client/*": ["client/src/*"],
+      "@server/*": ["server/src/*"],
+      "~/*": ["client/src/*"]
+    }
   }
 }

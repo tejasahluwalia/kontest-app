@@ -1,18 +1,25 @@
 import { createRootRoute, Link, Outlet } from '@tanstack/solid-router'
+import { ColorModeProvider, ColorModeScript, createLocalStorageManager } from "@kobalte/core"
+import { createRootRouteWithContext } from '@tanstack/solid-router'
+import { authClient } from '@client/lib/auth-client'
 
-export const Route = createRootRoute({
-  component: () => (
-    <div>
-      <div class="p-2 flex gap-2">
-        <Link to="/" class="[&.active]:font-bold">
-          Home
-        </Link>{' '}
-        <Link to="/about" class="[&.active]:font-bold">
-          About
-        </Link>
-      </div>
-      <hr />
-      <Outlet />
-    </div>
-  ),
+interface RootContext {
+    // auth: ReturnType<typeof authClient.useSession>
+}
+
+export const Route = createRootRouteWithContext<RootContext>()({
+    component: Root
 })
+
+function Root() {
+    const storageManager = createLocalStorageManager("vite-ui-theme")
+
+    return (
+        <>
+            <ColorModeScript storageType={storageManager.type} />
+            <ColorModeProvider storageManager={storageManager}>
+                <Outlet />
+            </ColorModeProvider>
+        </>
+    )
+}

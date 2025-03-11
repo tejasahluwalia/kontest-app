@@ -1,0 +1,22 @@
+services:
+  kontest_postgres:
+    image: postgres:17.4-alpine
+    shm_size: 1g
+    container_name: kontest_postgres
+    platform: linux/amd64
+    user: postgres
+    ports:
+      - "5432:5432"
+    restart: "always"
+    volumes:
+      - kontest_postgres_data:/var/lib/postgresql/data
+      - ./:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+
+volumes:
+  kontest_postgres_data:
+    name: kontest_postgres_data
+    driver: local

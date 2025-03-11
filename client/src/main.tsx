@@ -2,6 +2,7 @@ import { render } from "solid-js/web";
 import { RouterProvider, createRouter } from "@tanstack/solid-router";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
+import { authClient } from "./lib/auth-client";
 
 // Set up a Router instance
 const router = createRouter({
