@@ -1,3 +1,24 @@
+# Ignore everything by default - delete this line temporarily when working with Cascade
+*
+
+# Version control list - always keep these lines
+!/.gitignore
+!/client/
+!/client/**
+!/docker/
+!/docker/**
+!/server/
+!/server/**
+!/package.json
+!/README.md
+!/drizzle.config.ts
+!/tsconfig.json
+!/biome.json
+!/tsr.config.ts
+!/docs/
+!/docs/**
+# Add more project files as needed
+
 # dependencies (bun install)
 node_modules
 
@@ -32,9 +53,3 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
-
-# windsurf rules
-.windsurfrules
-
-# Claude Code rules
-CLAUDE.md
