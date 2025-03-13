@@ -1,24 +1,21 @@
-import type { Session, User } from "better-auth/types";
 import { auth } from "@server/lib/auth";
-import type { Context } from "elysia";
- 
-export const userMiddleware = async (c: Context) => {
-  const session = await auth.api.getSession({ headers: c.request.headers });
- 
-  if (!session) {
-    c.set.status = 401;
-    return { success: 'error', message: "Unauthorized Access: Token is missing" };
-  }
- 
-  return {
-    user: session.user,
-    session: session.session
-  }
-}
+import { Elysia, type Context } from "elysia";
 
-export const userInfo = (user: User | null, session: Session | null) => {
-  return {
-    user: user,
-    session: session
-  }
-}
+export const betterAuth = new Elysia({ name: "better-auth" })
+  .mount(auth.handler)
+  .macro({
+    auth: {
+      async resolve({ error, request: { headers } }) {
+        const session = await auth.api.getSession({
+          headers,
+        });
+
+        if (!session) return error(401);
+
+        return {
+          user: session.user,
+          session: session.session,
+        };
+      },
+    },
+  });

@@ -3,14 +3,7 @@ import { RouterProvider, createRouter } from "@tanstack/solid-router";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 import { authClient } from "./lib/auth-client";
-
-// Set up a Router instance
-const router = createRouter({
-  routeTree,
-  defaultPreload: "intent",
-  defaultStaleTime: 5000,
-  scrollRestoration: true,
-});
+import { router } from "./router";
 
 // Register things for typesafety
 declare module "@tanstack/solid-router" {

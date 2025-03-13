@@ -29,6 +29,7 @@
     "paths": {
       "@client/*": ["./client/src/*"],
       "@server/*": ["./server/src/*"],
+      "~/*": ["client/src/*"]
     }
   }
 }

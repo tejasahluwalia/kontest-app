@@ -86,7 +86,7 @@ function EmailForm({
                 name={field().name}
                 value={field().state.value}
                 onBlur={field().handleBlur}
-                onChange={(e) => field().handleChange(e.target.value)}
+                onInput={(e) => field().handleChange(e.currentTarget.value)}
                 type="email"
                 placeholder="me@email.com"
               />
