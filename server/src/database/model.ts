@@ -29,6 +29,10 @@ export const model = {
       user: createSelectSchema(table.user, {
         email: t.String({ format: "email" }),
       }),
+      organization: createSelectSchema(table.organization, {
+        slug: t.String({ minLength: 2, maxLength: 100 }),
+        id: t.String({ format: "uuid" }),
+      }),
     },
     "select",
   ),

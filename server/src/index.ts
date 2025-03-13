@@ -2,13 +2,9 @@ import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
 import betterAuthView from "./lib/auth-view";
 import { betterAuth } from "./middlewares/auth-middleware";
-import { model } from "./database/model";
+import { checkContestAvailability } from "./services/contest";
+import { organizationController } from "./controllers/organization";
 
-import {
-  checkOrganizationAvailability,
-  createOrganization,
-  getOrganizationsByUserId,
-} from "./services/organization";
 
 const app = new Elysia()
   .use(
@@ -20,35 +16,16 @@ const app = new Elysia()
     }),
   )
   .use(betterAuth)
+  .use(organizationController)
   .get(
-    "/api/organizations",
-    async ({ set, user, session, error, ...ctx }) => {
-      return await getOrganizationsByUserId(user.id);
-    },
-    { auth: true },
-  )
-  .get(
-    "/api/organizations/checkAvailability/:slug",
-    async ({ set, user, session, error, ...ctx }) => {
-      const isAvailable = await checkOrganizationAvailability(ctx.params.slug);
+    "/api/contests/checkAvailability/:slug",
+    async ({ params, set }) => {
+      const isAvailable = await checkContestAvailability(params.slug);
       return {
         isAvailable,
       };
     },
     { auth: true },
-  )
-  .post(
-    "/api/organizations",
-    async ({ body, user }) => {
-      return await createOrganization(body.name, body.slug, user.id);
-    },
-    {
-      auth: true,
-      body: t.Object({
-        name: model.insert.organization.name,
-        slug: model.insert.organization.slug,
-      }),
-    },
   )
   .all("/api/auth/*", betterAuthView)
   .listen(3000);

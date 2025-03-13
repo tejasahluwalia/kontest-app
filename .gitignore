@@ -1,5 +1,5 @@
 # Ignore everything by default - delete this line temporarily when working with Cascade
-*
+# *
 
 # Version control list - always keep these lines
 !/.gitignore

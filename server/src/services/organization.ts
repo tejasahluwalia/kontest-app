@@ -1,6 +1,7 @@
 import { db } from "@server/database";
 import { organization, organizationToHost } from "@server/database/schema";
 import { model } from "@server/database/model";
+import * as schema from "@server/database/schema";
 
 const { insert, select } = model;
 
@@ -16,6 +17,52 @@ export async function getOrganizationsByUserId(userId: string) {
     ...record.organization,
     role: record.role,
   }));
+}
+
+export async function getOrganizationBySlug(slug: string) {
+  return await db.query.organization.findFirst({
+    where: (organization, { eq }) => eq(organization.slug, slug),
+    with: {
+      contests: true,
+    },
+  });
+}
+
+export async function isUserOrganizationMember(userId: string, organizationId: string) {
+  const membership = await db.query.organizationToHost.findFirst({
+    where: (organizationToHost, { and, eq }) => 
+      and(
+        eq(organizationToHost.userId, userId),
+        eq(organizationToHost.organizationId, organizationId)
+      ),
+  });
+  return !!membership;
+}
+
+
+type OrganizationWithContests = typeof schema.organization.$inferSelect & {
+  contests: typeof schema.contest.$inferSelect[];
+};
+
+/**
+ * Helper function to check if a user is a member of an organization
+ * This avoids TypeScript issues with Elysia middleware
+ */
+export async function checkOrganizationMembership(userId: string, organizationSlug: string): Promise<
+  | { success: false; status: number; error?: string; }
+  | { success: true; status: number; error?: string; organization:  OrganizationWithContests}
+> {
+  const organization = await getOrganizationBySlug(organizationSlug);
+  if (!organization) {
+    return { success: false, status: 404, error: "Organization not found" };
+  }
+
+  const isMember = await isUserOrganizationMember(userId, organization.id);
+  if (!isMember) {
+    return { success: false, status: 403, error: "Forbidden: You are not a member of this organization" };
+  }
+
+  return { success: true, status: 200, organization };
 }
 
 export async function createOrganization(

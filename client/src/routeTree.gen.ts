@@ -15,6 +15,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as HostIndexImport } from './routes/host.index'
+import { Route as HostOrganisationImport } from './routes/host/$organisation'
 
 // Create/Update Routes
 
@@ -39,6 +40,12 @@ const IndexRoute = IndexImport.update({
 const HostIndexRoute = HostIndexImport.update({
   id: '/host/',
   path: '/host/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const HostOrganisationRoute = HostOrganisationImport.update({
+  id: '/host/$organisation',
+  path: '/host/$organisation',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,6 +74,13 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/host/$organisation': {
+      id: '/host/$organisation'
+      path: '/host/$organisation'
+      fullPath: '/host/$organisation'
+      preLoaderRoute: typeof HostOrganisationImport
+      parentRoute: typeof rootRoute
+    }
     '/host/': {
       id: '/host/'
       path: '/host'
@@ -83,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/host/$organisation': typeof HostOrganisationRoute
   '/host': typeof HostIndexRoute
 }
 
@@ -90,6 +105,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/host/$organisation': typeof HostOrganisationRoute
   '/host': typeof HostIndexRoute
 }
 
@@ -98,15 +114,16 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/host/$organisation': typeof HostOrganisationRoute
   '/host/': typeof HostIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/login' | '/host'
+  fullPaths: '/' | '/about' | '/login' | '/host/$organisation' | '/host'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/login' | '/host'
-  id: '__root__' | '/' | '/about' | '/login' | '/host/'
+  to: '/' | '/about' | '/login' | '/host/$organisation' | '/host'
+  id: '__root__' | '/' | '/about' | '/login' | '/host/$organisation' | '/host/'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,6 +131,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
+  HostOrganisationRoute: typeof HostOrganisationRoute
   HostIndexRoute: typeof HostIndexRoute
 }
 
@@ -121,6 +139,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
+  HostOrganisationRoute: HostOrganisationRoute,
   HostIndexRoute: HostIndexRoute,
 }
 
@@ -137,6 +156,7 @@ export const routeTree = rootRoute
         "/",
         "/about",
         "/login",
+        "/host/$organisation",
         "/host/"
       ]
     },
@@ -148,6 +168,9 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/host/$organisation": {
+      "filePath": "host/$organisation.tsx"
     },
     "/host/": {
       "filePath": "host.index.tsx"
