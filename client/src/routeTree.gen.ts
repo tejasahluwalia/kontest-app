@@ -12,16 +12,24 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
+import { Route as HostImport } from './routes/host'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
-import { Route as HostIndexImport } from './routes/host.index'
-import { Route as HostOrganisationImport } from './routes/host/$organisation'
+import { Route as HostOrganizationsOrganizationImport } from './routes/host/organizations/$organization'
+import { Route as HostContestsContestImport } from './routes/host/contests/$contest'
+import { Route as HostOrganizationsOrganizationContestsImport } from './routes/host/organizations/$organization.contests'
 
 // Create/Update Routes
 
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const HostRoute = HostImport.update({
+  id: '/host',
+  path: '/host',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -37,17 +45,25 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const HostIndexRoute = HostIndexImport.update({
-  id: '/host/',
-  path: '/host/',
-  getParentRoute: () => rootRoute,
+const HostOrganizationsOrganizationRoute =
+  HostOrganizationsOrganizationImport.update({
+    id: '/organizations/$organization',
+    path: '/organizations/$organization',
+    getParentRoute: () => HostRoute,
+  } as any)
+
+const HostContestsContestRoute = HostContestsContestImport.update({
+  id: '/contests/$contest',
+  path: '/contests/$contest',
+  getParentRoute: () => HostRoute,
 } as any)
 
-const HostOrganisationRoute = HostOrganisationImport.update({
-  id: '/host/$organisation',
-  path: '/host/$organisation',
-  getParentRoute: () => rootRoute,
-} as any)
+const HostOrganizationsOrganizationContestsRoute =
+  HostOrganizationsOrganizationContestsImport.update({
+    id: '/contests',
+    path: '/contests',
+    getParentRoute: () => HostOrganizationsOrganizationRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -67,6 +83,13 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/host': {
+      id: '/host'
+      path: '/host'
+      fullPath: '/host'
+      preLoaderRoute: typeof HostImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -74,73 +97,134 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/host/$organisation': {
-      id: '/host/$organisation'
-      path: '/host/$organisation'
-      fullPath: '/host/$organisation'
-      preLoaderRoute: typeof HostOrganisationImport
-      parentRoute: typeof rootRoute
+    '/host/contests/$contest': {
+      id: '/host/contests/$contest'
+      path: '/contests/$contest'
+      fullPath: '/host/contests/$contest'
+      preLoaderRoute: typeof HostContestsContestImport
+      parentRoute: typeof HostImport
     }
-    '/host/': {
-      id: '/host/'
-      path: '/host'
-      fullPath: '/host'
-      preLoaderRoute: typeof HostIndexImport
-      parentRoute: typeof rootRoute
+    '/host/organizations/$organization': {
+      id: '/host/organizations/$organization'
+      path: '/organizations/$organization'
+      fullPath: '/host/organizations/$organization'
+      preLoaderRoute: typeof HostOrganizationsOrganizationImport
+      parentRoute: typeof HostImport
+    }
+    '/host/organizations/$organization/contests': {
+      id: '/host/organizations/$organization/contests'
+      path: '/contests'
+      fullPath: '/host/organizations/$organization/contests'
+      preLoaderRoute: typeof HostOrganizationsOrganizationContestsImport
+      parentRoute: typeof HostOrganizationsOrganizationImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface HostOrganizationsOrganizationRouteChildren {
+  HostOrganizationsOrganizationContestsRoute: typeof HostOrganizationsOrganizationContestsRoute
+}
+
+const HostOrganizationsOrganizationRouteChildren: HostOrganizationsOrganizationRouteChildren =
+  {
+    HostOrganizationsOrganizationContestsRoute:
+      HostOrganizationsOrganizationContestsRoute,
+  }
+
+const HostOrganizationsOrganizationRouteWithChildren =
+  HostOrganizationsOrganizationRoute._addFileChildren(
+    HostOrganizationsOrganizationRouteChildren,
+  )
+
+interface HostRouteChildren {
+  HostContestsContestRoute: typeof HostContestsContestRoute
+  HostOrganizationsOrganizationRoute: typeof HostOrganizationsOrganizationRouteWithChildren
+}
+
+const HostRouteChildren: HostRouteChildren = {
+  HostContestsContestRoute: HostContestsContestRoute,
+  HostOrganizationsOrganizationRoute:
+    HostOrganizationsOrganizationRouteWithChildren,
+}
+
+const HostRouteWithChildren = HostRoute._addFileChildren(HostRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/$organisation': typeof HostOrganisationRoute
-  '/host': typeof HostIndexRoute
+  '/host/contests/$contest': typeof HostContestsContestRoute
+  '/host/organizations/$organization': typeof HostOrganizationsOrganizationRouteWithChildren
+  '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/$organisation': typeof HostOrganisationRoute
-  '/host': typeof HostIndexRoute
+  '/host/contests/$contest': typeof HostContestsContestRoute
+  '/host/organizations/$organization': typeof HostOrganizationsOrganizationRouteWithChildren
+  '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/$organisation': typeof HostOrganisationRoute
-  '/host/': typeof HostIndexRoute
+  '/host/contests/$contest': typeof HostContestsContestRoute
+  '/host/organizations/$organization': typeof HostOrganizationsOrganizationRouteWithChildren
+  '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/login' | '/host/$organisation' | '/host'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/host'
+    | '/login'
+    | '/host/contests/$contest'
+    | '/host/organizations/$organization'
+    | '/host/organizations/$organization/contests'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/login' | '/host/$organisation' | '/host'
-  id: '__root__' | '/' | '/about' | '/login' | '/host/$organisation' | '/host/'
+  to:
+    | '/'
+    | '/about'
+    | '/host'
+    | '/login'
+    | '/host/contests/$contest'
+    | '/host/organizations/$organization'
+    | '/host/organizations/$organization/contests'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/host'
+    | '/login'
+    | '/host/contests/$contest'
+    | '/host/organizations/$organization'
+    | '/host/organizations/$organization/contests'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  HostRoute: typeof HostRouteWithChildren
   LoginRoute: typeof LoginRoute
-  HostOrganisationRoute: typeof HostOrganisationRoute
-  HostIndexRoute: typeof HostIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  HostRoute: HostRouteWithChildren,
   LoginRoute: LoginRoute,
-  HostOrganisationRoute: HostOrganisationRoute,
-  HostIndexRoute: HostIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -155,9 +239,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/login",
-        "/host/$organisation",
-        "/host/"
+        "/host",
+        "/login"
       ]
     },
     "/": {
@@ -166,14 +249,30 @@ export const routeTree = rootRoute
     "/about": {
       "filePath": "about.tsx"
     },
+    "/host": {
+      "filePath": "host.tsx",
+      "children": [
+        "/host/contests/$contest",
+        "/host/organizations/$organization"
+      ]
+    },
     "/login": {
       "filePath": "login.tsx"
     },
-    "/host/$organisation": {
-      "filePath": "host/$organisation.tsx"
+    "/host/contests/$contest": {
+      "filePath": "host/contests/$contest.tsx",
+      "parent": "/host"
     },
-    "/host/": {
-      "filePath": "host.index.tsx"
+    "/host/organizations/$organization": {
+      "filePath": "host/organizations/$organization.tsx",
+      "parent": "/host",
+      "children": [
+        "/host/organizations/$organization/contests"
+      ]
+    },
+    "/host/organizations/$organization/contests": {
+      "filePath": "host/organizations/$organization.contests.tsx",
+      "parent": "/host/organizations/$organization"
     }
   }
 }

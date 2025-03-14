@@ -1,10 +1,24 @@
 import server from "@client/lib/server-api";
-import { Outlet, createFileRoute, Navigate, redirect, useRouter } from "@tanstack/solid-router";
+import {
+  Outlet,
+  createFileRoute,
+  Navigate,
+  redirect,
+  useRouter,
+} from "@tanstack/solid-router";
 import { Show, For } from "solid-js";
-import { AppSidebar } from "@client/components/layouts/app-sidebar"
-import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar"
+import {
+  AppSidebar,
+  AppSidebarHeader,
+} from "@client/components/layouts/app-sidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset,
+  Sidebar,
+} from "~/components/ui/sidebar";
 
-async function fetchOrganizations(token: string) {
+async function fetchOrganizations() {
   const { data, error, status } = await server.api.organizations.index.get();
   if (error) {
     throw error.value;
@@ -15,7 +29,7 @@ async function fetchOrganizations(token: string) {
   return data;
 }
 
-export const Route = createFileRoute("/host/")({
+export const Route = createFileRoute("/host")({
   beforeLoad: async ({ context: { auth }, location }) => {
     const { data, error } = await auth();
     if (!data) {
@@ -29,7 +43,7 @@ export const Route = createFileRoute("/host/")({
   },
   loader: async (ctx) => {
     const { data } = ctx.context;
-    const organizations = await fetchOrganizations(data.session.token);
+    const organizations = await fetchOrganizations();
     return { organizations };
   },
 
@@ -37,16 +51,13 @@ export const Route = createFileRoute("/host/")({
 });
 
 function RouteComponent() {
-  const loaderData = Route.useLoaderData();
-  const organizations = loaderData().organizations;
-
   return (
     <SidebarProvider>
       <AppSidebar />
-      <div class="container mx-auto p-4">
-        <SidebarTrigger />
+      <main class="w-full">
+        <AppSidebarHeader />
         <Outlet />
-      </div>
+      </main>
     </SidebarProvider>
   );
 }

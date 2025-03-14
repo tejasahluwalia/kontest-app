@@ -6,9 +6,9 @@ import { resolve } from "node:path";
 
 export default defineConfig({
   plugins: [
-    TanStackRouterVite({ target: "solid", autoCodeSplitting: true }),
     solid(),
     tailwindcss(),
+    TanStackRouterVite({ target: "solid", autoCodeSplitting: true }),
   ],
   envDir: "../",
   resolve: {
@@ -17,5 +17,8 @@ export default defineConfig({
       "@client": resolve(__dirname, "./src"),
       "@server": resolve(__dirname, "../server/src"),
     },
+  },
+  build: {
+    target: "esnext",
   },
 });
