@@ -15,9 +15,13 @@ import { Route as LoginImport } from './routes/login'
 import { Route as HostImport } from './routes/host'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
+import { Route as HostOrganizationsIndexImport } from './routes/host/organizations/index'
 import { Route as HostOrganizationsOrganizationImport } from './routes/host/organizations/$organization'
 import { Route as HostContestsContestImport } from './routes/host/contests/$contest'
+import { Route as HostOrganizationsOrganizationIndexImport } from './routes/host/organizations/$organization.index'
+import { Route as HostOrganizationsOrganizationMembersImport } from './routes/host/organizations/$organization.members'
 import { Route as HostOrganizationsOrganizationContestsImport } from './routes/host/organizations/$organization.contests'
+import { Route as HostContestsContestEntriesImport } from './routes/host/contests/$contest.entries'
 
 // Create/Update Routes
 
@@ -45,6 +49,12 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const HostOrganizationsIndexRoute = HostOrganizationsIndexImport.update({
+  id: '/organizations/',
+  path: '/organizations/',
+  getParentRoute: () => HostRoute,
+} as any)
+
 const HostOrganizationsOrganizationRoute =
   HostOrganizationsOrganizationImport.update({
     id: '/organizations/$organization',
@@ -58,12 +68,34 @@ const HostContestsContestRoute = HostContestsContestImport.update({
   getParentRoute: () => HostRoute,
 } as any)
 
+const HostOrganizationsOrganizationIndexRoute =
+  HostOrganizationsOrganizationIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => HostOrganizationsOrganizationRoute,
+  } as any)
+
+const HostOrganizationsOrganizationMembersRoute =
+  HostOrganizationsOrganizationMembersImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () => HostOrganizationsOrganizationRoute,
+  } as any)
+
 const HostOrganizationsOrganizationContestsRoute =
   HostOrganizationsOrganizationContestsImport.update({
     id: '/contests',
     path: '/contests',
     getParentRoute: () => HostOrganizationsOrganizationRoute,
   } as any)
+
+const HostContestsContestEntriesRoute = HostContestsContestEntriesImport.update(
+  {
+    id: '/entries',
+    path: '/entries',
+    getParentRoute: () => HostContestsContestRoute,
+  } as any,
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -111,6 +143,20 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof HostOrganizationsOrganizationImport
       parentRoute: typeof HostImport
     }
+    '/host/organizations/': {
+      id: '/host/organizations/'
+      path: '/organizations'
+      fullPath: '/host/organizations'
+      preLoaderRoute: typeof HostOrganizationsIndexImport
+      parentRoute: typeof HostImport
+    }
+    '/host/contests/$contest/entries': {
+      id: '/host/contests/$contest/entries'
+      path: '/entries'
+      fullPath: '/host/contests/$contest/entries'
+      preLoaderRoute: typeof HostContestsContestEntriesImport
+      parentRoute: typeof HostContestsContestImport
+    }
     '/host/organizations/$organization/contests': {
       id: '/host/organizations/$organization/contests'
       path: '/contests'
@@ -118,19 +164,50 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof HostOrganizationsOrganizationContestsImport
       parentRoute: typeof HostOrganizationsOrganizationImport
     }
+    '/host/organizations/$organization/members': {
+      id: '/host/organizations/$organization/members'
+      path: '/members'
+      fullPath: '/host/organizations/$organization/members'
+      preLoaderRoute: typeof HostOrganizationsOrganizationMembersImport
+      parentRoute: typeof HostOrganizationsOrganizationImport
+    }
+    '/host/organizations/$organization/': {
+      id: '/host/organizations/$organization/'
+      path: '/'
+      fullPath: '/host/organizations/$organization/'
+      preLoaderRoute: typeof HostOrganizationsOrganizationIndexImport
+      parentRoute: typeof HostOrganizationsOrganizationImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface HostContestsContestRouteChildren {
+  HostContestsContestEntriesRoute: typeof HostContestsContestEntriesRoute
+}
+
+const HostContestsContestRouteChildren: HostContestsContestRouteChildren = {
+  HostContestsContestEntriesRoute: HostContestsContestEntriesRoute,
+}
+
+const HostContestsContestRouteWithChildren =
+  HostContestsContestRoute._addFileChildren(HostContestsContestRouteChildren)
+
 interface HostOrganizationsOrganizationRouteChildren {
   HostOrganizationsOrganizationContestsRoute: typeof HostOrganizationsOrganizationContestsRoute
+  HostOrganizationsOrganizationMembersRoute: typeof HostOrganizationsOrganizationMembersRoute
+  HostOrganizationsOrganizationIndexRoute: typeof HostOrganizationsOrganizationIndexRoute
 }
 
 const HostOrganizationsOrganizationRouteChildren: HostOrganizationsOrganizationRouteChildren =
   {
     HostOrganizationsOrganizationContestsRoute:
       HostOrganizationsOrganizationContestsRoute,
+    HostOrganizationsOrganizationMembersRoute:
+      HostOrganizationsOrganizationMembersRoute,
+    HostOrganizationsOrganizationIndexRoute:
+      HostOrganizationsOrganizationIndexRoute,
   }
 
 const HostOrganizationsOrganizationRouteWithChildren =
@@ -139,14 +216,16 @@ const HostOrganizationsOrganizationRouteWithChildren =
   )
 
 interface HostRouteChildren {
-  HostContestsContestRoute: typeof HostContestsContestRoute
+  HostContestsContestRoute: typeof HostContestsContestRouteWithChildren
   HostOrganizationsOrganizationRoute: typeof HostOrganizationsOrganizationRouteWithChildren
+  HostOrganizationsIndexRoute: typeof HostOrganizationsIndexRoute
 }
 
 const HostRouteChildren: HostRouteChildren = {
-  HostContestsContestRoute: HostContestsContestRoute,
+  HostContestsContestRoute: HostContestsContestRouteWithChildren,
   HostOrganizationsOrganizationRoute:
     HostOrganizationsOrganizationRouteWithChildren,
+  HostOrganizationsIndexRoute: HostOrganizationsIndexRoute,
 }
 
 const HostRouteWithChildren = HostRoute._addFileChildren(HostRouteChildren)
@@ -156,9 +235,13 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/contests/$contest': typeof HostContestsContestRoute
+  '/host/contests/$contest': typeof HostContestsContestRouteWithChildren
   '/host/organizations/$organization': typeof HostOrganizationsOrganizationRouteWithChildren
+  '/host/organizations': typeof HostOrganizationsIndexRoute
+  '/host/contests/$contest/entries': typeof HostContestsContestEntriesRoute
   '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsRoute
+  '/host/organizations/$organization/members': typeof HostOrganizationsOrganizationMembersRoute
+  '/host/organizations/$organization/': typeof HostOrganizationsOrganizationIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -166,9 +249,12 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/contests/$contest': typeof HostContestsContestRoute
-  '/host/organizations/$organization': typeof HostOrganizationsOrganizationRouteWithChildren
+  '/host/contests/$contest': typeof HostContestsContestRouteWithChildren
+  '/host/organizations': typeof HostOrganizationsIndexRoute
+  '/host/contests/$contest/entries': typeof HostContestsContestEntriesRoute
   '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsRoute
+  '/host/organizations/$organization/members': typeof HostOrganizationsOrganizationMembersRoute
+  '/host/organizations/$organization': typeof HostOrganizationsOrganizationIndexRoute
 }
 
 export interface FileRoutesById {
@@ -177,9 +263,13 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/contests/$contest': typeof HostContestsContestRoute
+  '/host/contests/$contest': typeof HostContestsContestRouteWithChildren
   '/host/organizations/$organization': typeof HostOrganizationsOrganizationRouteWithChildren
+  '/host/organizations/': typeof HostOrganizationsIndexRoute
+  '/host/contests/$contest/entries': typeof HostContestsContestEntriesRoute
   '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsRoute
+  '/host/organizations/$organization/members': typeof HostOrganizationsOrganizationMembersRoute
+  '/host/organizations/$organization/': typeof HostOrganizationsOrganizationIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -191,7 +281,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/host/contests/$contest'
     | '/host/organizations/$organization'
+    | '/host/organizations'
+    | '/host/contests/$contest/entries'
     | '/host/organizations/$organization/contests'
+    | '/host/organizations/$organization/members'
+    | '/host/organizations/$organization/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -199,8 +293,11 @@ export interface FileRouteTypes {
     | '/host'
     | '/login'
     | '/host/contests/$contest'
-    | '/host/organizations/$organization'
+    | '/host/organizations'
+    | '/host/contests/$contest/entries'
     | '/host/organizations/$organization/contests'
+    | '/host/organizations/$organization/members'
+    | '/host/organizations/$organization'
   id:
     | '__root__'
     | '/'
@@ -209,7 +306,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/host/contests/$contest'
     | '/host/organizations/$organization'
+    | '/host/organizations/'
+    | '/host/contests/$contest/entries'
     | '/host/organizations/$organization/contests'
+    | '/host/organizations/$organization/members'
+    | '/host/organizations/$organization/'
   fileRoutesById: FileRoutesById
 }
 
@@ -253,7 +354,8 @@ export const routeTree = rootRoute
       "filePath": "host.tsx",
       "children": [
         "/host/contests/$contest",
-        "/host/organizations/$organization"
+        "/host/organizations/$organization",
+        "/host/organizations/"
       ]
     },
     "/login": {
@@ -261,17 +363,38 @@ export const routeTree = rootRoute
     },
     "/host/contests/$contest": {
       "filePath": "host/contests/$contest.tsx",
-      "parent": "/host"
+      "parent": "/host",
+      "children": [
+        "/host/contests/$contest/entries"
+      ]
     },
     "/host/organizations/$organization": {
       "filePath": "host/organizations/$organization.tsx",
       "parent": "/host",
       "children": [
-        "/host/organizations/$organization/contests"
+        "/host/organizations/$organization/contests",
+        "/host/organizations/$organization/members",
+        "/host/organizations/$organization/"
       ]
+    },
+    "/host/organizations/": {
+      "filePath": "host/organizations/index.tsx",
+      "parent": "/host"
+    },
+    "/host/contests/$contest/entries": {
+      "filePath": "host/contests/$contest.entries.tsx",
+      "parent": "/host/contests/$contest"
     },
     "/host/organizations/$organization/contests": {
       "filePath": "host/organizations/$organization.contests.tsx",
+      "parent": "/host/organizations/$organization"
+    },
+    "/host/organizations/$organization/members": {
+      "filePath": "host/organizations/$organization.members.tsx",
+      "parent": "/host/organizations/$organization"
+    },
+    "/host/organizations/$organization/": {
+      "filePath": "host/organizations/$organization.index.tsx",
       "parent": "/host/organizations/$organization"
     }
   }

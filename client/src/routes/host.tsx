@@ -2,21 +2,8 @@ import server from "@client/lib/server-api";
 import {
   Outlet,
   createFileRoute,
-  Navigate,
   redirect,
-  useRouter,
 } from "@tanstack/solid-router";
-import { Show, For } from "solid-js";
-import {
-  AppSidebar,
-  AppSidebarHeader,
-} from "@client/components/layouts/app-sidebar";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-  Sidebar,
-} from "~/components/ui/sidebar";
 
 async function fetchOrganizations() {
   const { data, error, status } = await server.api.organizations.index.get();
@@ -42,22 +29,12 @@ export const Route = createFileRoute("/host")({
     };
   },
   loader: async (ctx) => {
-    const { data } = ctx.context;
     const organizations = await fetchOrganizations();
     return { organizations };
   },
-
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main class="w-full">
-        <AppSidebarHeader />
-        <Outlet />
-      </main>
-    </SidebarProvider>
-  );
+  return <Outlet />;
 }

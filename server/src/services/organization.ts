@@ -2,6 +2,7 @@ import { db } from "@server/database";
 import { organization, organizationToHost } from "@server/database/schema";
 import { model } from "@server/database/model";
 import * as schema from "@server/database/schema";
+import { redirect } from "elysia";
 
 const { insert, select } = model;
 
@@ -77,7 +78,8 @@ export async function createOrganization(
   await db
     .insert(organizationToHost)
     .values({ organizationId: newOrganization[0].id, userId, role: "admin" });
-  return newOrganization[0].id;
+
+  return redirect("http://localhost:5173/host/organizations/" + slug, 302);
 }
 
 export async function checkOrganizationAvailability(slug: string) {

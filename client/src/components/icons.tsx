@@ -20,6 +20,8 @@ const Icon = (props: IconProps) => {
   )
 }
 
+export type Icon = typeof Icon
+
 export function IconLogo(props: IconProps) {
   return (
     <Icon viewBox="0 0 24 24" {...props}>

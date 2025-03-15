@@ -1,4 +1,4 @@
-import Elysia, { t } from "elysia";
+import Elysia, { error, t } from "elysia";
 import { model } from "@server/database/model";
 import { betterAuth } from "@server/middlewares/auth-middleware";
 import { createContest, getContestBySlug } from "@server/services/contest";
@@ -24,7 +24,7 @@ export const organizationOwnerController = new Elysia({ name: "organizationOwner
             async ({ params, set, organization }) => {
                 if (!organization) {
                     set.status = 404;
-                    return { error: "Organization not found" };
+                    return error(404, "Organization not found");
                 }
                 return organization;
             },
@@ -35,8 +35,9 @@ export const organizationOwnerController = new Elysia({ name: "organizationOwner
 
                 if (!organization) {
                     set.status = 404;
-                    return { error: "Organization not found" };
+                    return error(404, "Organization not found");
                 }
+                set.status = 201;
 
                 return await createContest(
                     body.name,
@@ -64,13 +65,13 @@ export const organizationOwnerController = new Elysia({ name: "organizationOwner
 
                 if (!result.success) {
                     set.status = result.status;
-                    return { error: result.error };
+                    return error(result.status, result.error);
                 }
 
                 const contest = await getContestBySlug(result.organization.id, params.contestSlug);
                 if (!contest) {
                     set.status = 404;
-                    return { error: "Contest not found" };
+                    return error(404, "Contest not found");
                 }
                 return contest;
             },
@@ -98,9 +99,11 @@ export const organizationController = new Elysia({ name: "organizationController
             },
         )
         .post(
-            "/",
-            async ({ body, user }) => {
-                return await createOrganization(body.name, body.slug, user.id);
+            "/create",
+            async ({ body, user, set }) => {
+                const newOrganization = await createOrganization(body.name, body.slug, user.id);
+                set.status = 201;
+                return newOrganization;
             },
             {
                 body: t.Object({
