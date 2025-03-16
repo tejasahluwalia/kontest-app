@@ -28,8 +28,7 @@ export const userRelations = relations(user, ({ many }) => ({
 }));
 
 export const session = pgTable("session", {
-  id: text("id")
-    .primaryKey(),
+  id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
   createdAt: timestamp("created_at").notNull(),
@@ -42,8 +41,7 @@ export const session = pgTable("session", {
 });
 
 export const account = pgTable("account", {
-  id: text("id")
-    .primaryKey(),
+  id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: text("user_id")
@@ -61,8 +59,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-  id: text("id")
-    .primaryKey(),
+  id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -222,21 +219,18 @@ export const jurorToContestRelations = relations(jurorToContest, ({ one }) => ({
   }),
 }));
 
-export const submission = pgTable(
-  "submission",
-  {
-    contestId: text("contest_id")
-      .notNull()
-      .references(() => contest.id, { onDelete: "cascade" }),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    data: jsonb("data"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (t) => [primaryKey({ columns: [t.contestId, t.userId] })],
-);
+export const submission = pgTable("submission", {
+  id: text("id").notNull().primaryKey(),
+  contestId: text("contest_id")
+    .notNull()
+    .references(() => contest.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  data: jsonb("data"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 export const submissionRelations = relations(submission, ({ one }) => ({
   contest: one(contest, {

@@ -1,20 +1,5 @@
 import server from "@client/lib/server-api";
-import {
-  Outlet,
-  createFileRoute,
-  redirect,
-} from "@tanstack/solid-router";
-
-async function fetchOrganizations() {
-  const { data, error, status } = await server.api.organizations.index.get();
-  if (error) {
-    throw error.value;
-  }
-  if (status !== 200) {
-    throw new Error(`Failed to fetch organizations: ${status}`);
-  }
-  return data;
-}
+import { Outlet, createFileRoute, redirect } from "@tanstack/solid-router";
 
 export const Route = createFileRoute("/host")({
   beforeLoad: async ({ context: { auth }, location }) => {
@@ -25,12 +10,8 @@ export const Route = createFileRoute("/host")({
       });
     }
     return {
-      data,
+      auth: data,
     };
-  },
-  loader: async (ctx) => {
-    const organizations = await fetchOrganizations();
-    return { organizations };
   },
   component: RouteComponent,
 });

@@ -6,6 +6,7 @@ import {
 } from "@kobalte/core";
 import { createRootRouteWithContext } from "@tanstack/solid-router";
 import type { authClient } from "@client/lib/auth-client";
+import { Toaster } from "~/components/ui/toast";
 
 interface RootContext {
   auth: typeof authClient.getSession;
@@ -13,6 +14,7 @@ interface RootContext {
 
 export const Route = createRootRouteWithContext<RootContext>()({
   component: Root,
+  errorComponent: ErrorComponent,
 });
 
 function Root() {
@@ -22,7 +24,17 @@ function Root() {
       <ColorModeScript storageType={storageManager.type} />
       <ColorModeProvider storageManager={storageManager}>
         <Outlet />
+        <Toaster />
       </ColorModeProvider>
     </>
+  );
+}
+
+function ErrorComponent() {
+  return (
+    <div>
+      <h1>Error</h1>
+      <p>An error occurred.</p>
+    </div>
   );
 }

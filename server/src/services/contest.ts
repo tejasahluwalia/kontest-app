@@ -1,13 +1,35 @@
 import { db } from "@server/database";
-import { contest, contestToParticipant, submission } from "@server/database/schema";
-import { model } from "@server/database/model";
-import { eq } from "drizzle-orm";
+import {
+  contest,
+  contestToParticipant,
+  submission,
+} from "@server/database/schema";
 
-const { insert, select } = model;
+export async function checkContestBelongsToOrganization({
+  contestId, 
+  organizationId
+}: {
+  contestId: typeof contest.$inferSelect.id;
+  organizationId: typeof contest.$inferSelect.organizationId;
+}) {
+  const contest = await db.query.contest.findFirst({
+    where: (contest, { and, eq }) =>
+      and(
+        eq(contest.id, contestId),
+        eq(contest.organizationId, organizationId),
+      ),
+  });
+  return !!contest;
+}
+
 
 export async function getContestsByOrganizationId(organizationId: string) {
   return await db.query.contest.findMany({
     where: (contest, { eq }) => eq(contest.organizationId, organizationId),
+    with: {
+      contestToParticipant: true,
+      submissions: { columns: { id: true } },
+    },
   });
 }
 
@@ -23,12 +45,18 @@ export async function getContestsByOrganizationSlug(slug: string) {
   return await getContestsByOrganizationId(organization.id);
 }
 
-export async function getContestBySlug(organizationId: string, contestSlug: string) {
+export async function getContestBySlug({
+  organizationId,
+  contestId,
+}: {
+  organizationId: typeof contest.$inferSelect.organizationId;
+  contestId: typeof contest.$inferSelect.id;
+}) {
   return await db.query.contest.findFirst({
-    where: (contest, { and, eq }) => 
+    where: (contest, { and, eq }) =>
       and(
         eq(contest.organizationId, organizationId),
-        eq(contest.slug, contestSlug)
+        eq(contest.id, contestId),
       ),
     with: {
       contestToParticipant: {
@@ -42,21 +70,13 @@ export async function getContestBySlug(organizationId: string, contestSlug: stri
 }
 
 export async function createContest(
-  name: string,
-  slug: string,
-  organizationId: string,
-  schema?: any,
+  newContestValues: typeof contest.$inferInsert,
 ) {
   const newContest = await db
     .insert(contest)
-    .values({ 
-      name, 
-      slug, 
-      organizationId,
-      schema: schema ? schema : null,
-    })
+    .values(newContestValues)
     .returning();
-  
+
   return newContest[0];
 }
 

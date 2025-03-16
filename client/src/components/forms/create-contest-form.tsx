@@ -18,11 +18,23 @@ interface CreateContestFormProps {
   onSuccess: () => void;
 }
 
-async function createContest(name: string, slug: string, organizationSlug: string) {
-  const { data, error, status } = await server.api.organizations({ organizationSlug }).contests.post({
-    name,
-    slug,
-  });
+async function createContest(
+  name: string,
+  slug: string,
+  organizationSlug: string,
+  organizationId: string,
+) {
+  const { data, error, status } = await server.api
+    .organizations({ organizationSlug })
+    .contests.create.post({
+      name,
+      slug,
+      organizationId
+    }, {
+      query: {
+        organizationId,
+      },
+    });
   if (error) {
     throw error.value;
   }
@@ -33,7 +45,9 @@ async function createContest(name: string, slug: string, organizationSlug: strin
 }
 
 async function getSlugAvailability(slug: string) {
-  const { data, error, status } = await server.api.contests.checkAvailability({ slug }).get();
+  const { data, error, status } = await server.api.contests
+    .checkAvailability({ slug })
+    .get();
   if (error) {
     throw error.value;
   }
@@ -58,26 +72,33 @@ export default function CreateContestForm(props: CreateContestFormProps) {
     checkSlugAvailability(slug);
   }, 500); // 500ms debounce time
 
-  const handleInputNameChange: JSX.EventHandler<HTMLInputElement, InputEvent> = (event) => {
+  const handleInputNameChange: JSX.EventHandler<
+    HTMLInputElement,
+    InputEvent
+  > = (event) => {
     const target = event.target as HTMLInputElement;
     setName(target.value);
-    if (target.value === '') {
+    if (target.value === "") {
       setSlugAvailable(null);
       setSlugManuallyEdited(false);
     }
-  }
+  };
 
-  const handleInputSlugChange: JSX.EventHandler<HTMLInputElement, InputEvent> = (event) => {
+  const handleInputSlugChange: JSX.EventHandler<
+    HTMLInputElement,
+    InputEvent
+  > = (event) => {
     const target = event.target as HTMLInputElement;
     setSlug(target.value);
     setSlugManuallyEdited(true);
     debouncedCheckSlugAvailability(target.value);
-  }
+  };
 
   const generateSlugFromName = async (name: string) => {
-    const slug = name.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
+    const slug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
     setSlug(slug);
   };
 
@@ -110,8 +131,8 @@ export default function CreateContestForm(props: CreateContestFormProps) {
 
     setIsSubmitting(true);
     try {
-      await createContest(name(), slug(), props.organizationSlug);
-      props.onSuccess()
+      await createContest(name(), slug(), props.organizationSlug, props.organizationId);
+      props.onSuccess();
       await router.invalidate();
     } catch (error) {
       console.error("Error creating contest:", error);
@@ -155,15 +176,23 @@ export default function CreateContestForm(props: CreateContestFormProps) {
               required
             />
             <div class="mt-1 text-sm">
-              {checkingSlug() && <span class="text-gray-500">Checking availability...</span>}
-              {!checkingSlug() && slugAvailable() === true && <span class="text-green-600">Slug is available</span>}
-              {!checkingSlug() && slugAvailable() === false && <span class="text-red-600">Slug is not available</span>}
+              {checkingSlug() && (
+                <span class="text-gray-500">Checking availability...</span>
+              )}
+              {!checkingSlug() && slugAvailable() === true && (
+                <span class="text-green-600">Slug is available</span>
+              )}
+              {!checkingSlug() && slugAvailable() === false && (
+                <span class="text-red-600">Slug is not available</span>
+              )}
             </div>
           </TextField>
 
           <Button
             type="submit"
-            disabled={isSubmitting() || !name() || !slug() || slugAvailable() === false}
+            disabled={
+              isSubmitting() || !name() || !slug() || slugAvailable() === false
+            }
           >
             {isSubmitting() && <IconLoader class="mr-2 size-4 animate-spin" />}
             Create Contest

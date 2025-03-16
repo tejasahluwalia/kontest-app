@@ -1,10 +1,7 @@
 import { db } from "@server/database";
 import { organization, organizationToHost } from "@server/database/schema";
-import { model } from "@server/database/model";
-import * as schema from "@server/database/schema";
+import type * as schema from "@server/database/schema";
 import { redirect } from "elysia";
-
-const { insert, select } = model;
 
 export async function getOrganizationsByUserId(userId: string) {
   const userOrganizations = await db.query.organizationToHost.findMany({
@@ -20,50 +17,53 @@ export async function getOrganizationsByUserId(userId: string) {
   }));
 }
 
-export async function getOrganizationBySlug(slug: string) {
+export async function getOrganizationById(id: string) {
   return await db.query.organization.findFirst({
-    where: (organization, { eq }) => eq(organization.slug, slug),
+    where: (organization, { eq }) => eq(organization.id, id),
     with: {
-      contests: true,
+      contests: {
+        with: {
+          contestToParticipant: true,
+          submissions: {
+            columns: { id: true },
+          },
+        },
+      },
     },
   });
 }
 
-export async function isUserOrganizationMember(userId: string, organizationId: string) {
+export async function isUserOrganizationMember(
+  userId: string,
+  organizationId: string,
+) {
   const membership = await db.query.organizationToHost.findFirst({
-    where: (organizationToHost, { and, eq }) => 
+    where: (organizationToHost, { and, eq }) =>
       and(
         eq(organizationToHost.userId, userId),
-        eq(organizationToHost.organizationId, organizationId)
+        eq(organizationToHost.organizationId, organizationId),
       ),
   });
   return !!membership;
 }
 
-
-type OrganizationWithContests = typeof schema.organization.$inferSelect & {
-  contests: typeof schema.contest.$inferSelect[];
+type OrganizationWithContests = typeof organization.$inferSelect & {
+  contests: (typeof schema.contest.$inferSelect)[];
 };
 
 /**
  * Helper function to check if a user is a member of an organization
  * This avoids TypeScript issues with Elysia middleware
  */
-export async function checkOrganizationMembership(userId: string, organizationSlug: string): Promise<
-  | { success: false; status: number; error?: string; }
-  | { success: true; status: number; error?: string; organization:  OrganizationWithContests}
-> {
-  const organization = await getOrganizationBySlug(organizationSlug);
-  if (!organization) {
-    return { success: false, status: 404, error: "Organization not found" };
-  }
-
-  const isMember = await isUserOrganizationMember(userId, organization.id);
-  if (!isMember) {
-    return { success: false, status: 403, error: "Forbidden: You are not a member of this organization" };
-  }
-
-  return { success: true, status: 200, organization };
+export async function checkOrganizationMembership({
+  userId,
+  organizationId,
+}: {
+  userId: typeof schema.organizationToHost.$inferSelect.userId;
+  organizationId: typeof schema.organizationToHost.$inferSelect.organizationId;
+}) {
+  const isMember = await isUserOrganizationMember(userId, organizationId);
+  return isMember;
 }
 
 export async function createOrganization(
@@ -79,7 +79,7 @@ export async function createOrganization(
     .insert(organizationToHost)
     .values({ organizationId: newOrganization[0].id, userId, role: "admin" });
 
-  return redirect("http://localhost:5173/host/organizations/" + slug, 302);
+  return redirect(`http://localhost:5173/host/organizations/${slug}`, 302);
 }
 
 export async function checkOrganizationAvailability(slug: string) {

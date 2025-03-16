@@ -4,7 +4,7 @@ import betterAuthView from "./lib/auth-view";
 import { betterAuth } from "./middlewares/auth-middleware";
 import { checkContestAvailability } from "./services/contest";
 import { organizationController } from "./controllers/organization";
-
+import { contestController } from "./controllers/contest";
 
 const app = new Elysia()
   .use(
@@ -17,6 +17,7 @@ const app = new Elysia()
   )
   .use(betterAuth)
   .use(organizationController)
+  .use(contestController)
   .get(
     "/api/contests/checkAvailability/:slug",
     async ({ params, set }) => {

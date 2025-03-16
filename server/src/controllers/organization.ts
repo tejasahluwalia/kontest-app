@@ -1,117 +1,150 @@
 import Elysia, { error, t } from "elysia";
 import { model } from "@server/database/model";
 import { betterAuth } from "@server/middlewares/auth-middleware";
-import { createContest, getContestBySlug } from "@server/services/contest";
-import { checkOrganizationAvailability, createOrganization, checkOrganizationMembership, getOrganizationsByUserId } from "@server/services/organization";
+import { checkContestBelongsToOrganization, createContest, getContestBySlug } from "@server/services/contest";
+import {
+  checkOrganizationAvailability,
+  createOrganization,
+  checkOrganizationMembership,
+  getOrganizationsByUserId,
+  getOrganizationById,
+} from "@server/services/organization";
 
-export const organizationOwnerController = new Elysia({ name: "organizationOwnerController", prefix: "/:organizationSlug" })
-    .use(betterAuth)
-    .guard({
-        auth: true,
-    }, app => app
-        .resolve(async ({ error, params, user }) => {
-            if (!params.organizationSlug) {
-                return error(400, "Missing organization slug");
-            }
-            const result = await checkOrganizationMembership(user.id, params.organizationSlug);
-            if (!result.success) {
-                return error(result.status, result.error);
-            }
-            return { isOrganizationMember: result.success, organization: result.organization };
+export const organizationHostController = new Elysia({
+  name: "organizationHostController",
+  prefix: "/:organizationSlug",
+})
+  .use(betterAuth)
+  .guard(
+    {
+      auth: true,
+      query: t.Object({
+        organizationId: model.select.organization.id,
+      }),
+    },
+    (app) =>
+      app
+        .resolve(async ({ error, user, query: { organizationId } }) => {
+          const result = await checkOrganizationMembership({
+            userId: user.id,
+            organizationId,
+          });
+          if (!result) {
+            return error(403, "Forbidden: You are not a member of this organization");
+          }
+          return {
+            isOrganizationMember: true,
+          };
         })
-        .get(
-            "/",
-            async ({ params, set, organization }) => {
-                if (!organization) {
-                    set.status = 404;
-                    return error(404, "Organization not found");
-                }
-                return organization;
-            },
-        )
+        .get("/", async ({ params, set, query: { organizationId } }) => {
+          const organization = await getOrganizationById(organizationId);
+          if (!organization) {
+            set.status = 404;
+            return error(404, "Organization not found");
+          }
+          return organization;
+        })
         .post(
-            "/contests",
-            async ({ body, params, user, set, organization }) => {
-
-                if (!organization) {
-                    set.status = 404;
-                    return error(404, "Organization not found");
-                }
-                set.status = 201;
-
-                return await createContest(
-                    body.name,
-                    body.slug,
-                    organization.id,
-                    body.schema
-                );
-            },
-            {
-                body: t.Object({
-                    name: t.String(),
-                    slug: t.String(),
-                    schema: t.Optional(t.Any()),
-                }),
-            },
+          "/contests/create",
+          async ({ body, params, user, set }) => {
+            const newContest = await createContest(body);
+            set.status = 201;
+            return newContest.id;
+          },
+          {
+            body: t.Object({
+              name: model.insert.contest.name,
+              slug: model.insert.contest.slug,
+              schema: model.insert.contest.schema,
+              organizationId: model.insert.contest.organizationId,
+            }),
+          },
         )
-        .get(
-            "/contests/:contestSlug",
-            async ({ params, user, set }) => {
-                // Check if user is a member of the organization
-                const result = await checkOrganizationMembership(
-                    user.id,
-                    params.organizationSlug
-                );
-
-                if (!result.success) {
-                    set.status = result.status;
-                    return error(result.status, result.error);
+        .guard(
+          {
+            query: t.Object({
+              organizationId: model.select.organization.id,
+              contestId: model.select.contest.id,
+            }),
+          },
+          (app) =>
+            app
+              .resolve(async ({ error, params, user, query: { organizationId, contestId } }) => {
+                const result = await checkContestBelongsToOrganization({
+                  contestId,
+                  organizationId,
+                });
+                if (!result) {
+                  return error(403, "Forbidden: This contest does not belong to this organization");
                 }
-
-                const contest = await getContestBySlug(result.organization.id, params.contestSlug);
+                return {
+                  isContestBelongsToOrganization: result,
+                };
+              })
+              .get(
+                "/contests/:contestSlug",
+                async ({
+                  params,
+                  user,
+                set,
+                query: { organizationId, contestId },
+              }) => {
+                const contest = await getContestBySlug({
+                  organizationId,
+                  contestId,
+                });
                 if (!contest) {
-                    set.status = 404;
-                    return error(404, "Contest not found");
+                  set.status = 404;
+                  return error(404, "Contest not found");
                 }
                 return contest;
-            },
-        ))
+              },
+            ),
+        ),
+  );
 
-
-export const organizationController = new Elysia({ name: "organizationController", prefix: "/api/organizations" })
-    .use(betterAuth)
-    .guard({
-        auth: true,
-    }, app => app
+export const organizationController = new Elysia({
+  name: "organizationController",
+  prefix: "/api/organizations",
+})
+  .use(betterAuth)
+  .guard(
+    {
+      auth: true,
+    },
+    (app) =>
+      app
+        .get("/", async ({ set, user, session, error, ...ctx }) => {
+          return await getOrganizationsByUserId(user.id);
+        })
         .get(
-            "/",
-            async ({ set, user, session, error, ...ctx }) => {
-                return await getOrganizationsByUserId(user.id);
-            },
-        )
-        .get(
-            "/checkAvailability/:slug",
-            async ({ set, user, session, error, ...ctx }) => {
-                const isAvailable = await checkOrganizationAvailability(ctx.params.slug);
-                return {
-                    isAvailable,
-                };
-            },
+          "/checkAvailability/:slug",
+          async ({ set, user, session, error, ...ctx }) => {
+            const isAvailable = await checkOrganizationAvailability(
+              ctx.params.slug,
+            );
+            return {
+              isAvailable,
+            };
+          },
         )
         .post(
-            "/create",
-            async ({ body, user, set }) => {
-                const newOrganization = await createOrganization(body.name, body.slug, user.id);
-                set.status = 201;
-                return newOrganization;
-            },
-            {
-                body: t.Object({
-                    name: model.insert.organization.name,
-                    slug: model.insert.organization.slug,
-                }),
-            },
+          "/create",
+          async ({ body, user, set }) => {
+            const newOrganization = await createOrganization(
+              body.name,
+              body.slug,
+              user.id,
+            );
+            set.status = 201;
+            return newOrganization;
+          },
+          {
+            body: t.Object({
+              name: model.insert.organization.name,
+              slug: model.insert.organization.slug,
+            }),
+          },
         )
-        .use(organizationOwnerController))
-
-
+        .use(organizationHostController),
+  );
