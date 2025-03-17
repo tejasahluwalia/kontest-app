@@ -3,31 +3,30 @@ import type { JSX, ParentComponent } from 'solid-js'
 import { useFormBuilder } from "../form-builder-context";
 
 interface FieldWrapperProps {
-  fieldId: string;
-  sectionId: string;
+  childId: string;
+  blockId: string;
   children: JSX.Element;
   label: string;
   helpText?: string;
   required?: boolean;
-  isDragging?: boolean;
 }
 
 export const FieldWrapper: ParentComponent<FieldWrapperProps> = (props) => {
-  const { activeFieldId, setActiveFieldId } = useFormBuilder();
+  const { selectedChildId, setSelectedChildId } = useFormBuilder();
   const [isHovered, setIsHovered] = createSignal(false);
   
-  const isActive = () => activeFieldId() === props.fieldId;
+  const isActive = () => selectedChildId() === props.childId;
   
   const handleClick = (e: MouseEvent) => {
     e.stopPropagation();
-    setActiveFieldId(props.fieldId);
+    setSelectedChildId(props.childId);
   };
 
   return (
     <div 
       class={`relative border rounded-md p-4 mb-3 transition-all ${
         isActive() ? "border-primary shadow-sm" : "border-border"
-      } ${props.isDragging ? "opacity-50" : "opacity-100"}`}
+      }`}
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -55,13 +54,13 @@ export const FieldWrapper: ParentComponent<FieldWrapperProps> = (props) => {
         </Show>
       </div>
       
-      <div class="mb-1">
+      <Show when={props.helpText}>
+        <p class="text-sm text-muted-foreground mb-2">{props.helpText}</p>
+      </Show>
+      
+      <div>
         {props.children}
       </div>
-      
-      <Show when={props.helpText}>
-        <p class="text-sm text-muted-foreground mt-1">{props.helpText}</p>
-      </Show>
     </div>
   );
-}
+};

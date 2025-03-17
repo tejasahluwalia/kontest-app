@@ -1,26 +1,24 @@
-import type { FormField } from "../types";
+import type { RichTextField } from "../primitives/fields";
 import { FieldWrapper } from "./field-wrapper";
 import { TextField, TextFieldTextArea } from "~/components/ui/text-field";
 
 interface TextareaFieldProps {
-  field: FormField;
-  sectionId: string;
-  isDragging?: boolean;
-}
+  child: RichTextField;
+  blockId: string;
+} 
 
 export function TextAreaField(props: TextareaFieldProps) {
   return (
     <FieldWrapper
-      fieldId={props.field.id}
-      sectionId={props.sectionId}
-      label={props.field.label}
-      helpText={props.field.helpText}
-      required={props.field.required}
-      isDragging={props.isDragging}
+      childId={props.child.id}
+      blockId={props.blockId}
+      label={props.child.label}
+      helpText={props.child.helpText}
+      required={props.child.required}
     >
       <TextField>
         <TextFieldTextArea
-          placeholder={props.field.placeholder || "Enter text..."}
+          placeholder={props.child.placeholder || "Enter text..."}
           disabled
         />
       </TextField>

@@ -1,25 +1,23 @@
-import type { FormField } from "../types";
+import type { TextField } from "../primitives/fields";
 import { FieldWrapper } from "./field-wrapper";
 import { TextField as TextFieldWrapper, TextFieldInput } from "~/components/ui/text-field";
 
 interface TextFieldProps {
-  field: FormField;
-  sectionId: string;
-  isDragging?: boolean;
+  child: TextField;
+  blockId: string;
 }
 
 export function TextField(props: TextFieldProps) {
   return (
     <FieldWrapper
-      fieldId={props.field.id}
-      sectionId={props.sectionId}
-      label={props.field.label}
-      helpText={props.field.helpText}
-      required={props.field.required}
-      isDragging={props.isDragging}
+      childId={props.child.id}
+      blockId={props.blockId}
+      label={props.child.label}
+      helpText={props.child.helpText}
+      required={props.child.required}
     >
       <TextFieldWrapper>
-        <TextFieldInput placeholder={props.field.placeholder || "Enter text..."}
+        <TextFieldInput placeholder={props.child.placeholder || "Enter text..."}
         />
       </TextFieldWrapper>
     </FieldWrapper>

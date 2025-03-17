@@ -1,48 +1,46 @@
 import { For, Show, createSignal } from "solid-js";
 import { useFormBuilder } from "./form-builder-context";
-import { FieldRenderer } from "./field-components/field-renderer";
+// import { NodeRenderer } from "./node-components/node-renderer";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
-import { TextField, TextFieldTextArea, TextFieldInput } from "~/components/ui/text-field";
+import { TextField, TextFieldTextArea } from "~/components/ui/text-field";
 
 export function FormBuilderCanvas() {
   const { 
     formSchema, 
-    activeSection, 
-    setActiveSection, 
-    addSection, 
-    updateSection,
-    addField
+    selectedStepId,
+    setSelectedStepId,
+    selectedBlockId,
+    setSelectedBlockId,
+    selectedChildId,
+    setSelectedChildId,
+    addBlockToStep
   } = useFormBuilder();
 
-  const handleSectionClick = (sectionId: string) => {
-    setActiveSection(sectionId);
-  };
-
-  return (
+  return (  
     <div class="space-y-6">
-      <For each={formSchema.sections}>
-        {(section) => {
+      <For each={formSchema.graph[selectedStepId()].step.blocks}>
+        {(block) => {
           const [isEditingTitle, setIsEditingTitle] = createSignal(false);
           const [isEditingDescription, setIsEditingDescription] = createSignal(false);
           
-          const isActive = () => activeSection() === section.id;
+          const isActive = () => selectedBlockId() === block.id;
           
           return (
             <Card 
               class={`transition-all ${isActive() ? "ring-2 ring-primary" : ""}`}
-              onClick={() => handleSectionClick(section.id)}
+              onClick={() => setSelectedBlockId(block.id)}
             >
-              <CardHeader class="relative">
+              {/* <CardHeader class="relative">
                 <Show
                   when={!isEditingTitle()}
                   fallback={
                     <Input
-                      value={section.title}
-                      onInput={(e) => updateSection(section.id, { title: e.currentTarget.value })}
+                      value={block.label}
+                      onInput={(e: Event) => updateBlock(block.id, { label: (e.target as HTMLInputElement).value })}
                       onBlur={() => setIsEditingTitle(false)}
-                      onKeyDown={(e) => e.key === "Enter" && setIsEditingTitle(false)}
+                      onKeyDown={(e: KeyboardEvent) => e.key === "Enter" && setIsEditingTitle(false)}
                       autofocus
                     />
                   }
@@ -51,7 +49,7 @@ export function FormBuilderCanvas() {
                     class="cursor-pointer hover:text-primary"
                     onClick={() => isActive() && setIsEditingTitle(true)}
                   >
-                    {section.title}
+                    {node.label}
                   </CardTitle>
                 </Show>
                 
@@ -60,8 +58,8 @@ export function FormBuilderCanvas() {
                   fallback={
                     <TextField>
                       <TextFieldTextArea
-                        value={section.description || ""}
-                        onInput={(e) => updateSection(section.id, { description: e.currentTarget.value })}
+                        value={node.description || ""}
+                        onInput={(e: Event) => updateNode(node.id, { description: (e.target as HTMLTextAreaElement).value })}
                         onBlur={() => setIsEditingDescription(false)}
                         rows={3}
                         autofocus
@@ -69,20 +67,20 @@ export function FormBuilderCanvas() {
                     </TextField>
                   }
                 >
-                  <Show when={section.description}>
+                  <Show when={node.description}>
                     <CardDescription 
                       class="cursor-pointer hover:text-primary"
                       onClick={() => isActive() && setIsEditingDescription(true)}
                     >
-                      {section.description}
+                      {node.description}
                     </CardDescription>
                   </Show>
-                  <Show when={!section.description && isActive()}>
+                  <Show when={!node.description && isActive()}>
                     <button 
                       class="text-sm text-muted-foreground hover:text-primary"
                       onClick={() => setIsEditingDescription(true)}
                     >
-                      + Add section description
+                      + Add description
                     </button>
                   </Show>
                 </Show>
@@ -93,8 +91,9 @@ export function FormBuilderCanvas() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => {
-                          addField(section.id, "text");
+                        onClick={(e: MouseEvent) => {
+                          e.stopPropagation();
+                          addFieldNode("text", node.id);
                         }}
                       >
                         Add Field
@@ -105,13 +104,14 @@ export function FormBuilderCanvas() {
               </CardHeader>
               
               <CardContent>
-                <Show when={section.fields.length > 0} fallback={
+                <Show when={'children' in node && node.children.length > 0} fallback={
                   <div class="py-8 flex flex-col items-center justify-center border border-dashed rounded-md">
-                    <p class="text-muted-foreground mb-4">No fields added to this section yet</p>
+                    <p class="text-muted-foreground mb-4">No fields added to this node yet</p>
                     <Button 
                       variant="outline"
-                      onClick={() => {
-                        addField(section.id, "text");
+                      onClick={(e: MouseEvent) => {
+                        e.stopPropagation();
+                        addFieldNode("text", node.id);
                       }}
                     >
                       Add your first field
@@ -119,14 +119,14 @@ export function FormBuilderCanvas() {
                   </div>
                 }>
                   <div class="space-y-4">
-                    <For each={section.fields}>
-                      {(field) => (
-                        <FieldRenderer field={field} sectionId={section.id} />
+                    <For each={'children' in node ? node.children : []}>
+                      {(childNode) => (
+                        <NodeRenderer node={childNode} parentId={node.id} />
                       )}
                     </For>
                   </div>
                 </Show>
-              </CardContent>
+              </CardContent> */}
             </Card>
           );
         }}
@@ -135,10 +135,10 @@ export function FormBuilderCanvas() {
       <div class="flex justify-center">
         <Button 
           variant="outline" 
-          onClick={addSection}
+          // onClick={() => addBlockToStep()}
           class="w-full max-w-md"
         >
-          Add Section
+          Add Step
         </Button>
       </div>
     </div>

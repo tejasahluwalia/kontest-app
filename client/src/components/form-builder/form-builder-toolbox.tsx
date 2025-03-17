@@ -2,7 +2,7 @@ import { For } from "solid-js";
 import { useFormBuilder } from "./form-builder-context";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import type { FieldType } from "./types";
+import type { FieldType } from "./primitives/fields";
 
 interface FieldTypeOption {
   type: FieldType;
@@ -12,7 +12,7 @@ interface FieldTypeOption {
 
 const fieldTypes: FieldTypeOption[] = [
   { type: "text", label: "Text", icon: "text" },
-  { type: "textarea", label: "Paragraph", icon: "paragraph" },
+  { type: "rich-text", label: "Rich text", icon: "paragraph" },
   { type: "number", label: "Number", icon: "number" },
   { type: "select", label: "Dropdown", icon: "dropdown" },
   { type: "multiselect", label: "Multi Select", icon: "multiselect" },
@@ -20,20 +20,15 @@ const fieldTypes: FieldTypeOption[] = [
   { type: "radio", label: "Radio", icon: "radio" },
   { type: "date", label: "Date", icon: "date" },
   { type: "file", label: "File Upload", icon: "file" },
-  { type: "section", label: "Section Header", icon: "section" },
+  { type: "array", label: "Array", icon: "array" },
   { type: "group", label: "Group", icon: "group" },
 ];
 
 export function FormBuilderToolbox() {
-  const { activeSection, addField } = useFormBuilder();
+  const { addBlockToStep } = useFormBuilder();
 
   const handleAddField = (type: FieldType) => {
-    if (activeSection()) {
-      addField(activeSection()!, type);
-    } else {
-      // Show a notification that a section must be selected
-      console.warn("Please select a section first");
-    }
+    // addBlockToStep({})
   };
 
   return (
@@ -49,7 +44,6 @@ export function FormBuilderToolbox() {
                 variant="outline"
                 class="flex flex-col items-center justify-center h-20 p-2"
                 onClick={() => handleAddField(fieldType.type)}
-                disabled={!activeSection()}
               >
                 <div class="text-lg mb-1">
                   {getFieldIcon(fieldType.icon)}
@@ -84,10 +78,6 @@ function getFieldIcon(icon: string) {
       return "📅";
     case "file":
       return "📎";
-    case "section":
-      return "§";
-    case "group":
-      return "⧉";
     default:
       return "?";
   }

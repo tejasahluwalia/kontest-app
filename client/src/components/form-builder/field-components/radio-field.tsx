@@ -1,27 +1,25 @@
 import { For } from "solid-js";
-import type { FormField } from "../types";
+import type { RadioField } from "../primitives/fields";
 import { FieldWrapper } from "./field-wrapper";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Label } from "~/components/ui/label";
 
 interface RadioFieldProps {
-  field: FormField;
-  sectionId: string;
-  isDragging?: boolean;
+  child: RadioField;
+  blockId: string;
 }
 
 export function RadioField(props: RadioFieldProps) {
   return (
     <FieldWrapper
-      fieldId={props.field.id}
-      sectionId={props.sectionId}
-      label={props.field.label}
-      helpText={props.field.helpText}
-      required={props.field.required}
-      isDragging={props.isDragging}
+      childId={props.child.id}
+      blockId={props.blockId}
+      label={props.child.label}
+      helpText={props.child.helpText}
+      required={props.child.required}
     >
       <RadioGroup disabled>
-        <For each={props.field.options || []}>
+        <For each={props.child.options || []}>
           {(option) => (
             <div class="flex items-center space-x-2">
               <RadioGroupItem value={option.value} id={option.id} />

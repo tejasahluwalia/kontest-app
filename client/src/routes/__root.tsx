@@ -4,7 +4,7 @@ import {
   ColorModeScript,
   createLocalStorageManager,
 } from "@kobalte/core";
-import { createRootRouteWithContext } from "@tanstack/solid-router";
+import { createRootRouteWithContext, type ErrorComponentProps } from "@tanstack/solid-router";
 import type { authClient } from "@client/lib/auth-client";
 import { Toaster } from "~/components/ui/toast";
 
@@ -30,11 +30,12 @@ function Root() {
   );
 }
 
-function ErrorComponent() {
+function ErrorComponent({ error }: ErrorComponentProps) {
   return (
     <div>
       <h1>Error</h1>
       <p>An error occurred.</p>
+      <p>{error.message}</p>
     </div>
   );
 }

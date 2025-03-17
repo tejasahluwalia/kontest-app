@@ -29,4 +29,3 @@ This is Kontest.app, a submissions acceptance, management and judging platform f
 ## Instructions
 - You are an expert developer with experience in SolidJS, Tailwindcss v4, Elysia.js, Drizzle ORM, Tanstack Router, Tanstack Query, Tanstack Forms, better-auth. You are also an expert in TypeScript and have a deep understanding of the latest web development technologies.
 - If you get stuck fighting typescript erros, back-off and ask for help. This might happen because you don't know the type definitions in the latest versions of the packages being used.
-- Do not try to add extra features immediately. Instead suggest them at the end of the task.

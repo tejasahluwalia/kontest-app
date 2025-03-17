@@ -2,14 +2,14 @@ import { FormBuilderProvider, useFormBuilder } from "./form-builder-context";
 import { FormBuilderCanvas } from "./form-builder-canvas";
 import { FormBuilderToolbox } from "./form-builder-toolbox";
 import { FieldPropertiesPanel } from "./field-properties-panel";
-import type { FormSchema } from "./types";
+import type { FormSchema } from "./primitives/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { FormSettings } from "./form-settings";
 import { Button } from "~/components/ui/button";
 import { createEffect, onMount } from "solid-js";
 
 interface FormBuilderProps {
-  initialSchema?: FormSchema;
+  initialSchema: FormSchema;
   onSave?: (schema: FormSchema) => void;
 }
 
