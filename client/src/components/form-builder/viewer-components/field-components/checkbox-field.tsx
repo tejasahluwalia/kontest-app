@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import type { CheckboxField } from "../primitives/fields";
+import type { CheckboxField } from "../../primitives/fields";
 import { FieldWrapper } from "./field-wrapper";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Label } from "~/components/ui/label";
@@ -7,6 +7,7 @@ import { Label } from "~/components/ui/label";
 interface CheckboxFieldProps {
   child: CheckboxField;
   blockId: string;
+  stepId: string;
 }
 
 export function CheckboxField(props: CheckboxFieldProps) {
@@ -14,6 +15,7 @@ export function CheckboxField(props: CheckboxFieldProps) {
     <FieldWrapper
       childId={props.child.id}
       blockId={props.blockId}
+      stepId={props.stepId}
       label={props.child.label}
       helpText={props.child.helpText}
       required={props.child.required}

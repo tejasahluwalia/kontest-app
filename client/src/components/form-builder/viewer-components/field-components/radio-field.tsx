@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import type { RadioField } from "../primitives/fields";
+import type { RadioField } from "../../primitives/fields";
 import { FieldWrapper } from "./field-wrapper";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Label } from "~/components/ui/label";
@@ -7,6 +7,7 @@ import { Label } from "~/components/ui/label";
 interface RadioFieldProps {
   child: RadioField;
   blockId: string;
+  stepId: string;
 }
 
 export function RadioField(props: RadioFieldProps) {
@@ -14,6 +15,7 @@ export function RadioField(props: RadioFieldProps) {
     <FieldWrapper
       childId={props.child.id}
       blockId={props.blockId}
+      stepId={props.stepId}
       label={props.child.label}
       helpText={props.child.helpText}
       required={props.child.required}

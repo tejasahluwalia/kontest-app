@@ -1,10 +1,11 @@
-import type { RichTextField } from "../primitives/fields";
+import type { RichTextField } from "../../primitives/fields";
 import { FieldWrapper } from "./field-wrapper";
 import { TextField, TextFieldTextArea } from "~/components/ui/text-field";
 
 interface TextareaFieldProps {
   child: RichTextField;
   blockId: string;
+  stepId: string;
 } 
 
 export function TextAreaField(props: TextareaFieldProps) {
@@ -12,6 +13,7 @@ export function TextAreaField(props: TextareaFieldProps) {
     <FieldWrapper
       childId={props.child.id}
       blockId={props.blockId}
+      stepId={props.stepId}
       label={props.child.label}
       helpText={props.child.helpText}
       required={props.child.required}

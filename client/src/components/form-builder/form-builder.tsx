@@ -26,18 +26,8 @@ function FormBuilderContent(props: { onSave?: (schema: FormSchema) => void }) {
         </TabsList>
         
         <TabsContent value="builder" class="pt-6">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-3">
-              <FormBuilderToolbox />
-            </div>
-            
-            <div class="lg:col-span-6">
-              <FormBuilderCanvas />
-            </div>
-            
-            <div class="lg:col-span-3">
-              <FieldPropertiesPanel />
-            </div>
+          <div class="grid">
+            <FormBuilderCanvas />
           </div>
         </TabsContent>
         

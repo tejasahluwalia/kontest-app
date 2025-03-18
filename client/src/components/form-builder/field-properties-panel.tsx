@@ -11,7 +11,7 @@ import type { Child } from "./primitives/children";
 import { createId } from "@paralleldrive/cuid2";
 
 export function FieldPropertiesPanel() {
-  const { selectedChildId, formSchema, selectedStepId, selectedBlockId, selectedChild, removeChildFromBlock } = useFormBuilder();
+  const { selectedChildId, formSchema, selectedStepId, selectedBlockId, selectedChild, removeChildFromBlock, updateChildInBlock } = useFormBuilder();
   const [activeTab, setActiveTab] = createSignal("general");
 
   const field = createMemo(() => {
@@ -21,12 +21,7 @@ export function FieldPropertiesPanel() {
 
   const handleUpdateField = (data: Partial<InputField>) => {
     if (field()) {
-      // updateNode(field.id, data);
-      // setFormSchema(produce(draft => {
-      //   const updatedField = updateNode(draft, field.id, data);
-      //   draft.graph[selectedStepId()].step.blocks.find(block => block.id === selectedBlockId())?.children.find(child => child.id === selectedChildId()) = updatedField;
-      // }));
-      // saveToHistory();
+      updateChildInBlock(field()!.id, selectedBlockId(), data);
     }
   };
 

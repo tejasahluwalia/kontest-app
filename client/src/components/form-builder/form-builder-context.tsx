@@ -45,6 +45,7 @@ interface FormBuilderContextType {
   selectedChild: Accessor<Child | undefined>
   addChildToBlock: (child: Child, blockId: string) => void;
   removeChildFromBlock: (childId: string, blockId: string) => void;
+  updateChildInBlock: (childId: string, blockId: string, data: Partial<Child>) => void;
   // moveChild: (childId: string, newParentId: string, index?: number) => void;
   // duplicateChild: (childId: string) => string;
 
@@ -322,6 +323,15 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
     setFormSchema("graph", step.id, "blocks", (b) => b.id === blockId, "children", reconcile(newChildren));
   };
 
+  const updateChildInBlock = (childId: string, blockId: string, data: Partial<Child>): void => {
+    saveToHistory();
+    const {step, blocks} = formSchema.graph[selectedStepId()];
+    if (!step) throw new Error('Step not found');
+    const block = blocks.find(block => block.id === blockId);
+    if (!block) throw new Error('Block not found');
+    setFormSchema("graph", step.id, "blocks", (b) => b.id === block.id, "children", (c) => c.id === childId, data);
+  };
+
   // Update form settings
   const updateFormSettings = (data: Partial<Omit<FormSchema, 'flow' | 'templates'>>) => {
     saveToHistory();
@@ -385,6 +395,7 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
     selectedChild,
     addChildToBlock,
     removeChildFromBlock,
+    updateChildInBlock,
     // moveChildInBlock,
     // duplicateChildInBlock,
 

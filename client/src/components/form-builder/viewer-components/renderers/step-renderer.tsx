@@ -1,10 +1,10 @@
 import { createSignal, For, Show } from "solid-js";
-import type { FormGraph, StepGraphNode } from "../primitives/form";
-import { useFormBuilder } from "../form-builder-context";
+import type { FormGraph, StepGraphNode } from "../../primitives/form";
+import { useFormBuilder } from "../../form-builder-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { TextField, TextFieldTextArea } from "~/components/ui/text-field";
-import { createChildren } from "../primitives/children";
+import { createChildren } from "../../primitives/children";
 import { createId } from "@paralleldrive/cuid2";
 import { Button } from "~/components/ui/button";
 import BlockRenderer from "./block-renderer";
@@ -85,14 +85,13 @@ export default function StepRenderer(props: StepGraphNode) {
             <div class="space-y-4">
               <For each={blocks}>
                 {(block) => (
-                  <BlockRenderer block={block} />
+                  <BlockRenderer block={block} stepId={step.id} />
                 )}
               </For>
             </div>
           </Show>
         </CardContent>
         <CardFooter>
-          <Show when={isActive()}>
             <div class="flex items-center justify-between gap-1">
               <Button
                 variant="outline"
@@ -105,7 +104,6 @@ export default function StepRenderer(props: StepGraphNode) {
                 Add Block
               </Button>
             </div>
-          </Show>
         </CardFooter>
       </Card>
     );

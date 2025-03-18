@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import type { SelectField } from "../primitives/fields";
+import type { SelectField } from "../../primitives/fields";
 import { FieldWrapper } from "./field-wrapper";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 
@@ -7,6 +7,7 @@ interface SelectFieldProps {
   child: SelectField;
   onSelect?: () => void;
   blockId: string;
+  stepId: string;
 }
 
 export function SelectField(props: SelectFieldProps) {
@@ -21,6 +22,7 @@ export function SelectField(props: SelectFieldProps) {
     <FieldWrapper
       childId={props.child.id}
       blockId={props.blockId}
+      stepId={props.stepId}
       label={props.child.label}
       helpText={props.child.helpText}
       required={props.child.required}

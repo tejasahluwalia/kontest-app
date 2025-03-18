@@ -1,10 +1,11 @@
-import type { TextField } from "../primitives/fields";
+import type { TextField } from "../../primitives/fields";
 import { FieldWrapper } from "./field-wrapper";
 import { TextField as TextFieldWrapper, TextFieldInput } from "~/components/ui/text-field";
 
 interface TextFieldProps {
   child: TextField;
   blockId: string;
+  stepId: string;
 }
 
 export function TextField(props: TextFieldProps) {
@@ -12,6 +13,7 @@ export function TextField(props: TextFieldProps) {
     <FieldWrapper
       childId={props.child.id}
       blockId={props.blockId}
+      stepId={props.stepId}
       label={props.child.label}
       helpText={props.child.helpText}
       required={props.child.required}

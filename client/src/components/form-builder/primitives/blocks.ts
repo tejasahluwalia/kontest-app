@@ -4,7 +4,8 @@ import type { Condition, ConditionGroup } from "./conditions";
 
 interface BaseBlock {
     id: string;
-    children: Children
+    label?: string;
+    children: Children;
     conditionalDisplay?: Condition | ConditionGroup;
 }
 
@@ -21,13 +22,16 @@ type Block = BaseBlock | BlockTemplate
 // List type definition
 type Blocks = Block[]
 
+// Create a single empty block
+const createBlock = (): Block => ({
+    id: createId(),
+    children: createChildren()
+});
+
 // Create an empty list
-const createBlocks = (): Blocks => ([
-    {
-        id: createId(), 
-        children: createChildren()
-    }
-]);
+const createBlocks = (): Blocks => [
+    createBlock()
+];
 
 // Insert at the end
 const appendBlock = (list: Blocks, value: Block): Blocks => {
@@ -156,6 +160,7 @@ export {
     type Block,
     type Blocks,
     type BlockTemplate,
+    createBlock,
     createBlocks,
     appendBlock,
     prependBlock,

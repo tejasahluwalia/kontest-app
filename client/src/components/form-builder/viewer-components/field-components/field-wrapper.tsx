@@ -1,10 +1,11 @@
-import { Show, createSignal } from "solid-js";
+import { Show, batch, createSignal } from "solid-js";
 import type { JSX, ParentComponent } from 'solid-js'
-import { useFormBuilder } from "../form-builder-context";
+import { useFormBuilder } from "../../form-builder-context";
 
 interface FieldWrapperProps {
   childId: string;
   blockId: string;
+  stepId: string;
   children: JSX.Element;
   label: string;
   helpText?: string;
@@ -12,14 +13,16 @@ interface FieldWrapperProps {
 }
 
 export const FieldWrapper: ParentComponent<FieldWrapperProps> = (props) => {
-  const { selectedChildId, setSelectedChildId } = useFormBuilder();
-  const [isHovered, setIsHovered] = createSignal(false);
+  const { selectedChildId, setSelectedChildId, setSelectedBlockId, setSelectedStepId } = useFormBuilder();
   
   const isActive = () => selectedChildId() === props.childId;
   
   const handleClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    setSelectedChildId(props.childId);
+    batch(() => {
+      setSelectedStepId(props.stepId);
+      setSelectedBlockId(props.blockId);
+      setSelectedChildId(props.childId);
+    });
   };
 
   return (
@@ -28,8 +31,6 @@ export const FieldWrapper: ParentComponent<FieldWrapperProps> = (props) => {
         isActive() ? "border-primary shadow-sm" : "border-border"
       }`}
       onClick={handleClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div class="flex items-start justify-between mb-2">
         <div class="flex items-center gap-1">
@@ -39,7 +40,7 @@ export const FieldWrapper: ParentComponent<FieldWrapperProps> = (props) => {
           </Show>
         </div>
         
-        <Show when={isActive() || isHovered()}>
+        <Show when={isActive()}>
           <div class="flex items-center gap-1">
             <button 
               type="button" 

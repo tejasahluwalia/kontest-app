@@ -1,11 +1,11 @@
 import { For, type Component } from "solid-js";
-import type { Block } from "../primitives/blocks";
+import type { Block } from "../../primitives/blocks";
 import ChildRenderer from "./child-renderer";
-import { useFormBuilder } from "../form-builder-context";
+import { useFormBuilder } from "../../form-builder-context";
 import { Button } from "@client/components/ui/button";
-import { createChild } from "../primitives/children";
+import { createChild } from "../../primitives/children";
 
-const BlockRenderer: Component<{block: Block}> = ({block}) =>  {
+const BlockRenderer: Component<{block: Block, stepId: string}> = ({block, stepId}) =>  {
     const { setSelectedBlockId, addChildToBlock } = useFormBuilder()
     const { id, children } = block;
     return (
@@ -16,7 +16,7 @@ const BlockRenderer: Component<{block: Block}> = ({block}) =>  {
                 </div>
                 <For each={children}>
                     {(child) => (
-                        <ChildRenderer child={child} />
+                        <ChildRenderer child={child} blockId={id} stepId={stepId} />
                     )}
                 </For>
                 <Button variant="outline" onClick={() => addChildToBlock(createChild(), id)}>
