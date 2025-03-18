@@ -1,15 +1,20 @@
-import { createContext, createSignal, createEffect, onCleanup, useContext, type Accessor, type ParentComponent } from "solid-js";
+import { createContext, createSignal, createEffect, onCleanup, useContext, type Accessor, type ParentComponent, createMemo } from "solid-js";
 import { createStore, produce, reconcile } from "solid-js/store";
 import type { FormBuilderUIState } from './state/ui-state';
-import { createDefaultFormSchema, type FormBuilderHistory, type FormSchema, type Step } from "./primitives/form";
+import { createDefaultFormGraph, createGraphFromStep, type FormBuilderHistory, type FormSchema, type Step, type StepGraphNode } from "./primitives/form";
 import { createInitialUIState } from './state/ui-state';
 import {
   createInitialHistory,
   addHistoryEntry,
 } from './history/history-manager';
 import { appendBlock, type Block } from "./primitives/blocks";
-import type { Child } from "./primitives/children";
 import { createId } from "@paralleldrive/cuid2";
+import { appendChild, type Child, type Children } from "./primitives/children";
+import server from "@client/lib/server-api";
+import { getRouteApi, useRouteContext } from "@tanstack/solid-router";
+import OrganizationContext from "@client/context/organization";
+import ContestContext from "@client/context/contest";
+import { showToast } from "../ui/toast";
 
 // Define the operations we can perform on the form builder
 interface FormBuilderContextType {
@@ -21,24 +26,27 @@ interface FormBuilderContextType {
   // Step operations
   selectedStepId: Accessor<string>;
   setSelectedStepId: (stepId: string) => void;
-  // addStep: (step: Step) => string;
-  // removeStep: (stepId: string) => void;
-  // updateStep: (stepId: string, data: Partial<Step>) => void;
+  selectedStep: Accessor<StepGraphNode>;
+  addStepToGraph: (step: Step) => void;
+  removeStepFromGraph: (stepId: string) => void;
+  updateStepInGraph: (stepId: string, data: Partial<Step>) => void;
 
   // Block operations
   setSelectedBlockId: (blockId: string) => void;
   selectedBlockId: Accessor<string>;
+  selectedBlock: Accessor<Block | undefined>
   addBlockToStep: (block: Block, stepId?: string) => void;
   removeBlockFromStep: (blockId: string, stepId?: string) => void;
-  updateBlock: (blockId: string, data: Partial<Block>) => void;
+  updateBlockInStep: (blockId: string, data: Partial<Block>) => void;
 
   // Child operations
   setSelectedChildId: (childId: string) => void;
   selectedChildId: Accessor<string>;
-  // addChildToChildren: (child: Child) => string;
-  // removeChild: (block: Block, childId: string) => void;
-  // moveChild: (block: Block, childId: string, newParentId: string, index?: number) => void;
-  // duplicateChild: (block: Block, childId: string) => string;
+  selectedChild: Accessor<Child | undefined>
+  addChildToBlock: (child: Child, blockId: string) => void;
+  removeChildFromBlock: (childId: string, blockId: string) => void;
+  // moveChild: (childId: string, newParentId: string, index?: number) => void;
+  // duplicateChild: (childId: string) => string;
 
   // // Template operations
   // addTemplate: (name: string, block: Block) => string;
@@ -69,7 +77,7 @@ const AUTOSAVE_DELAY = 3000; // 3 seconds
 
 const FormBuilderContext = createContext<FormBuilderContextType>();
 
-export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema }> = (props) => {
+export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> = (props) => {
   // Initialize the state with defaults or provided schema
   const [formSchema, setFormSchema] = createStore<FormSchema>(props.initialSchema);
 
@@ -77,9 +85,12 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema }>
   const [history, setHistory] = createStore<FormBuilderHistory>(createInitialHistory(props.initialSchema));
 
   const [selectedStepId, setSelectedStepId] = createSignal<string>(props.initialSchema.graph[Object.keys(props.initialSchema.graph)[0]].step.id);
-  const [selectedBlockId, setSelectedBlockId] = createSignal<string>(props.initialSchema.graph[selectedStepId()].step.blocks[0].id);
-  const [selectedChildId, setSelectedChildId] = createSignal<string>(props.initialSchema.graph[selectedStepId()].step.blocks.find(block => block.id === selectedBlockId())?.children[0]?.id || '');
+  const [selectedBlockId, setSelectedBlockId] = createSignal<string>(props.initialSchema.graph[selectedStepId()].blocks[0].id);
+  const [selectedChildId, setSelectedChildId] = createSignal<string>(props.initialSchema.graph[selectedStepId()].blocks.find(block => block.id === selectedBlockId())?.children[0]?.id || '');
 
+  const selectedStep = createMemo(() => formSchema.graph[selectedStepId()]);
+  const selectedBlock = createMemo(() => selectedStep().blocks.find(block => block.id === selectedBlockId()));
+  const selectedChild = createMemo(() => selectedBlock()?.children.find(child => child.id === selectedChildId()));
 
   // History tracking and management
   const saveToHistory = () => {
@@ -129,6 +140,13 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema }>
   // Setup autosave
   let autosaveTimeout: number | undefined;
 
+  const organization = useContext(OrganizationContext)
+  const contest = useContext(ContestContext)
+
+  if (!contest || !organization) {
+    throw new Error('Contest or Organization not found');
+  }
+
   const saveForm = async () => {
     try {
       setUIState("isSaving", true);
@@ -140,7 +158,52 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema }>
       }));
 
       // Simulate saving to server
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data, error, status } = await server.api.organizations({ organizationSlug: organization.slug })
+        .contests({ contestSlug: contest.slug }).update.post({
+          id: contest.id,
+          name: contest.name,
+          slug: contest.slug,
+          organizationId: contest.organizationId,
+          schema: formSchema
+        }, {
+          query: {
+            contestId: contest.id,
+            organizationId: organization.id
+          }
+        });
+
+      if (error) {
+        showToast({
+          title: 'Error',
+          description: JSON.stringify(error.value),
+          variant: 'destructive'
+        });
+        return false;
+      }
+
+      if (status !== 200) {
+        showToast({
+          title: 'Error',
+          description: `Failed to save form: ${status}`,
+          variant: 'destructive'
+        });
+        return false;
+      }
+
+      if (!data) {
+        showToast({
+          title: 'Error',
+          description: 'Failed to save form',
+          variant: 'destructive'
+        });
+        return false;
+      }
+
+      // showToast({
+      //   title: 'Success',
+      //   description: 'Form saved successfully',
+      //   variant: 'default'
+      // });
 
       // Set last saved timestamp
       setUIState("lastSaved", new Date().toISOString());
@@ -180,41 +243,83 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema }>
     }
   });
 
+  // Step operations
+  const addStepToGraph = (step: Step) => {
+    saveToHistory();
+    const stepGraphNode = createGraphFromStep(step);
+    setFormSchema("graph", stepGraphNode);
+  };
+
+  const removeStepFromGraph = (stepId: string): void => {
+    saveToHistory();
+    const step = formSchema.graph[stepId].step;
+    if (!step) throw new Error('Step not found');
+    setFormSchema("graph", produce(draft => {
+      delete draft[stepId];
+    }));
+  };
+
+  const updateStepInGraph = (stepId: string, data: Partial<Step>): void => {
+    saveToHistory();
+    const step = formSchema.graph[stepId].step;
+    if (!step) throw new Error('Step not found');
+    const newStep = { ...step, ...data };
+    setFormSchema("graph", stepId, "step", newStep);
+  };
+
   // Block operations
   const addBlockToStep = (block: Block, stepId?: string): void => {
     saveToHistory();
-    const step = formSchema.graph[stepId ?? selectedStepId()].step;
+    const {step, blocks} = formSchema.graph[stepId ?? selectedStepId()];
     if (!step) throw new Error('Step not found');
-    const newBlocks = appendBlock(step.blocks, block);
-    setFormSchema("graph", step.id, "step", "blocks", reconcile(newBlocks));
+    setFormSchema("graph", step.id, "blocks", blocks.length, block);
   };
 
   const removeBlockFromStep = (blockId: string, stepId?: string): void => {
     saveToHistory();
-    const step = formSchema.graph[stepId ?? selectedStepId()].step;
+    const {step, blocks} = formSchema.graph[stepId ?? selectedStepId()];
     if (!step) throw new Error('Step not found');
-    const newBlocks = step.blocks.filter(block => block.id !== blockId);
-    setFormSchema("graph", step.id, "step", "blocks", reconcile(newBlocks));
+    const newBlocks = blocks.filter(block => block.id !== blockId);
+    setFormSchema("graph", step.id, "blocks", reconcile(newBlocks));
   };
 
-  const updateBlock = (blockId: string, data: Partial<Block>): void => {
+  const updateBlockInStep = (blockId: string, data: Partial<Block>): void => {
     saveToHistory();
-    const step = formSchema.graph[selectedStepId()].step;
+    const {step, blocks} = formSchema.graph[selectedStepId()];
     if (!step) throw new Error('Step not found');
-    const newBlocks = step.blocks.map(block =>
+    const newBlocks = blocks.map(block =>
       block.id === blockId ? { ...block, ...data } : block
     );
-    setFormSchema("graph", step.id, "step", "blocks", reconcile(newBlocks));
+    setFormSchema("graph", step.id, "blocks", (block) => block.id === blockId, (block) => ({ ...block, ...data }));
   };
 
   const duplicateBlock = (blockId: string): void => {
     saveToHistory();
-    const step = formSchema.graph[selectedStepId()].step;
+    const {step, blocks} = formSchema.graph[selectedStepId()];
     if (!step) throw new Error('Step not found');
-    const block = step.blocks.find(block => block.id === blockId);
+    const block = blocks.find(block => block.id === blockId);
     if (!block) throw new Error('Block not found');
-    const newBlocks = appendBlock(step.blocks, { ...block, id: createId() });
-    setFormSchema("graph", step.id, "step", "blocks", reconcile(newBlocks));
+    const newBlocks = appendBlock(blocks, { ...block, id: createId() });
+    setFormSchema("graph", step.id, "blocks", reconcile(newBlocks));
+  };
+
+  const addChildToBlock = (child: Child, blockId: string): void => {
+    saveToHistory();
+    const {step, blocks} = formSchema.graph[selectedStepId()];
+    if (!step) throw new Error('Step not found');
+    const block = blocks.find(block => block.id === blockId);
+    if (!block) throw new Error('Block not found');
+    setFormSchema("graph", step.id, "blocks", (b) => b.id === blockId, "children", block.children.length, child);
+  };
+
+  const removeChildFromBlock = (childId: string, blockId: string): void => {
+    saveToHistory();
+    const {step, blocks} = formSchema.graph[selectedStepId()];
+    if (!step) throw new Error('Step not found');
+    const block = blocks.find(block => block.id === blockId);
+    if (!block) throw new Error('Block not found');
+    const newChildren = block.children.filter(child => child.id !== childId);
+    setFormSchema("graph", step.id, "blocks", (b) => b.id === blockId, "children", reconcile(newChildren));
   };
 
   // Update form settings
@@ -261,22 +366,25 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema }>
     // Step operations
     setSelectedStepId,
     selectedStepId,
-    // addStep,
-    // removeStep,
-    // updateStep,
+    selectedStep,
+    addStepToGraph,
+    removeStepFromGraph,
+    updateStepInGraph,
 
     // Block operations
     setSelectedBlockId,
     selectedBlockId,
+    selectedBlock,
     addBlockToStep,
     removeBlockFromStep,
-    updateBlock,
+    updateBlockInStep,
 
     // Child operations
     setSelectedChildId,
     selectedChildId,
-    // addChildToBlock,
-    // removeChildFromBlock,
+    selectedChild,
+    addChildToBlock,
+    removeChildFromBlock,
     // moveChildInBlock,
     // duplicateChildInBlock,
 

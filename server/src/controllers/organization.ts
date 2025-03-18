@@ -1,7 +1,7 @@
 import Elysia, { error, t } from "elysia";
 import { model } from "@server/database/model";
 import { betterAuth } from "@server/middlewares/auth-middleware";
-import { checkContestBelongsToOrganization, createContest, getContestBySlug } from "@server/services/contest";
+import { checkContestBelongsToOrganization, createContest, getContestBySlug, updateContest } from "@server/services/contest";
 import {
   checkOrganizationAvailability,
   createOrganization,
@@ -60,7 +60,8 @@ export const organizationHostController = new Elysia({
             }),
           },
         )
-        .guard(
+        .group(
+          "/contests/:contestSlug",
           {
             query: t.Object({
               organizationId: model.select.organization.id,
@@ -82,24 +83,45 @@ export const organizationHostController = new Elysia({
                 };
               })
               .get(
-                "/contests/:contestSlug",
+                "/",
                 async ({
                   params,
                   user,
-                set,
-                query: { organizationId, contestId },
-              }) => {
-                const contest = await getContestBySlug({
-                  organizationId,
-                  contestId,
-                });
-                if (!contest) {
-                  set.status = 404;
-                  return error(404, "Contest not found");
-                }
-                return contest;
-              },
-            ),
+                  set,
+                  query: { organizationId, contestId },
+                }) => {
+                  const contest = await getContestBySlug({
+                    organizationId,
+                    contestId,
+                  });
+                  if (!contest) {
+                    set.status = 404;
+                    return error(404, "Contest not found");
+                  }
+                  return contest;
+                },
+              )
+              .post(
+                "/update",
+                async ({ body, params, user, set }) => {
+                  if (!body.id) {
+                    set.status = 400;
+                    return error(400, "Missing contest ID");
+                  }
+                  const updatedContest = await updateContest(body.id, body);
+                  set.status = 200;
+                  return updatedContest;
+                },
+                {
+                  body: t.Object({
+                    id: model.insert.contest.id,
+                    name: model.insert.contest.name,
+                    slug: model.insert.contest.slug,
+                    schema: model.insert.contest.schema,
+                    organizationId: model.insert.contest.organizationId,
+                  }),
+                },
+              )
         ),
   );
 

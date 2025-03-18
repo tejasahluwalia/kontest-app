@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 type Step = {
     id: string;
     label: string;
-    blocks: Blocks;
+    description?: string;
     nextButtonLabel?: string;
     previousButtonLabel?: string;
     showProgressBar?: boolean;
@@ -18,23 +18,35 @@ type Edge = {
     condition: (data: Step) => boolean;
 };
 
+type StepGraphNode = { step: Step; blocks: Blocks; edges: Edge[] };
+
 // Graph structure
-type FormGraph = {[key: string]: { step: Step; edges: Edge[] }}
+type FormGraph = {[key: string]: StepGraphNode}
 
 // Create an empty form flow graph
-const createDefaultFormGraph = (): FormGraph => {
-    const id = createId();
+const createDefaultFormGraph = (stepId?: string): FormGraph => {
+    const id = stepId || createId();
     return {
         [id]: {
             step: {
                 id,
                 label: 'Step 1',
-                blocks: createBlocks(),
                 nextButtonLabel: 'Next',
                 previousButtonLabel: 'Previous',
                 showProgressBar: true,
                 validate: () => true
             },
+            blocks: createBlocks(),
+            edges: []
+        }
+    };
+};
+
+const createGraphFromStep = (step: Step): FormGraph => {
+    return {
+        [step.id]: {
+            step,
+            blocks: createBlocks(),
             edges: []
         }
     };
@@ -46,7 +58,7 @@ const addStep = (
     step: Step
 ): FormGraph => {
     if (graph[step.id]) return graph;
-    graph[step.id] = { step, edges: [] };
+    graph[step.id] = { step, blocks: createBlocks(), edges: [] };
     return graph;
 };
 
@@ -154,5 +166,6 @@ export {
     type FormSchema,
     type FormBuilderHistory,
     type FormVersion,
-    createDefaultFormGraph, addStep, addTransition, validateStep, getNextStep, createDefaultFormSchema
+    type StepGraphNode,
+    createDefaultFormGraph, createGraphFromStep, addStep, addTransition, validateStep, getNextStep, createDefaultFormSchema
 };

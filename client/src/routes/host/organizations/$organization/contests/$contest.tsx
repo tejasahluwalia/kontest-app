@@ -1,3 +1,4 @@
+import ContestContext from '@client/context/contest';
 import server from '@client/lib/server-api';
 import { createFileRoute, notFound, Outlet } from '@tanstack/solid-router'
 
@@ -14,7 +15,7 @@ export const Route = createFileRoute(
     const { data, error, status } = await server.api
       .organizations({ organizationSlug: params.organization })
       .contests({ contestSlug: params.contest })
-      .get({query: { organizationId: organization.id, contestId }});
+      .index.get({query: { organizationId: organization.id, contestId }});
     if (error) {
       throw error.value;
     }
@@ -23,8 +24,12 @@ export const Route = createFileRoute(
     }
     return { contest: data };
   },
+  loader(ctx) {
+    return { contest: ctx.context.contest };
+  },
 })
 
 function RouteComponent() {
-  return <Outlet />
+  const { contest } = Route.useLoaderData()();
+  return <ContestContext.Provider value={contest}><Outlet /></ContestContext.Provider>
 }

@@ -1,4 +1,4 @@
-import { For, Show, createEffect, createSignal } from "solid-js";
+import { For, Show, createEffect, createMemo, createSignal } from "solid-js";
 import { useFormBuilder } from "./form-builder-context";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -11,21 +11,16 @@ import type { Child } from "./primitives/children";
 import { createId } from "@paralleldrive/cuid2";
 
 export function FieldPropertiesPanel() {
-  const { selectedChildId, setSelectedChildId, formSchema, selectedStepId, selectedBlockId } = useFormBuilder();
+  const { selectedChildId, formSchema, selectedStepId, selectedBlockId, selectedChild, removeChildFromBlock } = useFormBuilder();
   const [activeTab, setActiveTab] = createSignal("general");
 
-  const child = () => formSchema.graph[selectedStepId()].step.blocks.find(block => block.id === selectedBlockId())?.children.find(child => child.id === selectedChildId())
-
-  if (!child() ||child()?.childType !== 'field') return null;
-
-  const activeField = () => {
-    if (!child()) return null;
-    return child();
-  };
+  const field = createMemo(() => {
+    const child = selectedChild()
+    return child && child.childType === 'field' ? child : undefined;
+  })
 
   const handleUpdateField = (data: Partial<InputField>) => {
-    const field = activeField();
-    if (field) {
+    if (field()) {
       // updateNode(field.id, data);
       // setFormSchema(produce(draft => {
       //   const updatedField = updateNode(draft, field.id, data);
@@ -36,24 +31,25 @@ export function FieldPropertiesPanel() {
   };
 
   const handleAddOption = () => {
-    const field = activeField();
-    if (!field || field.childType !== 'field' || field.fieldType !== 'select') return;
-
+    const f = field();
+    if (!f || f.childType !== 'field' || f.fieldType !== 'select') return;
+    
     const newOption: FieldOption = {
       id: createId(),
-      label: `Option ${(field.options?.length || 0) + 1}`,
-      value: `option_${(field.options?.length || 0) + 1}`,
+      label: `Option ${(f.options?.length || 0) + 1}`,
+      value: `option_${(f.options?.length || 0) + 1}`,
+      };
+      
+      const updatedOptions = [...(f.options || []), newOption];
+      handleUpdateField({ options: updatedOptions });
     };
-    
-    const updatedOptions = [...(field.options || []), newOption];
-    handleUpdateField({ options: updatedOptions });
-  };
+
 
   const handleUpdateOption = (optionId: string, data: Partial<FieldOption>) => {
-    const field = activeField();
-    if (!field || field.childType !== 'field' || field.fieldType !== 'select') return;
+    const f = field();
+    if (!f || f.childType !== 'field' || f.fieldType !== 'select') return;
     
-    const updatedOptions = field.options?.map(option => 
+    const updatedOptions = f.options?.map(option => 
       option.id === optionId ? { ...option, ...data } : option
     );
     
@@ -61,24 +57,22 @@ export function FieldPropertiesPanel() {
   };
 
   const handleRemoveOption = (optionId: string) => {
-    const field = activeField();
-    if (!field || field.childType !== 'field' || field.fieldType !== 'select') return;
+    const f = field();
+    if (!f || f.childType !== 'field' || f.fieldType !== 'select') return;
     
-    const updatedOptions = field.options?.filter(option => option.id !== optionId);
+    const updatedOptions = f.options?.filter(option => option.id !== optionId);
     handleUpdateField({ options: updatedOptions });
   };
 
   const handleDeleteField = () => {
-    if (activeField()) {
-      // removeNode(field.id);
-    }
+    const f = field();
+    if (!f || f.childType !== 'field') return;
+    
+    removeChildFromBlock(f.id, selectedBlockId());
   };
 
   return (
-    <Show when={(() => {
-      const field = activeField();
-      return field && field.childType === 'field' ? field : undefined;
-    })()} fallback={
+    <Show when={field()} fallback={
       <Card>
         <CardHeader>
           <CardTitle>Field Properties</CardTitle>
@@ -103,6 +97,9 @@ export function FieldPropertiesPanel() {
           </TabsList>
           
           <TabsContent value="general" class="space-y-4 pt-4">
+            <div>
+              {field().id}
+            </div>
             <div>
               <Label for="field-label">Label</Label>
               <Input

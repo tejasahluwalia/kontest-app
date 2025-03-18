@@ -11,6 +11,7 @@ import {
   TextFieldInput,
   TextFieldLabel,
 } from "~/components/ui/text-field";
+import { createDefaultFormSchema } from "../form-builder/primitives/form";
 
 interface CreateContestFormProps {
   organizationId: string;
@@ -29,7 +30,8 @@ async function createContest(
     .contests.create.post({
       name,
       slug,
-      organizationId
+      organizationId,
+      schema: createDefaultFormSchema(),
     }, {
       query: {
         organizationId,

@@ -4,6 +4,7 @@ import {
   contestToParticipant,
   submission,
 } from "@server/database/schema";
+import { eq } from "drizzle-orm";
 
 export async function checkContestBelongsToOrganization({
   contestId, 
@@ -85,4 +86,16 @@ export async function checkContestAvailability(slug: string) {
     where: (contest, { eq }) => eq(contest.slug, slug),
   });
   return !existingContest;
+}
+
+export async function updateContest(
+  contestId: typeof contest.$inferSelect.id,
+  contestValues: typeof contest.$inferInsert,
+) {
+  const updatedContest = await db
+    .update(contest)
+    .set(contestValues)
+    .where(eq(contest.id, contestId))
+    .returning();
+  return updatedContest[0];
 }

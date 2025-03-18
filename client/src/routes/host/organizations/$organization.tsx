@@ -4,6 +4,7 @@ import { SidebarProvider } from "~/components/ui/sidebar";
 import { Outlet } from "@tanstack/solid-router";
 import server from "@client/lib/server-api";
 import { ErrorBoundary } from "solid-js";
+import OrganizationContext from "@client/context/organization";
 
 export const Route = createFileRoute("/host/organizations/$organization")({
   component: RouteComponent,
@@ -27,17 +28,25 @@ export const Route = createFileRoute("/host/organizations/$organization")({
       organization: data,
     };
   },
+  loader: async ({ context: { organization } }) => {
+    return { organization };
+  },
 });
 
+
 function RouteComponent() {
+  const { organization } = Route.useLoaderData()();
+
   return (
-    <SidebarProvider>
-      <ErrorBoundary fallback={<div>Error in Sidebar</div>}>
-        <AppSidebar />
-      </ErrorBoundary>
-      <main class="w-full p-4">
-        <Outlet />
-      </main>
-    </SidebarProvider>
+    <OrganizationContext.Provider value={organization}>
+      <SidebarProvider>
+        <ErrorBoundary fallback={<div>Error in Sidebar</div>}>
+          <AppSidebar />
+        </ErrorBoundary>
+        <main class="w-full p-4">
+          <Outlet />
+        </main>
+      </SidebarProvider>
+    </OrganizationContext.Provider>
   );
 }

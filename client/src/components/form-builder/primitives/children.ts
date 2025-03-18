@@ -6,8 +6,7 @@ type Child = InputField | Display
 // List type definition
 type Children = Child[]
 
-// Create an empty list
-const createChildren = (): Children => [{
+const createChild = (): Child => ({
     childType: 'field',
     id: createId(),
     fieldType: 'text',
@@ -17,7 +16,10 @@ const createChildren = (): Children => [{
     placeholder: 'Enter value',
     description: '',
     defaultValue: '',
-}];
+})
+
+// Create an empty list
+const createChildren = (): Children => [createChild()];
 
 // Insert at the end
 const appendChild = (list: Children, value: Child): Children => {
@@ -94,6 +96,7 @@ const duplicateChild = (list: Children, childId: string): Children => {
 export {
     type Child,
     type Children,
+    createChild,
     createChildren,
     appendChild,
     prependChild,
