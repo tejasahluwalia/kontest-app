@@ -1,7 +1,7 @@
 import Elysia, { error, t } from "elysia";
 import { model } from "@server/database/model";
 import { betterAuth } from "@server/middlewares/auth-middleware";
-import { checkContestBelongsToOrganization, createContest, getContestBySlug, updateContest } from "@server/services/contest";
+import { checkContestBelongsToOrganization, createContest, deleteContest, getContestBySlug, updateContest } from "@server/services/contest";
 import {
   checkOrganizationAvailability,
   createOrganization,
@@ -99,6 +99,13 @@ export const organizationHostController = new Elysia({
                     return error(404, "Contest not found");
                   }
                   return contest;
+                },
+              )
+              .delete(
+                "/",
+                async ({ params, user, set, query: { organizationId, contestId } }) => {
+                  await deleteContest(contestId);
+                  return;
                 },
               )
               .post(

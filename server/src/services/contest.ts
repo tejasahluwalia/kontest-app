@@ -99,3 +99,10 @@ export async function updateContest(
     .returning();
   return updatedContest[0];
 }
+
+export async function deleteContest(
+  contestId: typeof contest.$inferSelect.id,
+) {
+  await db.delete(contest).where(eq(contest.id, contestId));
+  return;
+}

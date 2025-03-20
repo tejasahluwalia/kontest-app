@@ -102,6 +102,8 @@ export interface TimeField extends BaseField {
   minDate?: string | null;
   maxDate?: string | null;
   dateFormat?: string;
+  defaultValue?: string;
+  value?: string;
 }
 
 export interface FileField extends BaseField {
@@ -109,6 +111,8 @@ export interface FileField extends BaseField {
   maxSize?: number;
   allowedTypes?: string[];
   multiple?: boolean;
+  defaultValue?: string[];
+  value?: string[];
 }
 
 export interface CheckboxField extends BaseField {

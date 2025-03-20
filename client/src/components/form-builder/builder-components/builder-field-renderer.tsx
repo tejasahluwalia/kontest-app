@@ -1,41 +1,78 @@
-import { Match, Switch, type Component } from "solid-js";
+import { Button } from "@client/components/ui/button";
+import { Card, CardContent, CardHeader } from "@client/components/ui/card";
+import { Dialog, DialogTrigger } from "@client/components/ui/dialog";
+import type { Accessor, Component } from "solid-js";
+import { batch, Show } from "solid-js";
+import { useFormBuilder } from "../form-builder-context";
 import type { InputField } from "../primitives/fields";
-import { BuilderTextField } from "./field-representations/builder-text-field";
-import { BuilderTextAreaField } from "./field-representations/builder-textarea-field";
-import { BuilderSelectField } from "./field-representations/builder-select-field";
-import { BuilderCheckboxField } from "./field-representations/builder-checkbox-field";
-import { BuilderRadioField } from "./field-representations/builder-radio-field";
-import type { TextField as TextFieldType, RichTextField as RichTextFieldType, SelectField as SelectFieldType, CheckboxField as CheckboxFieldType, RadioField as RadioFieldType } from "../primitives/fields";
+import FieldPropertiesModal from "./field-properties-modal";
+import EllipsisVertical from "lucide-solid/icons/ellipsis-vertical";
+import Trash2 from "lucide-solid/icons/trash-2";
+import { Badge } from "@client/components/ui/badge";
 
 interface BuilderFieldRendererProps {
-  child: InputField;
+  field: Accessor<InputField>;
   blockId: string;
   stepId: string;
 }
 
-export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = (props) => {
+export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({ field, blockId, stepId }) => {
+  const {
+    setSelectedChildId,
+    setSelectedBlockId,
+    setSelectedStepId,
+    removeChildFromBlock,
+  } = useFormBuilder();
+
+  const handleClick = () => {
+    batch(() => {
+      setSelectedStepId(stepId);
+      setSelectedBlockId(blockId);
+      setSelectedChildId(field().id);
+    });
+  };
+
   return (
-    <Switch>
-      <Match when={props.child.fieldType === "text"}>
-        <BuilderTextField child={props.child as TextFieldType} blockId={props.blockId} stepId={props.stepId} />
-      </Match>
-      <Match when={props.child.fieldType === "rich-text"}>
-        <BuilderTextAreaField child={props.child as RichTextFieldType} blockId={props.blockId} stepId={props.stepId} />
-      </Match>
-      <Match when={props.child.fieldType === "select"}>
-        <BuilderSelectField child={props.child as SelectFieldType} blockId={props.blockId} stepId={props.stepId} />
-      </Match>
-      <Match when={props.child.fieldType === "checkbox"}>
-        <BuilderCheckboxField child={props.child as CheckboxFieldType} blockId={props.blockId} stepId={props.stepId} />
-      </Match>
-      <Match when={props.child.fieldType === "radio"}>
-        <BuilderRadioField child={props.child as RadioFieldType} blockId={props.blockId} stepId={props.stepId} />
-      </Match>
-      <Match when={true}>
-        <div class="p-4 border border-dashed rounded-md">
-          <p class="text-muted-foreground">Field type "{props.child.fieldType}" not implemented yet</p>
-        </div>
-      </Match>
-    </Switch>
+    <Card onClick={handleClick}>
+      <CardHeader class="p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <Badge variant="secondary" class="uppercase">{field().fieldType}</Badge>
+              <span class="font-medium">{field().label}</span>
+              <Show when={field().required}>
+                <span class="text-destructive">*</span>
+              </Show>
+              <Show when={field().helpText}>
+                <p class="text-sm text-muted-foreground">{field().helpText}</p>
+              </Show>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <div class="space-y-2">
+                <Dialog>
+                  <DialogTrigger>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                    >
+                      <EllipsisVertical size={16} />
+                    </Button>
+                  </DialogTrigger>
+                  <FieldPropertiesModal field={field} blockId={blockId} />
+                </Dialog>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  removeChildFromBlock(field().id, blockId);
+                }}
+              >
+                <Trash2 size={16} />
+              </Button>
+            </div>
+          </div>
+      </CardHeader>
+    </Card>
   );
 };

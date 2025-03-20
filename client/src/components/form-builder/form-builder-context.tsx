@@ -15,6 +15,7 @@ import { getRouteApi, useRouteContext } from "@tanstack/solid-router";
 import OrganizationContext from "@client/context/organization";
 import ContestContext from "@client/context/contest";
 import { showToast } from "../ui/toast";
+import type { ConditionalRule } from "./primitives/conditions";
 
 // Define the operations we can perform on the form builder
 interface FormBuilderContextType {
@@ -29,7 +30,7 @@ interface FormBuilderContextType {
   selectedStep: Accessor<StepGraphNode>;
   addStepToGraph: (step: Step) => void;
   removeStepFromGraph: (stepId: string) => void;
-  updateStepInGraph: (stepId: string, data: Partial<Step>) => void;
+  updateStepInGraph: (stepId: string, data: Partial<StepGraphNode>) => void;
 
   // Block operations
   setSelectedBlockId: (blockId: string) => void;
@@ -48,6 +49,11 @@ interface FormBuilderContextType {
   updateChildInBlock: (childId: string, blockId: string, data: Partial<Child>) => void;
   // moveChild: (childId: string, newParentId: string, index?: number) => void;
   // duplicateChild: (childId: string) => string;
+
+  // Edge operations
+  addEdgeToStep: (edge: ConditionalRule, stepId: string) => void;
+  removeEdgeFromStep: (edgeId: string, stepId: string) => void;
+  updateEdgeInStep: (edgeId: string, stepId: string, data: Partial<ConditionalRule>) => void;
 
   // // Template operations
   // addTemplate: (name: string, block: Block) => string;
@@ -210,7 +216,7 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
       setUIState("lastSaved", new Date().toISOString());
 
       // Here you would implement the actual API call to save the form
-      console.log('Form saved:', formSchema);
+      // console.log('Form saved:', formSchema);
 
       return true;
     } catch (error) {
@@ -260,12 +266,13 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
     }));
   };
 
-  const updateStepInGraph = (stepId: string, data: Partial<Step>): void => {
+  const updateStepInGraph = (stepId: string, data: Partial<StepGraphNode>): void => {
     saveToHistory();
-    const step = formSchema.graph[stepId].step;
+    const step = formSchema.graph[stepId];
     if (!step) throw new Error('Step not found');
     const newStep = { ...step, ...data };
-    setFormSchema("graph", stepId, "step", newStep);
+    setFormSchema("graph", stepId, "step", newStep.step);
+    setFormSchema("graph", stepId, "edges", newStep.edges);
   };
 
   // Block operations
@@ -342,6 +349,28 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
     }));
   };
 
+  const addEdgeToStep = (edge: ConditionalRule, stepId: string) => {
+    saveToHistory();
+    const {step, edges} = formSchema.graph[stepId];
+    if (!step) throw new Error('Step not found');
+    setFormSchema("graph", step.id, "edges", edges.length, edge);
+  };
+
+  const removeEdgeFromStep = (edgeId: string, stepId: string) => {
+    saveToHistory();
+    const {step, edges} = formSchema.graph[stepId];
+    if (!step) throw new Error('Step not found');
+    const newEdges = edges.filter(edge => edge.id !== edgeId);
+    setFormSchema("graph", step.id, "edges", reconcile(newEdges));
+  };
+
+  const updateEdgeInStep = (edgeId: string, stepId: string, data: Partial<ConditionalRule>) => {
+    saveToHistory();
+    const {step, edges} = formSchema.graph[stepId];
+    if (!step) throw new Error('Step not found');
+    setFormSchema("graph", step.id, "edges", (e) => e.id === edgeId, data);
+  };
+
   // Preview operations
   const startPreview = () => {
     setUIState(produce(draft => {
@@ -398,6 +427,11 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
     updateChildInBlock,
     // moveChildInBlock,
     // duplicateChildInBlock,
+
+    // Edge operations
+    addEdgeToStep,
+    removeEdgeFromStep,
+    updateEdgeInStep,
 
     // // Template operations
     // addTemplateToBlock,

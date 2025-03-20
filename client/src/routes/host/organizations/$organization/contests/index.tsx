@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/solid-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/solid-router";
 import { Show, For, createSignal } from "solid-js";
 import server from "@client/lib/server-api";
 import { Button } from "~/components/ui/button";
@@ -10,6 +10,8 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import CreateContestForm from "~/components/forms/create-contest-form";
+import { Card, CardContent, CardHeader } from "@client/components/ui/card";
+import Trash2 from "lucide-solid/icons/trash-2";
 
 export const Route = createFileRoute(
   "/host/organizations/$organization/contests/",
@@ -24,10 +26,22 @@ function RouteComponent() {
   const { organization } = Route.useLoaderData()();
   const contests = organization.contests;
 
+  const router = useRouter();
+
   const [dialogOpen, setDialogOpen] = createSignal(false);
 
   const handleCreateSuccess = () => {
     setDialogOpen(false);
+  };
+
+  const deleteContest = ({ slug, id }: { slug: string, id: string }) => {
+    server.api.organizations({ organizationSlug: organization.slug }).contests({ contestSlug: slug }).index.delete({}, {
+      query: {
+        organizationId: organization.id,
+        contestId: id,
+      },
+    });
+    router.invalidate();
   };
 
   return (
@@ -70,29 +84,42 @@ function RouteComponent() {
               {(contest) => {
                 const numberOfSubmissions = contest.submissions?.length || 0;
                 const numberOfParticipants = contest.contestToParticipant?.length || 0;
-                const { slug, name } = contest;
+                const { slug, name, id } = contest;
                 return (
-                  <Link
-                    from="/host/organizations/$organization/contests"
-                    to="/host/organizations/$organization/contests/$contest/dashboard"
-                    params={{
-                      organization: organization.slug,
-                      contest: slug,
-                    }}
-                    class="block"
-                  >
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
-                      <h3 class="text-xl font-semibold mb-2">{name}</h3>
-                      <div class="flex items-center justify-between">
-                        <span class="text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
-                          {numberOfSubmissions} submissions
-                        </span>
-                        <span class="text-sm bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
-                          {numberOfParticipants} participants
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
+                  <div>
+                    <Link
+                      from="/host/organizations/$organization/contests"
+                      to="/host/organizations/$organization/contests/$contest/dashboard"
+                      params={{
+                        organization: organization.slug,
+                        contest: slug,
+                      }}
+                      class="block"
+                    >
+                      <Card>
+                        <CardHeader class="flex items-center justify-between">
+                          <h3 class="text-xl font-semibold mb-2">{name}</h3>
+                        </CardHeader>
+                        <CardContent>
+                          <div class="flex items-center justify-between">
+                            <span class="text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                              {numberOfSubmissions} submissions
+                            </span>
+                            <span class="text-sm bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
+                              {numberOfParticipants} participants
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => deleteContest({ slug, id })}
+                    >
+                      <Trash2 class="h-4 w-4" />
+                    </Button>
+                  </div>
                 )
               }}
             </For>

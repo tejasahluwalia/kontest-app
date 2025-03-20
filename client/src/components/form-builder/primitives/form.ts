@@ -1,6 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { createBlocks, type Block, type Blocks, type BlockTemplate } from "./blocks";
 import { nanoid } from "nanoid";
+import { createEdge, type Edges } from "./edges";
 
 type Step = {
     id: string;
@@ -12,13 +13,7 @@ type Step = {
     validate: (data: Step) => boolean;  // Step-specific validation logic
 };
 
-// Edge type with a condition based on form data
-type Edge = {
-    to: string;
-    condition: (data: Step) => boolean;
-};
-
-type StepGraphNode = { step: Step; blocks: Blocks; edges: Edge[] };
+type StepGraphNode = { step: Step; blocks: Blocks; edges: Edges };
 
 // Graph structure
 type FormGraph = {[key: string]: StepGraphNode}
@@ -37,7 +32,7 @@ const createDefaultFormGraph = (stepId?: string): FormGraph => {
                 validate: () => true
             },
             blocks: createBlocks(),
-            edges: []
+            edges: [createEdge()]
         }
     };
 };
@@ -47,7 +42,7 @@ const createGraphFromStep = (step: Step): FormGraph => {
         [step.id]: {
             step,
             blocks: createBlocks(),
-            edges: []
+            edges: [createEdge()]
         }
     };
 };
@@ -58,55 +53,8 @@ const addStep = (
     step: Step
 ): FormGraph => {
     if (graph[step.id]) return graph;
-    graph[step.id] = { step, blocks: createBlocks(), edges: [] };
+    graph[step.id] = { step, blocks: createBlocks(), edges: [createEdge()] };
     return graph;
-};
-
-// Add a conditional transition (edge)
-const addTransition = (
-    graph: FormGraph,
-    from: string,
-    to: string,
-    condition: (data: Step) => boolean
-): FormGraph => {
-    if (!graph[from] || !graph[to]) {
-        throw new Error(`Both steps must exist before adding a transition.`);
-    }
-
-    const newGraph = { ...graph };
-    const node = newGraph[from];
-    newGraph[from] = { ...node, edges: [...node.edges, { to, condition }] };
-
-    return newGraph;
-};
-
-// Validate a form step
-const validateStep = (
-    graph: FormGraph,
-    stepId: string,
-    data: Step
-): boolean => {
-    const node = graph[stepId];
-    if (!node) throw new Error(`Step "${stepId}" does not exist.`);
-    return node.step.validate(data);
-};
-
-// Find the next valid step
-const getNextStep = (
-    graph: FormGraph,
-    currentStep: string,
-    data: Step
-): string | null => {
-    const node = graph[currentStep];
-    if (!node) throw new Error(`Step "${currentStep}" does not exist.`);
-
-    for (const edge of node.edges) {
-        if (edge.condition(data)) {
-            return edge.to;
-        }
-    }
-
-    return null; // No valid next step found
 };
 
 interface FormDiff {
@@ -162,10 +110,9 @@ function createDefaultFormSchema(): FormSchema {
 export {
     type FormGraph,
     type Step,
-    type Edge,
     type FormSchema,
     type FormBuilderHistory,
     type FormVersion,
     type StepGraphNode,
-    createDefaultFormGraph, createGraphFromStep, addStep, addTransition, validateStep, getNextStep, createDefaultFormSchema
+    createDefaultFormGraph, createGraphFromStep, addStep, createDefaultFormSchema
 };

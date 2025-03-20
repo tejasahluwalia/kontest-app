@@ -1,41 +1,28 @@
-import { createMemo, For } from "solid-js";
+import { createMemo } from "solid-js";
 import { useFormBuilder } from "./form-builder-context";
-import { Button } from "@client/components/ui/button";
-import { createId } from "@paralleldrive/cuid2";
 import BuilderStepRenderer from "./builder-components/builder-step-renderer";
 
 export function FormBuilderCanvas() {
   const {
     formSchema,
-    addStepToGraph
+    selectedStepId
   } = useFormBuilder();
 
-  const graphNodes = createMemo(() => Object.values(formSchema.graph));
+  // Only show the selected step for editing
+  const selectedStepNode = createMemo(() => formSchema.graph[selectedStepId()]);
 
   return (
     <div class="space-y-6">
-      <For each={graphNodes()}>
-        {(graph) => (
-          <BuilderStepRenderer graph={graph} />
-        )}
-      </For>
-
-      <div class="flex justify-center">
-        <Button
-          variant="outline"
-          onClick={() => addStepToGraph({
-            id: createId(),
-            label: 'New Step',
-            nextButtonLabel: 'Next',
-            previousButtonLabel: 'Previous',
-            showProgressBar: true,
-            validate: () => true
-          })}
-          class="w-full max-w-md"
-        >
-          Add Step
-        </Button>
-      </div>
+      {/* Only render the currently selected step */}
+      {selectedStepNode() && (
+        <BuilderStepRenderer graph={selectedStepNode} />
+      )}
+      
+      {!selectedStepNode() && (
+        <div class="p-6 text-center text-muted-foreground border rounded-lg">
+          <p>Please select a step from the Form Flow tab to edit its contents.</p>
+        </div>
+      )}
     </div>
   );
 }

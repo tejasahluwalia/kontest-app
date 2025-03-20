@@ -1,16 +1,18 @@
 import { createId } from "@paralleldrive/cuid2";
+import type { ConditionalRule } from "./conditions";
 
-export interface Edge {
-  id: string;
-  source: string;
-  target: string;
-  condition?: string;
-}
+export type Edges = ConditionalRule[];
 
-export type Edges = Edge[];
-
-export const createEdge = (source: string, target: string): Edge => ({
+export const createEdge = (): ConditionalRule => ({
   id: createId(),
-  source,
-  target
+  condition: {
+    id: createId(),
+    operator: 'and',
+    conditions: []
+  },
+  action: {
+    id: createId(),
+    name: '',
+    value: ''
+  }
 });

@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { FormSettings } from "./form-settings";
 import { Button } from "~/components/ui/button";
 import { createEffect, onMount } from "solid-js";
+import { FormFlowCanvas } from "./form-flow-editor/form-flow-canvas";
 
 interface FormBuilderProps {
   initialSchema: FormSchema;
@@ -18,12 +19,19 @@ function FormBuilderContent(props: { onSave?: (schema: FormSchema) => void }) {
 
   return (
     <div class="space-y-6">
-      <Tabs defaultValue="builder" class="w-full">
+      <Tabs defaultValue="flow" class="w-full">
         <TabsList class="w-full max-w-md mx-auto">
+          <TabsTrigger value="flow" class="flex-1">Form Flow</TabsTrigger>
           <TabsTrigger value="builder" class="flex-1">Form Builder</TabsTrigger>
           <TabsTrigger value="settings" class="flex-1">Form Settings</TabsTrigger>
           <TabsTrigger value="preview" class="flex-1">Preview</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="flow" class="pt-6">
+          <div class="grid">
+            <FormFlowCanvas />
+          </div>
+        </TabsContent>
         
         <TabsContent value="builder" class="pt-6">
           <div class="grid">

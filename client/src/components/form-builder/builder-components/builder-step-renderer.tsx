@@ -1,77 +1,42 @@
 import { Button } from "@client/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@client/components/ui/card";
-import { batch, For, type Component } from "solid-js";
+import { batch, For, type Component, type Accessor } from "solid-js";
 import { useFormBuilder } from "../form-builder-context";
 import { createBlock } from "../primitives/blocks";
 import type { StepGraphNode } from "../primitives/form";
 import BuilderBlockRenderer from "./builder-block-renderer";
 
 interface BuilderStepRendererProps {
- graph: StepGraphNode
+  graph: Accessor<StepGraphNode>
 }
 
-const BuilderStepRenderer: Component<BuilderStepRendererProps> = (props) => {
-  const { 
-    setSelectedStepId, 
-    selectedStepId, 
-    addBlockToStep, 
-    removeStepFromGraph,
-    updateStepInGraph,
-    selectedStep
+const BuilderStepRenderer: Component<BuilderStepRendererProps> = ({graph}) => {
+  const {
+    addBlockToStep,
   } = useFormBuilder();
-  const { step, blocks } = props.graph
-  const isActive = () => selectedStep()?.step.id === step.id;
-  
+
   return (
-    <Card 
-      class={`mb-6 transition-all group ${isActive() ? "border-primary shadow-sm" : "border-border hover:border-muted-foreground"}`}
-      onClick={() => setSelectedStepId(step.id)}
-    >
-      <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle class="text-xl font-bold">{step.label}</CardTitle>
-        <div class="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            class={`transition-opacity ${isActive() ? "opacity-100" : "group-hover:opacity-100 opacity-0"}`}
-            onClick={() => {
-              batch(() => {
-                removeStepFromGraph(step.id);
-                setSelectedStepId('');
-              });
-            }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 6h18"/>
-              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-            </svg>
-          </Button>
-        </div>
-      </CardHeader>
-      
-      <CardContent>
-        <div class="space-y-4">
-          <For each={blocks}>
-            {(block) => (
-              <BuilderBlockRenderer block={block} stepId={step.id} />
-            )}
-          </For>
-        </div>
-      </CardContent>
-      
-      <CardFooter>
-        <Button 
-          variant="outline" 
-          class="w-full"
-          onClick={() => {
-            addBlockToStep(createBlock(), step.id);
-          }}
-        >
-          Add Block
-        </Button>
-      </CardFooter>
-    </Card>
+    <div>
+      <h2 class="text-xl font-bold mb-4">{graph().step.label}</h2>
+
+      <div class="space-y-4 mb-4">
+        <For each={graph().blocks}>
+          {(block) => (
+            <BuilderBlockRenderer block={block} stepId={graph().step.id} />
+          )}
+        </For>
+      </div>
+
+      <Button
+        variant="outline"
+        class="w-full"
+        onClick={() => {
+          addBlockToStep(createBlock(), graph().step.id);
+        }}
+      >
+        Add Block
+      </Button>
+    </div>
   );
 };
 
