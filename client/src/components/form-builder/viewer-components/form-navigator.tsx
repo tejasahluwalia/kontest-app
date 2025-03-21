@@ -1,6 +1,18 @@
-import { createSignal, createMemo, createEffect, type Component, Show, For } from "solid-js";
+import {
+  createSignal,
+  createMemo,
+  createEffect,
+  type Component,
+  Show,
+  For,
+  batch,
+} from "solid-js";
 import { Button } from "@client/components/ui/button";
-import type { FormGraph, StepGraphNode } from "../primitives/form";
+import type {
+  FormGraph,
+  InputFormData,
+  StepGraphNode,
+} from "../primitives/form";
 import { evaluateConditionalRule } from "../primitives/conditions";
 import StepRenderer from "./renderers/step-renderer";
 import ArrowRight from "lucide-solid/icons/arrow-right";
@@ -10,88 +22,84 @@ import { createStore } from "solid-js/store";
 
 interface FormNavigatorProps {
   graph: FormGraph;
-  onSubmit?: (formData: Record<string, any>) => void;
-  initialData?: Record<string, any>;
+  onSubmit?: (formData: InputFormData) => void;
+  initialData?: InputFormData;
 }
 
 const FormNavigator: Component<FormNavigatorProps> = (props) => {
   // State for form data and current step
-  const [formData, setFormData] = createStore<Record<string, any>>(props.initialData || {});
-  const [currentStepIndex, setCurrentStepIndex] = createSignal(0);
+  const [formData, setFormData] = createStore<InputFormData>(
+    props.initialData || {},
+  );
+  const [currentStep, setCurrentStep] = createSignal(props.graph[0]);
+  const [previousSteps, setPreviousSteps] = createSignal<StepGraphNode[]>([]);
   const [isSubmitting, setIsSubmitting] = createSignal(false);
+  const [isLastStep, setIsLastStep] = createSignal(false);
 
-  // Memoized values
-  const currentStep = createMemo(() => props.graph[currentStepIndex()]);
-  const isFirstStep = createMemo(() => currentStepIndex() === 0);
-  const isLastStep = createMemo(() => currentStepIndex() === props.graph.length - 1);
+  createEffect(() => {
+    console.log(formData);
+    // Update the form data when the current step changes
+    // setFormData(props.initialData || {});
+  });
 
-  // Update form data
-  const updateFormData = (data: Record<string, any>) => {
-    setFormData(prev => ({ ...prev, ...data }));
-  };
+  const isFirstStep = () => previousSteps().length === 0;
 
   // Determine the next step based on conditional rules
-  const determineNextStep = (): string | null => {
-    const step = currentStep();
-    
-    // If there are no edges, go to the next step in sequence
-    if (!step.edges || step.edges.length === 0) {
-      return isLastStep() ? null : props.graph[currentStepIndex() + 1].step.id;
-    }
+  const determineNextStep = (): StepGraphNode | null => {
+    const node = currentStep();
 
     // Evaluate each edge's condition against the form data
-    for (const edge of step.edges) {
+    for (const edge of node?.edges || []) {
       const conditionMet = evaluateConditionalRule(edge, formData);
-      
+
       if (conditionMet) {
         // If the action is to submit the form
-        if (edge.action.id === 'submit') {
+        if (edge.action.id === "submit") {
+          setIsLastStep(true);
           return null; // Return null to indicate form submission
         }
-        
+
         // Otherwise, the action is to go to another step
-        return edge.action.id;
+        return (
+          props.graph.find((node) => node.step.id === edge.action.id) || null
+        );
       }
     }
 
-    // If no conditions are met, go to the next step in sequence
-    return isLastStep() ? null : props.graph[currentStepIndex() + 1].step.id;
+    // No conditions met. This should never happen. All nodes should have at least one fallback edge.
+    throw new Error("No next step found");
   };
 
   // Navigate to the next step
   const handleNext = () => {
-    const nextStepId = determineNextStep();
-    
-    if (nextStepId === null) {
+    const nextStep = determineNextStep();
+
+    if (nextStep === null) {
       // Submit the form
       handleSubmit();
       return;
     }
-    
-    // Find the index of the next step
-    const nextIndex = props.graph.findIndex(node => node.step.id === nextStepId);
-    
-    if (nextIndex !== -1) {
-      setCurrentStepIndex(nextIndex);
-    } else {
-      // If the step is not found, go to the next step in sequence
-      if (!isLastStep()) {
-        setCurrentStepIndex(currentStepIndex() + 1);
-      }
-    }
+
+    batch(() => {
+      setPreviousSteps((prev) => [...prev, currentStep()]);
+      setCurrentStep(nextStep);
+    });
   };
 
   // Navigate to the previous step
   const handlePrevious = () => {
     if (!isFirstStep()) {
-      setCurrentStepIndex(currentStepIndex() - 1);
+      batch(() => {
+        setCurrentStep(previousSteps()[previousSteps().length - 1]);
+        setPreviousSteps((prev) => prev.slice(0, -1));
+      });
     }
   };
 
   // Submit the form
   const handleSubmit = () => {
     setIsSubmitting(true);
-    
+
     try {
       if (props.onSubmit) {
         props.onSubmit(formData);
@@ -104,12 +112,12 @@ const FormNavigator: Component<FormNavigatorProps> = (props) => {
   return (
     <div class="space-y-8">
       {/* Current step renderer */}
-      <StepRenderer 
-        {...currentStep()} 
-        formData={formData} 
-        updateFormData={updateFormData} 
+      <StepRenderer
+        node={currentStep()}
+        formData={formData}
+        updateFormData={setFormData}
       />
-      
+
       {/* Navigation buttons */}
       <div class="flex justify-between mt-4">
         <Show when={!isFirstStep()}>
@@ -122,13 +130,10 @@ const FormNavigator: Component<FormNavigatorProps> = (props) => {
             {currentStep().step.previousButtonLabel || "Previous"}
           </Button>
         </Show>
-        
+
         <div class="flex-1"></div>
-        
-        <Button
-          onClick={handleNext}
-          disabled={isSubmitting()}
-        >
+
+        <Button onClick={handleNext} disabled={isSubmitting()}>
           {isLastStep() ? (
             <>
               <CheckCircle class="mr-2 h-4 w-4" />

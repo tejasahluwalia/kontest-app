@@ -1,6 +1,13 @@
 import { createSignal, createMemo, type Component, Show } from "solid-js";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@client/components/ui/card";
-import type { FormSchema } from "../primitives/form";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@client/components/ui/card";
+import type { FormSchema, InputFormData } from "../primitives/form";
 import FormNavigator from "./form-navigator";
 import { Button } from "@client/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
@@ -10,17 +17,17 @@ import RefreshCw from "lucide-solid/icons/refresh-cw";
 
 interface FormPreviewProps {
   formSchema: FormSchema;
-  initialData?: Record<string, any>;
+  initialData?: InputFormData;
   onClose: () => void;
 }
 
 const FormPreview: Component<FormPreviewProps> = (props) => {
   const { updatePreviewData, previewData } = useFormBuilder();
   const [isSubmitted, setIsSubmitted] = createSignal(false);
-  const [submittedData, setSubmittedData] = createSignal<Record<string, any>>({});
+  const [submittedData, setSubmittedData] = createSignal<InputFormData>({});
 
   // Handle form submission
-  const handleSubmit = (data: Record<string, any>) => {
+  const handleSubmit = (data: InputFormData) => {
     setSubmittedData(data);
     setIsSubmitted(true);
     updatePreviewData(data);
