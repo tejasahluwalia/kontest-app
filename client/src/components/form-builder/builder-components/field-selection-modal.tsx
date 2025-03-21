@@ -32,6 +32,7 @@ const fieldTypes: FieldTypeOption[] = [
 
 interface FieldSelectionModalProps {
   blockId: string;
+  stepId: string;
 }
 
 export const FieldSelectionModal: Component<FieldSelectionModalProps> = (props) => {
@@ -41,7 +42,7 @@ export const FieldSelectionModal: Component<FieldSelectionModalProps> = (props) 
   const handleAddField = (type: 'text' | 'number' | 'select' | 'checkbox' | 'radio' | 'date' | 'time' | 'file' | 'rich-text' | 'array') => {
     const newChild = createChild() as InputField;
     newChild.fieldType = type;
-    addChildToBlock(newChild, props.blockId);
+    addChildToBlock(newChild, props.blockId, props.stepId);
     setIsOpen(false);
   };
 

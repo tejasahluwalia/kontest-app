@@ -58,14 +58,14 @@ export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({ fie
                       <EllipsisVertical size={16} />
                     </Button>
                   </DialogTrigger>
-                  <FieldPropertiesModal field={field} blockId={blockId} />
+                  <FieldPropertiesModal field={field} blockId={blockId} stepId={stepId} />
                 </Dialog>
               </div>
               <Button
                 variant="destructive"
                 size="sm"
                 onClick={() => {
-                  removeChildFromBlock(field().id, blockId);
+                  removeChildFromBlock(field().id, blockId, stepId);
                 }}
               >
                 <Trash2 size={16} />

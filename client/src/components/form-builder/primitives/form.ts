@@ -1,4 +1,3 @@
-import { createId } from "@paralleldrive/cuid2";
 import { createBlocks, type Block, type Blocks, type BlockTemplate } from "./blocks";
 import { nanoid } from "nanoid";
 import { createEdge, type Edges } from "./edges";
@@ -9,52 +8,31 @@ type Step = {
     description?: string;
     nextButtonLabel?: string;
     previousButtonLabel?: string;
-    showProgressBar?: boolean;
-    validate: (data: Step) => boolean;  // Step-specific validation logic
 };
 
 type StepGraphNode = { step: Step; blocks: Blocks; edges: Edges };
 
 // Graph structure
-type FormGraph = {[key: string]: StepGraphNode}
+type FormGraph = StepGraphNode[]
+
+const createDefaultStepNodeGraph = (): StepGraphNode => {
+    const id = nanoid();
+    return {
+        step: {
+            id,
+            label: 'Step 1',
+            nextButtonLabel: 'Next',
+            previousButtonLabel: 'Previous'
+        },
+        blocks: createBlocks(),
+        edges: [createEdge()]
+    };
+};
 
 // Create an empty form flow graph
-const createDefaultFormGraph = (stepId?: string): FormGraph => {
-    const id = stepId || createId();
-    return {
-        [id]: {
-            step: {
-                id,
-                label: 'Step 1',
-                nextButtonLabel: 'Next',
-                previousButtonLabel: 'Previous',
-                showProgressBar: true,
-                validate: () => true
-            },
-            blocks: createBlocks(),
-            edges: [createEdge()]
-        }
-    };
-};
-
-const createGraphFromStep = (step: Step): FormGraph => {
-    return {
-        [step.id]: {
-            step,
-            blocks: createBlocks(),
-            edges: [createEdge()]
-        }
-    };
-};
-
-// Add a form step (node)
-const addStep = (
-    graph: FormGraph,
-    step: Step
-): FormGraph => {
-    if (graph[step.id]) return graph;
-    graph[step.id] = { step, blocks: createBlocks(), edges: [createEdge()] };
-    return graph;
+const createDefaultFormGraph = (): FormGraph => {
+    const step = createDefaultStepNodeGraph();
+    return [step];
 };
 
 interface FormDiff {
@@ -90,7 +68,7 @@ interface FormBuilderHistory {
 }
 
 function createDefaultFormSchema(): FormSchema {
-    const id = createId();
+    const id = nanoid();
     const graph = createDefaultFormGraph();
     return {
         id,
@@ -114,5 +92,5 @@ export {
     type FormBuilderHistory,
     type FormVersion,
     type StepGraphNode,
-    createDefaultFormGraph, createGraphFromStep, addStep, createDefaultFormSchema
+    createDefaultFormGraph, createDefaultFormSchema, createDefaultStepNodeGraph
 };

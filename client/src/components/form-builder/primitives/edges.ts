@@ -1,18 +1,18 @@
-import { createId } from "@paralleldrive/cuid2";
+import { nanoid } from "nanoid";
 import type { ConditionalRule } from "./conditions";
 
 export type Edges = ConditionalRule[];
 
 export const createEdge = (): ConditionalRule => ({
-  id: createId(),
+  id: nanoid(),
   condition: {
-    id: createId(),
+    id: nanoid(),
     operator: 'and',
     conditions: []
   },
   action: {
-    id: createId(),
-    name: '',
-    value: ''
+    id: 'submit',
+    name: 'Submit',
+    value: 'submitFrom'
   }
 });

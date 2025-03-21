@@ -1,5 +1,5 @@
-import { createId } from "@paralleldrive/cuid2";
 import type { Display, InputField } from "./fields";
+import { nanoid } from "nanoid";
 
 type Child = InputField | Display
 
@@ -8,7 +8,7 @@ type Children = Child[]
 
 const createChild = (): Child => ({
     childType: 'field',
-    id: createId(),
+    id: nanoid(),
     fieldType: 'text',
     label: 'New Field',
     name: 'new_field',
@@ -90,7 +90,7 @@ const removeChild = (list: Children, childId: string): Children => {
 const duplicateChild = (list: Children, childId: string): Children => {
     const childNode = findChildById(list, childId);
     if (!childNode) return list;
-    return appendChild(list, { ...childNode, id: createId() });
+    return appendChild(list, { ...childNode, id: nanoid() });
 };
 
 export {

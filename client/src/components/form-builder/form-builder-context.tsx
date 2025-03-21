@@ -1,21 +1,20 @@
-import { createContext, createSignal, createEffect, onCleanup, useContext, type Accessor, type ParentComponent, createMemo } from "solid-js";
+import ContestContext from "@client/context/contest";
+import OrganizationContext from "@client/context/organization";
+import server from "@client/lib/server-api";
+import { nanoid } from "nanoid";
+import { createContext, createEffect, createMemo, createSignal, onCleanup, useContext, type Accessor, type ParentComponent } from "solid-js";
 import { createStore, produce, reconcile } from "solid-js/store";
-import type { FormBuilderUIState } from './state/ui-state';
-import { createDefaultFormGraph, createGraphFromStep, type FormBuilderHistory, type FormSchema, type Step, type StepGraphNode } from "./primitives/form";
-import { createInitialUIState } from './state/ui-state';
+import { showToast } from "../ui/toast";
 import {
-  createInitialHistory,
   addHistoryEntry,
+  createInitialHistory,
 } from './history/history-manager';
 import { appendBlock, type Block } from "./primitives/blocks";
-import { createId } from "@paralleldrive/cuid2";
-import { appendChild, type Child, type Children } from "./primitives/children";
-import server from "@client/lib/server-api";
-import { getRouteApi, useRouteContext } from "@tanstack/solid-router";
-import OrganizationContext from "@client/context/organization";
-import ContestContext from "@client/context/contest";
-import { showToast } from "../ui/toast";
+import { type Child } from "./primitives/children";
 import type { ConditionalRule } from "./primitives/conditions";
+import { type FormBuilderHistory, type FormSchema, type StepGraphNode } from "./primitives/form";
+import type { FormBuilderUIState } from './state/ui-state';
+import { createInitialUIState } from './state/ui-state';
 
 // Define the operations we can perform on the form builder
 interface FormBuilderContextType {
@@ -27,8 +26,8 @@ interface FormBuilderContextType {
   // Step operations
   selectedStepId: Accessor<string>;
   setSelectedStepId: (stepId: string) => void;
-  selectedStep: Accessor<StepGraphNode>;
-  addStepToGraph: (step: Step) => void;
+  selectedStep: Accessor<StepGraphNode | undefined>;
+  addStepToGraph: (step: StepGraphNode) => void;
   removeStepFromGraph: (stepId: string) => void;
   updateStepInGraph: (stepId: string, data: Partial<StepGraphNode>) => void;
 
@@ -36,17 +35,17 @@ interface FormBuilderContextType {
   setSelectedBlockId: (blockId: string) => void;
   selectedBlockId: Accessor<string>;
   selectedBlock: Accessor<Block | undefined>
-  addBlockToStep: (block: Block, stepId?: string) => void;
-  removeBlockFromStep: (blockId: string, stepId?: string) => void;
-  updateBlockInStep: (blockId: string, data: Partial<Block>) => void;
+  addBlockToStep: (block: Block, stepId: string) => void;
+  removeBlockFromStep: (blockId: string, stepId: string) => void;
+  updateBlockInStep: (blockId: string, data: Partial<Block>, stepId: string) => void;
 
   // Child operations
   setSelectedChildId: (childId: string) => void;
   selectedChildId: Accessor<string>;
   selectedChild: Accessor<Child | undefined>
-  addChildToBlock: (child: Child, blockId: string) => void;
-  removeChildFromBlock: (childId: string, blockId: string) => void;
-  updateChildInBlock: (childId: string, blockId: string, data: Partial<Child>) => void;
+  addChildToBlock: (child: Child, blockId: string, stepId: string) => void;
+  removeChildFromBlock: (childId: string, blockId: string, stepId: string) => void;
+  updateChildInBlock: (childId: string, blockId: string, data: Partial<Child>, stepId: string) => void;
   // moveChild: (childId: string, newParentId: string, index?: number) => void;
   // duplicateChild: (childId: string) => string;
 
@@ -91,12 +90,12 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
   const [uiState, setUIState] = createStore<FormBuilderUIState>(createInitialUIState());
   const [history, setHistory] = createStore<FormBuilderHistory>(createInitialHistory(props.initialSchema));
 
-  const [selectedStepId, setSelectedStepId] = createSignal<string>(props.initialSchema.graph[Object.keys(props.initialSchema.graph)[0]].step.id);
-  const [selectedBlockId, setSelectedBlockId] = createSignal<string>(props.initialSchema.graph[selectedStepId()].blocks[0].id);
-  const [selectedChildId, setSelectedChildId] = createSignal<string>(props.initialSchema.graph[selectedStepId()].blocks.find(block => block.id === selectedBlockId())?.children[0]?.id || '');
+  const [selectedStepId, setSelectedStepId] = createSignal<string>(props.initialSchema.graph[0].step.id);
+  const [selectedBlockId, setSelectedBlockId] = createSignal<string>(props.initialSchema.graph[0].blocks[0].id);
+  const [selectedChildId, setSelectedChildId] = createSignal<string>(props.initialSchema.graph[0].blocks.find(block => block.id === selectedBlockId())?.children[0]?.id || '');
 
-  const selectedStep = createMemo(() => formSchema.graph[selectedStepId()]);
-  const selectedBlock = createMemo(() => selectedStep().blocks.find(block => block.id === selectedBlockId()));
+  const selectedStep = createMemo(() => formSchema.graph.find(node => node.step.id === selectedStepId()));
+  const selectedBlock = createMemo(() => selectedStep()?.blocks.find(block => block.id === selectedBlockId()));
   const selectedChild = createMemo(() => selectedBlock()?.children.find(child => child.id === selectedChildId()));
 
   // History tracking and management
@@ -251,92 +250,89 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
   });
 
   // Step operations
-  const addStepToGraph = (step: Step) => {
+  const addStepToGraph = (stepGraphNode: StepGraphNode) => {
     saveToHistory();
-    const stepGraphNode = createGraphFromStep(step);
-    setFormSchema("graph", stepGraphNode);
+    setFormSchema("graph", formSchema.graph.length, stepGraphNode);
   };
 
   const removeStepFromGraph = (stepId: string): void => {
     saveToHistory();
-    const step = formSchema.graph[stepId].step;
+    const step = formSchema.graph.find(node => node.step.id == stepId);
     if (!step) throw new Error('Step not found');
-    setFormSchema("graph", produce(draft => {
-      delete draft[stepId];
-    }));
+    setFormSchema("graph", formSchema.graph.filter(node => node.step.id !== stepId));
   };
 
   const updateStepInGraph = (stepId: string, data: Partial<StepGraphNode>): void => {
     saveToHistory();
-    const step = formSchema.graph[stepId];
+    const step = formSchema.graph.find(node => node.step.id == stepId);
     if (!step) throw new Error('Step not found');
     const newStep = { ...step, ...data };
-    setFormSchema("graph", stepId, "step", newStep.step);
-    setFormSchema("graph", stepId, "edges", newStep.edges);
+    setFormSchema("graph", (node) => node.step.id === stepId, "step", newStep.step);
+    setFormSchema("graph", (node) => node.step.id === stepId, "edges", newStep.edges);
   };
 
   // Block operations
-  const addBlockToStep = (block: Block, stepId?: string): void => {
+  const addBlockToStep = (block: Block, stepId: string): void => {
     saveToHistory();
-    const {step, blocks} = formSchema.graph[stepId ?? selectedStepId()];
-    if (!step) throw new Error('Step not found');
-    setFormSchema("graph", step.id, "blocks", blocks.length, block);
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    setFormSchema("graph", (node) => node.step.id === stepId, "blocks", node.blocks.length, block);
   };
 
-  const removeBlockFromStep = (blockId: string, stepId?: string): void => {
+  const removeBlockFromStep = (blockId: string, stepId: string): void => {
     saveToHistory();
-    const {step, blocks} = formSchema.graph[stepId ?? selectedStepId()];
-    if (!step) throw new Error('Step not found');
-    const newBlocks = blocks.filter(block => block.id !== blockId);
-    setFormSchema("graph", step.id, "blocks", reconcile(newBlocks));
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    const newBlocks = node.blocks.filter(block => block.id !== blockId);
+    setFormSchema("graph", (node) => node.step.id === stepId, "blocks", reconcile(newBlocks));
   };
 
-  const updateBlockInStep = (blockId: string, data: Partial<Block>): void => {
+  const updateBlockInStep = (blockId: string, data: Partial<Block>, stepId: string): void => {
     saveToHistory();
-    const {step, blocks} = formSchema.graph[selectedStepId()];
-    if (!step) throw new Error('Step not found');
-    const newBlocks = blocks.map(block =>
+    const node = formSchema.graph.find(node => node.step.id == (stepId ?? selectedStepId()));
+    if (!node) throw new Error('Step not found');
+    const newBlocks = node.blocks.map(block =>
       block.id === blockId ? { ...block, ...data } : block
     );
-    setFormSchema("graph", step.id, "blocks", (block) => block.id === blockId, (block) => ({ ...block, ...data }));
+    setFormSchema("graph", (node) => node.step.id === (stepId ?? selectedStepId()), "blocks", reconcile(newBlocks));
   };
 
-  const duplicateBlock = (blockId: string): void => {
+  const duplicateBlock = (blockId: string, stepId: string): void => {
     saveToHistory();
-    const {step, blocks} = formSchema.graph[selectedStepId()];
-    if (!step) throw new Error('Step not found');
-    const block = blocks.find(block => block.id === blockId);
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    const block = node.blocks.find(block => block.id === blockId);
     if (!block) throw new Error('Block not found');
-    const newBlocks = appendBlock(blocks, { ...block, id: createId() });
-    setFormSchema("graph", step.id, "blocks", reconcile(newBlocks));
+    const newBlocks = appendBlock(node.blocks, { ...block, id: nanoid() });
+    setFormSchema("graph", (node) => node.step.id === stepId, "blocks", reconcile(newBlocks));
   };
 
-  const addChildToBlock = (child: Child, blockId: string): void => {
+  const addChildToBlock = (child: Child, blockId: string, stepId: string): void => {
     saveToHistory();
-    const {step, blocks} = formSchema.graph[selectedStepId()];
-    if (!step) throw new Error('Step not found');
-    const block = blocks.find(block => block.id === blockId);
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    const block = node.blocks.find(block => block.id === blockId);
     if (!block) throw new Error('Block not found');
-    setFormSchema("graph", step.id, "blocks", (b) => b.id === blockId, "children", block.children.length, child);
+    setFormSchema("graph", (node) => node.step.id === stepId, "blocks", (b) => b.id === blockId, "children", block.children.length, child);
   };
 
-  const removeChildFromBlock = (childId: string, blockId: string): void => {
+  const removeChildFromBlock = (childId: string, blockId: string, stepId: string): void => {
     saveToHistory();
-    const {step, blocks} = formSchema.graph[selectedStepId()];
-    if (!step) throw new Error('Step not found');
-    const block = blocks.find(block => block.id === blockId);
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    const block = node.blocks.find(block => block.id === blockId);
     if (!block) throw new Error('Block not found');
     const newChildren = block.children.filter(child => child.id !== childId);
-    setFormSchema("graph", step.id, "blocks", (b) => b.id === blockId, "children", reconcile(newChildren));
+    setFormSchema("graph", (node) => node.step.id === stepId, "blocks", (b) => b.id === blockId, "children", reconcile(newChildren));
   };
 
-  const updateChildInBlock = (childId: string, blockId: string, data: Partial<Child>): void => {
+  const updateChildInBlock = (childId: string, blockId: string, data: Partial<Child>, stepId: string): void => {
     saveToHistory();
-    const {step, blocks} = formSchema.graph[selectedStepId()];
-    if (!step) throw new Error('Step not found');
-    const block = blocks.find(block => block.id === blockId);
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    const block = node.blocks.find(block => block.id === blockId);
     if (!block) throw new Error('Block not found');
-    setFormSchema("graph", step.id, "blocks", (b) => b.id === block.id, "children", (c) => c.id === childId, data);
+    setFormSchema("graph", (node) => node.step.id === stepId, "blocks", (b) => b.id === blockId, "children", (c) => c.id === childId, data);
   };
 
   // Update form settings
@@ -351,24 +347,24 @@ export const FormBuilderProvider: ParentComponent<{ initialSchema: FormSchema}> 
 
   const addEdgeToStep = (edge: ConditionalRule, stepId: string) => {
     saveToHistory();
-    const {step, edges} = formSchema.graph[stepId];
-    if (!step) throw new Error('Step not found');
-    setFormSchema("graph", step.id, "edges", edges.length, edge);
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    setFormSchema("graph", (node) => node.step.id === stepId, "edges", node.edges.length, edge);
   };
 
   const removeEdgeFromStep = (edgeId: string, stepId: string) => {
     saveToHistory();
-    const {step, edges} = formSchema.graph[stepId];
-    if (!step) throw new Error('Step not found');
-    const newEdges = edges.filter(edge => edge.id !== edgeId);
-    setFormSchema("graph", step.id, "edges", reconcile(newEdges));
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    const newEdges = node.edges.filter(edge => edge.id !== edgeId);
+    setFormSchema("graph", (node) => node.step.id === stepId, "edges", reconcile(newEdges));
   };
 
   const updateEdgeInStep = (edgeId: string, stepId: string, data: Partial<ConditionalRule>) => {
     saveToHistory();
-    const {step, edges} = formSchema.graph[stepId];
-    if (!step) throw new Error('Step not found');
-    setFormSchema("graph", step.id, "edges", (e) => e.id === edgeId, data);
+    const node = formSchema.graph.find(node => node.step.id == stepId);
+    if (!node) throw new Error('Step not found');
+    setFormSchema("graph", (node) => node.step.id === stepId, "edges", (e) => e.id === edgeId, data);
   };
 
   // Preview operations

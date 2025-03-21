@@ -1,13 +1,12 @@
-import { FormBuilderProvider, useFormBuilder } from "./form-builder-context";
-import { FormBuilderCanvas } from "./form-builder-canvas";
-import { FormBuilderToolbox } from "./form-builder-toolbox";
-import { FieldPropertiesPanel } from "./field-properties-panel";
-import type { FormSchema } from "./primitives/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { FormSettings } from "./form-settings";
+import { Show } from "solid-js";
 import { Button } from "~/components/ui/button";
-import { createEffect, onMount } from "solid-js";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { FormBuilderCanvas } from "./form-builder-canvas";
+import { FormBuilderProvider, useFormBuilder } from "./form-builder-context";
 import { FormFlowCanvas } from "./form-flow-editor/form-flow-canvas";
+import { FormSettings } from "./form-settings";
+import type { FormSchema } from "./primitives/form";
+import FormPreview from "./viewer-components/form-preview";
 
 interface FormBuilderProps {
   initialSchema: FormSchema;
@@ -15,7 +14,7 @@ interface FormBuilderProps {
 }
 
 function FormBuilderContent(props: { onSave?: (schema: FormSchema) => void }) {
-  const { formSchema } = useFormBuilder();
+  const { formSchema, isPreviewMode, startPreview, stopPreview } = useFormBuilder();
 
   return (
     <div class="space-y-6">
@@ -44,11 +43,24 @@ function FormBuilderContent(props: { onSave?: (schema: FormSchema) => void }) {
         </TabsContent>
         
         <TabsContent value="preview" class="pt-6">
-          <div class="border rounded-lg p-6">
-            <p class="text-center text-muted-foreground">
-              Form preview will be implemented in a future update
-            </p>
-          </div>
+          <Show
+            when={isPreviewMode()}
+            fallback={
+              <div class="border rounded-lg p-6 text-center">
+                <p class="text-muted-foreground mb-4">
+                  Preview your form to test the conditional logic and navigation flow
+                </p>
+                <Button onClick={startPreview}>
+                  Start Preview
+                </Button>
+              </div>
+            }
+          >
+            <FormPreview 
+              formSchema={formSchema} 
+              onClose={stopPreview} 
+            />
+          </Show>
         </TabsContent>
       </Tabs>
 

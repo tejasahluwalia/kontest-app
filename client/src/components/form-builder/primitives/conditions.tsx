@@ -5,8 +5,6 @@ import { Input } from '@client/components/ui/input';
 import { Button } from '@client/components/ui/button';
 import PlusCircle from 'lucide-solid/icons/plus-circle';
 import Trash from 'lucide-solid/icons/trash';
-import { createStore } from 'solid-js/store';
-import { createId } from '@paralleldrive/cuid2';
 import { nanoid } from 'nanoid';
 
 export type ComparisonOperator =
@@ -62,6 +60,91 @@ interface FormValue {
   value: string;
 }
 
+// Function to evaluate a conditional rule against form data
+export function evaluateConditionalRule(rule: ConditionalRule, formData: Record<string, any>): boolean {
+  return evaluateConditionGroup(rule.condition, formData);
+}
+
+// Function to evaluate a condition group (handles nested conditions with AND/OR logic)
+function evaluateConditionGroup(group: ConditionGroup, formData: Record<string, any>): boolean {
+  if (group.conditions.length === 0) return true;
+  
+  const results = group.conditions.map(condition => {
+    if ('operator' in condition && (condition.operator === 'and' || condition.operator === 'or')) {
+      // This is a nested group
+      return evaluateConditionGroup(condition as ConditionGroup, formData);
+    } else {
+      // This is a single condition
+      return evaluateSingleCondition(condition as Condition, formData);
+    }
+  });
+  
+  // Apply the logical operator (AND/OR)
+  if (group.operator === 'and') {
+    return results.every(result => result);
+  } else {
+    return results.some(result => result);
+  }
+}
+
+// Function to evaluate a single condition
+function evaluateSingleCondition(condition: Condition, formData: Record<string, any>): boolean {
+  // Get the left and right values
+  const leftValue = getConditionValue(condition.leftType, condition.leftValue, formData);
+  const rightValue = getConditionValue(condition.rightType, condition.rightValue, formData);
+  
+  // Apply the comparison operator
+  switch (condition.operator) {
+    case 'equals':
+      return leftValue === rightValue;
+    case 'notEquals':
+      return leftValue !== rightValue;
+    case 'contains':
+      return String(leftValue).includes(String(rightValue));
+    case 'notContains':
+      return !String(leftValue).includes(String(rightValue));
+    case 'greaterThan':
+      return Number(leftValue) > Number(rightValue);
+    case 'lessThan':
+      return Number(leftValue) < Number(rightValue);
+    case 'greaterThanOrEqual':
+      return Number(leftValue) >= Number(rightValue);
+    case 'lessThanOrEqual':
+      return Number(leftValue) <= Number(rightValue);
+    case 'empty':
+      return leftValue === '' || leftValue === null || leftValue === undefined;
+    case 'notEmpty':
+      return leftValue !== '' && leftValue !== null && leftValue !== undefined;
+    case 'like':
+      return new RegExp(String(rightValue), 'i').test(String(leftValue));
+    case 'notLike':
+      return !new RegExp(String(rightValue), 'i').test(String(leftValue));
+    case 'regex':
+      try {
+        return new RegExp(String(rightValue)).test(String(leftValue));
+      } catch {
+        return false;
+      }
+    case 'notRegex':
+      try {
+        return !new RegExp(String(rightValue)).test(String(leftValue));
+      } catch {
+        return true;
+      }
+    default:
+      return false;
+  }
+}
+
+// Helper function to get the actual value based on the value type
+function getConditionValue(type: ValueType, value: string, formData: Record<string, any>): any {
+  if (type === 'formValue') {
+    return formData[value];
+  } else {
+    return value;
+  }
+}
+
 const COMPARISON_OPERATORS: { label: string; value: ComparisonOperator }[] = [
   { label: 'Equals', value: 'equals' },
   { label: 'Not Equals', value: 'notEquals' },
@@ -101,6 +184,7 @@ const SingleCondition: Component<{
   return (
     <div class="flex items-center gap-2 mb-2">
       <div class="flex-1 flex items-center gap-2">
+        <div class="grid">
         <Select
           options={VALUE_TYPES}
           value={VALUE_TYPES.find(vt => vt.value === props.condition().leftType)}
@@ -144,6 +228,7 @@ const SingleCondition: Component<{
             <SelectContent />
           </Select>
         </Show>
+        </div>
 
         <Select
           options={COMPARISON_OPERATORS}
@@ -169,6 +254,7 @@ const SingleCondition: Component<{
           onChange={(value) => { if (value) props.onUpdate({ ...props.condition(), rightType: value.value }) }}
           placeholder="Select type"
           class="w-32"
+          itemComponent={(props) => <SelectItem class="uppercase" item={props.item}>{props.item.rawValue.label}</SelectItem>}
         >
           <SelectTrigger class='uppercase' aria-label="Select type">
             <SelectValue<{label:string, value: ValueType}>>{(state) => state.selectedOption()?.label}</SelectValue>

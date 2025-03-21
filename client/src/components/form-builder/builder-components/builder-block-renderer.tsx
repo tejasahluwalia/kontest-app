@@ -53,7 +53,7 @@ const BuilderBlockRenderer: Component<{ block: Block, stepId: string }> = ({ blo
             )}
           </For>
 
-          <FieldSelectionModal blockId={id} />
+          <FieldSelectionModal blockId={id} stepId={stepId} />
         </div>
       </CardContent>
     </Card>

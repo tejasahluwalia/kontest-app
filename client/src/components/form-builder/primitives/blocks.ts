@@ -1,6 +1,6 @@
-import { createId } from "@paralleldrive/cuid2";
 import { createChildren, type Children } from "./children";
 import type { Condition, ConditionGroup } from "./conditions";
+import { nanoid } from "nanoid";
 
 interface BaseBlock {
     id: string;
@@ -24,7 +24,7 @@ type Blocks = Block[]
 
 // Create a single empty block
 const createBlock = (): Block => ({
-    id: createId(),
+    id: nanoid(),
     children: createChildren()
 });
 

@@ -1,16 +1,15 @@
-import { createSignal, For, Show, createEffect, createMemo, type Accessor } from "solid-js";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter 
-} from "@client/components/ui/dialog";
 import { Button } from "@client/components/ui/button";
-import type { StepGraphNode } from "../primitives/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@client/components/ui/dialog";
+import { createMemo, createSignal } from "solid-js";
 import { ConditionalLogic } from "../primitives/conditions";
 import type { Edges } from "../primitives/edges";
-import { useFormBuilder } from "../form-builder-context";
+import type { StepGraphNode } from "../primitives/form";
 
 interface ConnectionEditorModalProps {
   open: boolean;
@@ -28,11 +27,15 @@ export function ConnectionEditorModal(props: ConnectionEditorModalProps) {
     props.onOpenChange(false);
   };
 
-  const actions = createMemo(() => props.availableSteps.map(step => ({
+  const actions = createMemo(() => [...props.availableSteps.map(step => ({
     id: step.step.id,
     name: `Go to step: ${step.step.label}`,
-    value: 'goToStep'
-  })));
+    value: `goToStep:${step.step.id}`
+  })), {
+    id: 'submit',
+    name: 'Submit',
+    value: 'submitFrom'
+  }]);
 
   const formValues = createMemo(() => props.sourceStep.blocks.flatMap(block => 
     block.children

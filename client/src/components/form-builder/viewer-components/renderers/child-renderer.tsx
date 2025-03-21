@@ -9,22 +9,28 @@ interface ChildRendererProps {
   child: Child;
   blockId: string;
   stepId: string;
+  formData?: Record<string, any>;
+  updateFormData?: (data: Record<string, any>) => void;
 }
 
 const ChildRenderer: Component<ChildRendererProps> = (props) => {
-  const { setSelectedChildId, setSelectedBlockId, setSelectedStepId } = useFormBuilder();
   const { child, blockId, stepId } = props;
   const { id } = child;
 
   return (
     <Switch>
       <Match when={child.childType === "field"}>
-        <FieldRenderer child={child as InputField} blockId={blockId} stepId={stepId} />
+        <FieldRenderer 
+          child={child as InputField} 
+          blockId={blockId} 
+          stepId={stepId} 
+          formData={props.formData} 
+          updateFormData={props.updateFormData} 
+        />
       </Match>
       <Match when={child.childType === "display"}>
         <div 
           class="border border-dashed p-4 rounded-md" 
-          onClick={() => batch(() => {setSelectedStepId(stepId); setSelectedBlockId(blockId); setSelectedChildId(id);})}
         >
           <p class="text-muted-foreground">Display component: {id}</p>
           <p class="text-sm text-muted-foreground">This display type is not implemented yet</p>

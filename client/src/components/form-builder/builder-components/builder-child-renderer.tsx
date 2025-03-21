@@ -16,7 +16,7 @@ const BuilderChildRenderer: Component<BuilderChildRendererProps> = ({ child, blo
 
   const handleOnDelete = () => {
     batch(() => {
-      removeChildFromBlock(id, blockId);
+      removeChildFromBlock(id, blockId, stepId);
       setSelectedChildId('');
     });
   };

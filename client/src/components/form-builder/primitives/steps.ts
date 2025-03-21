@@ -1,4 +1,4 @@
-import { createId } from "@paralleldrive/cuid2";
+import { nanoid } from "nanoid";
 import type { Block } from "./blocks";
 
 export interface Step {
@@ -13,7 +13,7 @@ export interface Step {
 export type Steps = Step[];
 
 export const createStep = (): Step => ({
-  id: createId(),
+  id: nanoid(),
   label: "New Step",
   nextButtonLabel: "Next",
   previousButtonLabel: "Previous",
