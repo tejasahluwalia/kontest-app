@@ -13,41 +13,41 @@ import {
 } from "~/components/ui/text-field";
 import { createDefaultFormSchema } from "../form-builder/primitives/form";
 
-interface CreateContestFormProps {
-  organizationId: string;
-  organizationSlug: string;
+interface CreateCallFormProps {
+  orgId: string;
+  orgSlug: string;
   onSuccess: () => void;
 }
 
-async function createContest(
+async function createCall(
   name: string,
   slug: string,
-  organizationSlug: string,
-  organizationId: string,
+  orgSlug: string,
+  orgId: string,
 ) {
   const { data, error, status } = await server.api
-    .organizations({ organizationSlug })
-    .contests.create.post({
+    .orgs({ orgSlug })
+    .calls.create.post({
       name,
       slug,
-      organizationId,
+      orgId,
       schema: createDefaultFormSchema(),
     }, {
       query: {
-        organizationId,
+        orgId,
       },
     });
   if (error) {
     throw error.value;
   }
   if (status !== 201) {
-    throw new Error(`Failed to create contest: ${status}`);
+    throw new Error(`Failed to create call: ${status}`);
   }
   return data;
 }
 
 async function getSlugAvailability(slug: string) {
-  const { data, error, status } = await server.api.contests
+  const { data, error, status } = await server.api.calls
     .checkAvailability({ slug })
     .get();
   if (error) {
@@ -59,7 +59,7 @@ async function getSlugAvailability(slug: string) {
   return data.isAvailable;
 }
 
-export default function CreateContestForm(props: CreateContestFormProps) {
+export default function CreateCallForm(props: CreateCallFormProps) {
   const [name, setName] = createSignal("");
   const [slug, setSlug] = createSignal("");
   const [slugAvailable, setSlugAvailable] = createSignal<boolean | null>(null);
@@ -133,11 +133,11 @@ export default function CreateContestForm(props: CreateContestFormProps) {
 
     setIsSubmitting(true);
     try {
-      await createContest(name(), slug(), props.organizationSlug, props.organizationId);
+      await createCall(name(), slug(), props.orgSlug, props.orgId);
       props.onSuccess();
       await router.invalidate();
     } catch (error) {
-      console.error("Error creating contest:", error);
+      console.error("Error creating call:", error);
       resetForm();
     } finally {
       setIsSubmitting(false);
@@ -156,13 +156,13 @@ export default function CreateContestForm(props: CreateContestFormProps) {
       <form onSubmit={handleSubmit}>
         <div class="grid gap-6">
           <TextField class="gap-2">
-            <TextFieldLabel>Contest Name</TextFieldLabel>
+            <TextFieldLabel>Call Name</TextFieldLabel>
             <TextFieldInput
               name="name"
               value={name()}
               onInput={handleInputNameChange}
               type="text"
-              placeholder="My Contest"
+              placeholder="My Call"
               required
             />
           </TextField>
@@ -174,7 +174,7 @@ export default function CreateContestForm(props: CreateContestFormProps) {
               value={slug()}
               onInput={handleInputSlugChange}
               type="text"
-              placeholder="my-contest"
+              placeholder="my-call"
               required
             />
             <div class="mt-1 text-sm">
@@ -197,7 +197,7 @@ export default function CreateContestForm(props: CreateContestFormProps) {
             }
           >
             {isSubmitting() && <IconLoader class="mr-2 size-4 animate-spin" />}
-            Create Contest
+            Create Call
           </Button>
         </div>
       </form>

@@ -21,10 +21,10 @@ export const user = pgTable("user", {
 });
 
 export const userRelations = relations(user, ({ many }) => ({
-  organizationToHosts: many(organizationToHost),
-  contestToHosts: many(contestToHost),
-  contestToParticipants: many(contestToParticipant),
-  jurorToContests: many(jurorToContest),
+  orgToHosts: many(orgToHost),
+  callToHosts: many(callToHost),
+  callToParticipants: many(callToParticipant),
+  jurorToCalls: many(jurorToCall),
 }));
 
 export const session = pgTable("session", {
@@ -67,7 +67,7 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
-export const organization = pgTable("organization", {
+export const org = pgTable("org", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
@@ -77,17 +77,17 @@ export const organization = pgTable("organization", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const organizationRelations = relations(organization, ({ many }) => ({
-  organizationToHost: many(organizationToHost),
-  contests: many(contest),
+export const orgRelations = relations(org, ({ many }) => ({
+  orgToHost: many(orgToHost),
+  calls: many(call),
 }));
 
-export const organizationToHost = pgTable(
-  "organization_to_host",
+export const orgToHost = pgTable(
+  "org_to_host",
   {
-    organizationId: text("organization_id")
+    orgId: text("org_id")
       .notNull()
-      .references(() => organization.id, { onDelete: "cascade" }),
+      .references(() => org.id, { onDelete: "cascade" }),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -95,54 +95,54 @@ export const organizationToHost = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (t) => [primaryKey({ columns: [t.organizationId, t.userId] })],
+  (t) => [primaryKey({ columns: [t.orgId, t.userId] })],
 );
 
-export const organizationToHostRelations = relations(
-  organizationToHost,
+export const orgToHostRelations = relations(
+  orgToHost,
   ({ one }) => ({
-    organization: one(organization, {
-      fields: [organizationToHost.organizationId],
-      references: [organization.id],
+    org: one(org, {
+      fields: [orgToHost.orgId],
+      references: [org.id],
     }),
     user: one(user, {
-      fields: [organizationToHost.userId],
+      fields: [orgToHost.userId],
       references: [user.id],
     }),
   }),
 );
 
-export const contest = pgTable("contest", {
+export const call = pgTable("call", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
-  organizationId: text("organization_id")
+  orgId: text("org_id")
     .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
+    .references(() => org.id, { onDelete: "cascade" }),
   schema: jsonb("schema"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const contestRelations = relations(contest, ({ many, one }) => ({
-  organization: one(organization, {
-    fields: [contest.organizationId],
-    references: [organization.id],
+export const callRelations = relations(call, ({ many, one }) => ({
+  org: one(org, {
+    fields: [call.orgId],
+    references: [org.id],
   }),
-  contestToHost: many(contestToHost),
-  contestToParticipant: many(contestToParticipant),
-  jurorToContest: many(jurorToContest),
+  callToHost: many(callToHost),
+  callToParticipant: many(callToParticipant),
+  jurorToCall: many(jurorToCall),
   submissions: many(submission),
 }));
 
-export const contestToHost = pgTable(
-  "contest_to_host",
+export const callToHost = pgTable(
+  "call_to_host",
   {
-    contestId: text("contest_id")
+    callId: text("call_id")
       .notNull()
-      .references(() => contest.id, { onDelete: "cascade" }),
+      .references(() => call.id, { onDelete: "cascade" }),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -150,80 +150,80 @@ export const contestToHost = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (t) => [primaryKey({ columns: [t.contestId, t.userId] })],
+  (t) => [primaryKey({ columns: [t.callId, t.userId] })],
 );
 
-export const contestToHostRelations = relations(contestToHost, ({ one }) => ({
-  contest: one(contest, {
-    fields: [contestToHost.contestId],
-    references: [contest.id],
+export const callToHostRelations = relations(callToHost, ({ one }) => ({
+  call: one(call, {
+    fields: [callToHost.callId],
+    references: [call.id],
   }),
   user: one(user, {
-    fields: [contestToHost.userId],
+    fields: [callToHost.userId],
     references: [user.id],
   }),
 }));
 
-export const contestToParticipant = pgTable(
-  "contest_to_participant",
+export const callToParticipant = pgTable(
+  "call_to_participant",
   {
-    contestId: text("contest_id")
+    callId: text("call_id")
       .notNull()
-      .references(() => contest.id, { onDelete: "cascade" }),
+      .references(() => call.id, { onDelete: "cascade" }),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (t) => [primaryKey({ columns: [t.contestId, t.userId] })],
+  (t) => [primaryKey({ columns: [t.callId, t.userId] })],
 );
 
-export const contestToParticipantRelations = relations(
-  contestToParticipant,
+export const callToParticipantRelations = relations(
+  callToParticipant,
   ({ one }) => ({
-    contest: one(contest, {
-      fields: [contestToParticipant.contestId],
-      references: [contest.id],
+    call: one(call, {
+      fields: [callToParticipant.callId],
+      references: [call.id],
     }),
     user: one(user, {
-      fields: [contestToParticipant.userId],
+      fields: [callToParticipant.userId],
       references: [user.id],
     }),
   }),
 );
 
-export const jurorToContest = pgTable(
-  "juror_to_contest",
+export const jurorToCall = pgTable(
+  "juror_to_call",
   {
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    contestId: text("contest_id")
+    callId: text("call_id")
       .notNull()
-      .references(() => contest.id, { onDelete: "cascade" }),
+      .references(() => call.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (t) => [primaryKey({ columns: [t.contestId, t.userId] })],
+  (t) => [primaryKey({ columns: [t.callId, t.userId] })],
 );
 
-export const jurorToContestRelations = relations(jurorToContest, ({ one }) => ({
+export const jurorToCallRelations = relations(jurorToCall, ({ one }) => ({
   user: one(user, {
-    fields: [jurorToContest.userId],
+    fields: [jurorToCall.userId],
     references: [user.id],
   }),
-  contest: one(contest, {
-    fields: [jurorToContest.contestId],
-    references: [contest.id],
+  call: one(call, {
+    fields: [jurorToCall.callId],
+    references: [call.id],
   }),
 }));
 
 export const submission = pgTable("submission", {
   id: text("id").notNull().primaryKey(),
-  contestId: text("contest_id")
+  callId: text("call_id")
     .notNull()
-    .references(() => contest.id, { onDelete: "cascade" }),
+    .references(() => call.id, { onDelete: "cascade" }),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -233,9 +233,9 @@ export const submission = pgTable("submission", {
 });
 
 export const submissionRelations = relations(submission, ({ one }) => ({
-  contest: one(contest, {
-    fields: [submission.contestId],
-    references: [contest.id],
+  call: one(call, {
+    fields: [submission.callId],
+    references: [call.id],
   }),
   user: one(user, {
     fields: [submission.userId],

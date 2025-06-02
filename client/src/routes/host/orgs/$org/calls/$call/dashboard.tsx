@@ -2,14 +2,14 @@ import { createFileRoute, notFound } from "@tanstack/solid-router";
 import server from "@client/lib/server-api";
 
 export const Route = createFileRoute(
-  "/host/organizations/$organization/contests/$contest/dashboard",
+  "/host/orgs/$org/calls/$call/dashboard",
 )({
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const routeContext = Route.useRouteContext();
-  // Safely access the contest property with type assertion
-  const contest = () => routeContext().contest;
-  return <div>Hello {contest().name}!</div>;
+  // Safely access the call property with type assertion
+  const call = () => routeContext().call;
+  return <div>Hello {call().name}!</div>;
 }

@@ -16,17 +16,17 @@ import { Route as HostImport } from './routes/host'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as HostProfileImport } from './routes/host/profile'
-import { Route as HostOrganizationsImport } from './routes/host/organizations'
-import { Route as HostOrganizationsIndexImport } from './routes/host/organizations/index'
-import { Route as HostOrganizationsOrganizationImport } from './routes/host/organizations/$organization'
-import { Route as HostOrganizationsOrganizationIndexImport } from './routes/host/organizations/$organization/index'
-import { Route as HostOrganizationsOrganizationMembersImport } from './routes/host/organizations/$organization/members'
-import { Route as HostOrganizationsOrganizationContestsImport } from './routes/host/organizations/$organization/contests'
-import { Route as HostOrganizationsOrganizationContestsIndexImport } from './routes/host/organizations/$organization/contests/index'
-import { Route as HostOrganizationsOrganizationContestsContestImport } from './routes/host/organizations/$organization/contests/$contest'
-import { Route as HostOrganizationsOrganizationContestsContestEntriesImport } from './routes/host/organizations/$organization/contests/$contest/entries'
-import { Route as HostOrganizationsOrganizationContestsContestDashboardImport } from './routes/host/organizations/$organization/contests/$contest/dashboard'
-import { Route as HostOrganizationsOrganizationContestsContestConfigureImport } from './routes/host/organizations/$organization/contests/$contest/configure'
+import { Route as HostOrgsImport } from './routes/host/orgs'
+import { Route as HostOrgsIndexImport } from './routes/host/orgs/index'
+import { Route as HostOrgsOrgImport } from './routes/host/orgs/$org'
+import { Route as HostOrgsOrgIndexImport } from './routes/host/orgs/$org/index'
+import { Route as HostOrgsOrgMembersImport } from './routes/host/orgs/$org/members'
+import { Route as HostOrgsOrgCallsImport } from './routes/host/orgs/$org/calls'
+import { Route as HostOrgsOrgCallsIndexImport } from './routes/host/orgs/$org/calls/index'
+import { Route as HostOrgsOrgCallsCallImport } from './routes/host/orgs/$org/calls/$call'
+import { Route as HostOrgsOrgCallsCallEntriesImport } from './routes/host/orgs/$org/calls/$call/entries'
+import { Route as HostOrgsOrgCallsCallDashboardImport } from './routes/host/orgs/$org/calls/$call/dashboard'
+import { Route as HostOrgsOrgCallsCallConfigureImport } from './routes/host/orgs/$org/calls/$call/configure'
 
 // Create/Update Routes
 
@@ -60,79 +60,73 @@ const HostProfileRoute = HostProfileImport.update({
   getParentRoute: () => HostRoute,
 } as any)
 
-const HostOrganizationsRoute = HostOrganizationsImport.update({
-  id: '/organizations',
-  path: '/organizations',
+const HostOrgsRoute = HostOrgsImport.update({
+  id: '/orgs',
+  path: '/orgs',
   getParentRoute: () => HostRoute,
 } as any)
 
-const HostOrganizationsIndexRoute = HostOrganizationsIndexImport.update({
+const HostOrgsIndexRoute = HostOrgsIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => HostOrganizationsRoute,
+  getParentRoute: () => HostOrgsRoute,
 } as any)
 
-const HostOrganizationsOrganizationRoute =
-  HostOrganizationsOrganizationImport.update({
-    id: '/$organization',
-    path: '/$organization',
-    getParentRoute: () => HostOrganizationsRoute,
-  } as any)
+const HostOrgsOrgRoute = HostOrgsOrgImport.update({
+  id: '/$org',
+  path: '/$org',
+  getParentRoute: () => HostOrgsRoute,
+} as any)
 
-const HostOrganizationsOrganizationIndexRoute =
-  HostOrganizationsOrganizationIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => HostOrganizationsOrganizationRoute,
-  } as any)
+const HostOrgsOrgIndexRoute = HostOrgsOrgIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HostOrgsOrgRoute,
+} as any)
 
-const HostOrganizationsOrganizationMembersRoute =
-  HostOrganizationsOrganizationMembersImport.update({
-    id: '/members',
-    path: '/members',
-    getParentRoute: () => HostOrganizationsOrganizationRoute,
-  } as any)
+const HostOrgsOrgMembersRoute = HostOrgsOrgMembersImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => HostOrgsOrgRoute,
+} as any)
 
-const HostOrganizationsOrganizationContestsRoute =
-  HostOrganizationsOrganizationContestsImport.update({
-    id: '/contests',
-    path: '/contests',
-    getParentRoute: () => HostOrganizationsOrganizationRoute,
-  } as any)
+const HostOrgsOrgCallsRoute = HostOrgsOrgCallsImport.update({
+  id: '/calls',
+  path: '/calls',
+  getParentRoute: () => HostOrgsOrgRoute,
+} as any)
 
-const HostOrganizationsOrganizationContestsIndexRoute =
-  HostOrganizationsOrganizationContestsIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => HostOrganizationsOrganizationContestsRoute,
-  } as any)
+const HostOrgsOrgCallsIndexRoute = HostOrgsOrgCallsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HostOrgsOrgCallsRoute,
+} as any)
 
-const HostOrganizationsOrganizationContestsContestRoute =
-  HostOrganizationsOrganizationContestsContestImport.update({
-    id: '/$contest',
-    path: '/$contest',
-    getParentRoute: () => HostOrganizationsOrganizationContestsRoute,
-  } as any)
+const HostOrgsOrgCallsCallRoute = HostOrgsOrgCallsCallImport.update({
+  id: '/$call',
+  path: '/$call',
+  getParentRoute: () => HostOrgsOrgCallsRoute,
+} as any)
 
-const HostOrganizationsOrganizationContestsContestEntriesRoute =
-  HostOrganizationsOrganizationContestsContestEntriesImport.update({
+const HostOrgsOrgCallsCallEntriesRoute =
+  HostOrgsOrgCallsCallEntriesImport.update({
     id: '/entries',
     path: '/entries',
-    getParentRoute: () => HostOrganizationsOrganizationContestsContestRoute,
+    getParentRoute: () => HostOrgsOrgCallsCallRoute,
   } as any)
 
-const HostOrganizationsOrganizationContestsContestDashboardRoute =
-  HostOrganizationsOrganizationContestsContestDashboardImport.update({
+const HostOrgsOrgCallsCallDashboardRoute =
+  HostOrgsOrgCallsCallDashboardImport.update({
     id: '/dashboard',
     path: '/dashboard',
-    getParentRoute: () => HostOrganizationsOrganizationContestsContestRoute,
+    getParentRoute: () => HostOrgsOrgCallsCallRoute,
   } as any)
 
-const HostOrganizationsOrganizationContestsContestConfigureRoute =
-  HostOrganizationsOrganizationContestsContestConfigureImport.update({
+const HostOrgsOrgCallsCallConfigureRoute =
+  HostOrgsOrgCallsCallConfigureImport.update({
     id: '/configure',
     path: '/configure',
-    getParentRoute: () => HostOrganizationsOrganizationContestsContestRoute,
+    getParentRoute: () => HostOrgsOrgCallsCallRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -167,11 +161,11 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/host/organizations': {
-      id: '/host/organizations'
-      path: '/organizations'
-      fullPath: '/host/organizations'
-      preLoaderRoute: typeof HostOrganizationsImport
+    '/host/orgs': {
+      id: '/host/orgs'
+      path: '/orgs'
+      fullPath: '/host/orgs'
+      preLoaderRoute: typeof HostOrgsImport
       parentRoute: typeof HostImport
     }
     '/host/profile': {
@@ -181,162 +175,146 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof HostProfileImport
       parentRoute: typeof HostImport
     }
-    '/host/organizations/$organization': {
-      id: '/host/organizations/$organization'
-      path: '/$organization'
-      fullPath: '/host/organizations/$organization'
-      preLoaderRoute: typeof HostOrganizationsOrganizationImport
-      parentRoute: typeof HostOrganizationsImport
+    '/host/orgs/$org': {
+      id: '/host/orgs/$org'
+      path: '/$org'
+      fullPath: '/host/orgs/$org'
+      preLoaderRoute: typeof HostOrgsOrgImport
+      parentRoute: typeof HostOrgsImport
     }
-    '/host/organizations/': {
-      id: '/host/organizations/'
+    '/host/orgs/': {
+      id: '/host/orgs/'
       path: '/'
-      fullPath: '/host/organizations/'
-      preLoaderRoute: typeof HostOrganizationsIndexImport
-      parentRoute: typeof HostOrganizationsImport
+      fullPath: '/host/orgs/'
+      preLoaderRoute: typeof HostOrgsIndexImport
+      parentRoute: typeof HostOrgsImport
     }
-    '/host/organizations/$organization/contests': {
-      id: '/host/organizations/$organization/contests'
-      path: '/contests'
-      fullPath: '/host/organizations/$organization/contests'
-      preLoaderRoute: typeof HostOrganizationsOrganizationContestsImport
-      parentRoute: typeof HostOrganizationsOrganizationImport
+    '/host/orgs/$org/calls': {
+      id: '/host/orgs/$org/calls'
+      path: '/calls'
+      fullPath: '/host/orgs/$org/calls'
+      preLoaderRoute: typeof HostOrgsOrgCallsImport
+      parentRoute: typeof HostOrgsOrgImport
     }
-    '/host/organizations/$organization/members': {
-      id: '/host/organizations/$organization/members'
+    '/host/orgs/$org/members': {
+      id: '/host/orgs/$org/members'
       path: '/members'
-      fullPath: '/host/organizations/$organization/members'
-      preLoaderRoute: typeof HostOrganizationsOrganizationMembersImport
-      parentRoute: typeof HostOrganizationsOrganizationImport
+      fullPath: '/host/orgs/$org/members'
+      preLoaderRoute: typeof HostOrgsOrgMembersImport
+      parentRoute: typeof HostOrgsOrgImport
     }
-    '/host/organizations/$organization/': {
-      id: '/host/organizations/$organization/'
+    '/host/orgs/$org/': {
+      id: '/host/orgs/$org/'
       path: '/'
-      fullPath: '/host/organizations/$organization/'
-      preLoaderRoute: typeof HostOrganizationsOrganizationIndexImport
-      parentRoute: typeof HostOrganizationsOrganizationImport
+      fullPath: '/host/orgs/$org/'
+      preLoaderRoute: typeof HostOrgsOrgIndexImport
+      parentRoute: typeof HostOrgsOrgImport
     }
-    '/host/organizations/$organization/contests/$contest': {
-      id: '/host/organizations/$organization/contests/$contest'
-      path: '/$contest'
-      fullPath: '/host/organizations/$organization/contests/$contest'
-      preLoaderRoute: typeof HostOrganizationsOrganizationContestsContestImport
-      parentRoute: typeof HostOrganizationsOrganizationContestsImport
+    '/host/orgs/$org/calls/$call': {
+      id: '/host/orgs/$org/calls/$call'
+      path: '/$call'
+      fullPath: '/host/orgs/$org/calls/$call'
+      preLoaderRoute: typeof HostOrgsOrgCallsCallImport
+      parentRoute: typeof HostOrgsOrgCallsImport
     }
-    '/host/organizations/$organization/contests/': {
-      id: '/host/organizations/$organization/contests/'
+    '/host/orgs/$org/calls/': {
+      id: '/host/orgs/$org/calls/'
       path: '/'
-      fullPath: '/host/organizations/$organization/contests/'
-      preLoaderRoute: typeof HostOrganizationsOrganizationContestsIndexImport
-      parentRoute: typeof HostOrganizationsOrganizationContestsImport
+      fullPath: '/host/orgs/$org/calls/'
+      preLoaderRoute: typeof HostOrgsOrgCallsIndexImport
+      parentRoute: typeof HostOrgsOrgCallsImport
     }
-    '/host/organizations/$organization/contests/$contest/configure': {
-      id: '/host/organizations/$organization/contests/$contest/configure'
+    '/host/orgs/$org/calls/$call/configure': {
+      id: '/host/orgs/$org/calls/$call/configure'
       path: '/configure'
-      fullPath: '/host/organizations/$organization/contests/$contest/configure'
-      preLoaderRoute: typeof HostOrganizationsOrganizationContestsContestConfigureImport
-      parentRoute: typeof HostOrganizationsOrganizationContestsContestImport
+      fullPath: '/host/orgs/$org/calls/$call/configure'
+      preLoaderRoute: typeof HostOrgsOrgCallsCallConfigureImport
+      parentRoute: typeof HostOrgsOrgCallsCallImport
     }
-    '/host/organizations/$organization/contests/$contest/dashboard': {
-      id: '/host/organizations/$organization/contests/$contest/dashboard'
+    '/host/orgs/$org/calls/$call/dashboard': {
+      id: '/host/orgs/$org/calls/$call/dashboard'
       path: '/dashboard'
-      fullPath: '/host/organizations/$organization/contests/$contest/dashboard'
-      preLoaderRoute: typeof HostOrganizationsOrganizationContestsContestDashboardImport
-      parentRoute: typeof HostOrganizationsOrganizationContestsContestImport
+      fullPath: '/host/orgs/$org/calls/$call/dashboard'
+      preLoaderRoute: typeof HostOrgsOrgCallsCallDashboardImport
+      parentRoute: typeof HostOrgsOrgCallsCallImport
     }
-    '/host/organizations/$organization/contests/$contest/entries': {
-      id: '/host/organizations/$organization/contests/$contest/entries'
+    '/host/orgs/$org/calls/$call/entries': {
+      id: '/host/orgs/$org/calls/$call/entries'
       path: '/entries'
-      fullPath: '/host/organizations/$organization/contests/$contest/entries'
-      preLoaderRoute: typeof HostOrganizationsOrganizationContestsContestEntriesImport
-      parentRoute: typeof HostOrganizationsOrganizationContestsContestImport
+      fullPath: '/host/orgs/$org/calls/$call/entries'
+      preLoaderRoute: typeof HostOrgsOrgCallsCallEntriesImport
+      parentRoute: typeof HostOrgsOrgCallsCallImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface HostOrganizationsOrganizationContestsContestRouteChildren {
-  HostOrganizationsOrganizationContestsContestConfigureRoute: typeof HostOrganizationsOrganizationContestsContestConfigureRoute
-  HostOrganizationsOrganizationContestsContestDashboardRoute: typeof HostOrganizationsOrganizationContestsContestDashboardRoute
-  HostOrganizationsOrganizationContestsContestEntriesRoute: typeof HostOrganizationsOrganizationContestsContestEntriesRoute
+interface HostOrgsOrgCallsCallRouteChildren {
+  HostOrgsOrgCallsCallConfigureRoute: typeof HostOrgsOrgCallsCallConfigureRoute
+  HostOrgsOrgCallsCallDashboardRoute: typeof HostOrgsOrgCallsCallDashboardRoute
+  HostOrgsOrgCallsCallEntriesRoute: typeof HostOrgsOrgCallsCallEntriesRoute
 }
 
-const HostOrganizationsOrganizationContestsContestRouteChildren: HostOrganizationsOrganizationContestsContestRouteChildren =
-  {
-    HostOrganizationsOrganizationContestsContestConfigureRoute:
-      HostOrganizationsOrganizationContestsContestConfigureRoute,
-    HostOrganizationsOrganizationContestsContestDashboardRoute:
-      HostOrganizationsOrganizationContestsContestDashboardRoute,
-    HostOrganizationsOrganizationContestsContestEntriesRoute:
-      HostOrganizationsOrganizationContestsContestEntriesRoute,
-  }
-
-const HostOrganizationsOrganizationContestsContestRouteWithChildren =
-  HostOrganizationsOrganizationContestsContestRoute._addFileChildren(
-    HostOrganizationsOrganizationContestsContestRouteChildren,
-  )
-
-interface HostOrganizationsOrganizationContestsRouteChildren {
-  HostOrganizationsOrganizationContestsContestRoute: typeof HostOrganizationsOrganizationContestsContestRouteWithChildren
-  HostOrganizationsOrganizationContestsIndexRoute: typeof HostOrganizationsOrganizationContestsIndexRoute
+const HostOrgsOrgCallsCallRouteChildren: HostOrgsOrgCallsCallRouteChildren = {
+  HostOrgsOrgCallsCallConfigureRoute: HostOrgsOrgCallsCallConfigureRoute,
+  HostOrgsOrgCallsCallDashboardRoute: HostOrgsOrgCallsCallDashboardRoute,
+  HostOrgsOrgCallsCallEntriesRoute: HostOrgsOrgCallsCallEntriesRoute,
 }
 
-const HostOrganizationsOrganizationContestsRouteChildren: HostOrganizationsOrganizationContestsRouteChildren =
-  {
-    HostOrganizationsOrganizationContestsContestRoute:
-      HostOrganizationsOrganizationContestsContestRouteWithChildren,
-    HostOrganizationsOrganizationContestsIndexRoute:
-      HostOrganizationsOrganizationContestsIndexRoute,
-  }
+const HostOrgsOrgCallsCallRouteWithChildren =
+  HostOrgsOrgCallsCallRoute._addFileChildren(HostOrgsOrgCallsCallRouteChildren)
 
-const HostOrganizationsOrganizationContestsRouteWithChildren =
-  HostOrganizationsOrganizationContestsRoute._addFileChildren(
-    HostOrganizationsOrganizationContestsRouteChildren,
-  )
-
-interface HostOrganizationsOrganizationRouteChildren {
-  HostOrganizationsOrganizationContestsRoute: typeof HostOrganizationsOrganizationContestsRouteWithChildren
-  HostOrganizationsOrganizationMembersRoute: typeof HostOrganizationsOrganizationMembersRoute
-  HostOrganizationsOrganizationIndexRoute: typeof HostOrganizationsOrganizationIndexRoute
+interface HostOrgsOrgCallsRouteChildren {
+  HostOrgsOrgCallsCallRoute: typeof HostOrgsOrgCallsCallRouteWithChildren
+  HostOrgsOrgCallsIndexRoute: typeof HostOrgsOrgCallsIndexRoute
 }
 
-const HostOrganizationsOrganizationRouteChildren: HostOrganizationsOrganizationRouteChildren =
-  {
-    HostOrganizationsOrganizationContestsRoute:
-      HostOrganizationsOrganizationContestsRouteWithChildren,
-    HostOrganizationsOrganizationMembersRoute:
-      HostOrganizationsOrganizationMembersRoute,
-    HostOrganizationsOrganizationIndexRoute:
-      HostOrganizationsOrganizationIndexRoute,
-  }
-
-const HostOrganizationsOrganizationRouteWithChildren =
-  HostOrganizationsOrganizationRoute._addFileChildren(
-    HostOrganizationsOrganizationRouteChildren,
-  )
-
-interface HostOrganizationsRouteChildren {
-  HostOrganizationsOrganizationRoute: typeof HostOrganizationsOrganizationRouteWithChildren
-  HostOrganizationsIndexRoute: typeof HostOrganizationsIndexRoute
+const HostOrgsOrgCallsRouteChildren: HostOrgsOrgCallsRouteChildren = {
+  HostOrgsOrgCallsCallRoute: HostOrgsOrgCallsCallRouteWithChildren,
+  HostOrgsOrgCallsIndexRoute: HostOrgsOrgCallsIndexRoute,
 }
 
-const HostOrganizationsRouteChildren: HostOrganizationsRouteChildren = {
-  HostOrganizationsOrganizationRoute:
-    HostOrganizationsOrganizationRouteWithChildren,
-  HostOrganizationsIndexRoute: HostOrganizationsIndexRoute,
+const HostOrgsOrgCallsRouteWithChildren =
+  HostOrgsOrgCallsRoute._addFileChildren(HostOrgsOrgCallsRouteChildren)
+
+interface HostOrgsOrgRouteChildren {
+  HostOrgsOrgCallsRoute: typeof HostOrgsOrgCallsRouteWithChildren
+  HostOrgsOrgMembersRoute: typeof HostOrgsOrgMembersRoute
+  HostOrgsOrgIndexRoute: typeof HostOrgsOrgIndexRoute
 }
 
-const HostOrganizationsRouteWithChildren =
-  HostOrganizationsRoute._addFileChildren(HostOrganizationsRouteChildren)
+const HostOrgsOrgRouteChildren: HostOrgsOrgRouteChildren = {
+  HostOrgsOrgCallsRoute: HostOrgsOrgCallsRouteWithChildren,
+  HostOrgsOrgMembersRoute: HostOrgsOrgMembersRoute,
+  HostOrgsOrgIndexRoute: HostOrgsOrgIndexRoute,
+}
+
+const HostOrgsOrgRouteWithChildren = HostOrgsOrgRoute._addFileChildren(
+  HostOrgsOrgRouteChildren,
+)
+
+interface HostOrgsRouteChildren {
+  HostOrgsOrgRoute: typeof HostOrgsOrgRouteWithChildren
+  HostOrgsIndexRoute: typeof HostOrgsIndexRoute
+}
+
+const HostOrgsRouteChildren: HostOrgsRouteChildren = {
+  HostOrgsOrgRoute: HostOrgsOrgRouteWithChildren,
+  HostOrgsIndexRoute: HostOrgsIndexRoute,
+}
+
+const HostOrgsRouteWithChildren = HostOrgsRoute._addFileChildren(
+  HostOrgsRouteChildren,
+)
 
 interface HostRouteChildren {
-  HostOrganizationsRoute: typeof HostOrganizationsRouteWithChildren
+  HostOrgsRoute: typeof HostOrgsRouteWithChildren
   HostProfileRoute: typeof HostProfileRoute
 }
 
 const HostRouteChildren: HostRouteChildren = {
-  HostOrganizationsRoute: HostOrganizationsRouteWithChildren,
+  HostOrgsRoute: HostOrgsRouteWithChildren,
   HostProfileRoute: HostProfileRoute,
 }
 
@@ -347,18 +325,18 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/organizations': typeof HostOrganizationsRouteWithChildren
+  '/host/orgs': typeof HostOrgsRouteWithChildren
   '/host/profile': typeof HostProfileRoute
-  '/host/organizations/$organization': typeof HostOrganizationsOrganizationRouteWithChildren
-  '/host/organizations/': typeof HostOrganizationsIndexRoute
-  '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsRouteWithChildren
-  '/host/organizations/$organization/members': typeof HostOrganizationsOrganizationMembersRoute
-  '/host/organizations/$organization/': typeof HostOrganizationsOrganizationIndexRoute
-  '/host/organizations/$organization/contests/$contest': typeof HostOrganizationsOrganizationContestsContestRouteWithChildren
-  '/host/organizations/$organization/contests/': typeof HostOrganizationsOrganizationContestsIndexRoute
-  '/host/organizations/$organization/contests/$contest/configure': typeof HostOrganizationsOrganizationContestsContestConfigureRoute
-  '/host/organizations/$organization/contests/$contest/dashboard': typeof HostOrganizationsOrganizationContestsContestDashboardRoute
-  '/host/organizations/$organization/contests/$contest/entries': typeof HostOrganizationsOrganizationContestsContestEntriesRoute
+  '/host/orgs/$org': typeof HostOrgsOrgRouteWithChildren
+  '/host/orgs/': typeof HostOrgsIndexRoute
+  '/host/orgs/$org/calls': typeof HostOrgsOrgCallsRouteWithChildren
+  '/host/orgs/$org/members': typeof HostOrgsOrgMembersRoute
+  '/host/orgs/$org/': typeof HostOrgsOrgIndexRoute
+  '/host/orgs/$org/calls/$call': typeof HostOrgsOrgCallsCallRouteWithChildren
+  '/host/orgs/$org/calls/': typeof HostOrgsOrgCallsIndexRoute
+  '/host/orgs/$org/calls/$call/configure': typeof HostOrgsOrgCallsCallConfigureRoute
+  '/host/orgs/$org/calls/$call/dashboard': typeof HostOrgsOrgCallsCallDashboardRoute
+  '/host/orgs/$org/calls/$call/entries': typeof HostOrgsOrgCallsCallEntriesRoute
 }
 
 export interface FileRoutesByTo {
@@ -367,14 +345,14 @@ export interface FileRoutesByTo {
   '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
   '/host/profile': typeof HostProfileRoute
-  '/host/organizations': typeof HostOrganizationsIndexRoute
-  '/host/organizations/$organization/members': typeof HostOrganizationsOrganizationMembersRoute
-  '/host/organizations/$organization': typeof HostOrganizationsOrganizationIndexRoute
-  '/host/organizations/$organization/contests/$contest': typeof HostOrganizationsOrganizationContestsContestRouteWithChildren
-  '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsIndexRoute
-  '/host/organizations/$organization/contests/$contest/configure': typeof HostOrganizationsOrganizationContestsContestConfigureRoute
-  '/host/organizations/$organization/contests/$contest/dashboard': typeof HostOrganizationsOrganizationContestsContestDashboardRoute
-  '/host/organizations/$organization/contests/$contest/entries': typeof HostOrganizationsOrganizationContestsContestEntriesRoute
+  '/host/orgs': typeof HostOrgsIndexRoute
+  '/host/orgs/$org/members': typeof HostOrgsOrgMembersRoute
+  '/host/orgs/$org': typeof HostOrgsOrgIndexRoute
+  '/host/orgs/$org/calls/$call': typeof HostOrgsOrgCallsCallRouteWithChildren
+  '/host/orgs/$org/calls': typeof HostOrgsOrgCallsIndexRoute
+  '/host/orgs/$org/calls/$call/configure': typeof HostOrgsOrgCallsCallConfigureRoute
+  '/host/orgs/$org/calls/$call/dashboard': typeof HostOrgsOrgCallsCallDashboardRoute
+  '/host/orgs/$org/calls/$call/entries': typeof HostOrgsOrgCallsCallEntriesRoute
 }
 
 export interface FileRoutesById {
@@ -383,18 +361,18 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/organizations': typeof HostOrganizationsRouteWithChildren
+  '/host/orgs': typeof HostOrgsRouteWithChildren
   '/host/profile': typeof HostProfileRoute
-  '/host/organizations/$organization': typeof HostOrganizationsOrganizationRouteWithChildren
-  '/host/organizations/': typeof HostOrganizationsIndexRoute
-  '/host/organizations/$organization/contests': typeof HostOrganizationsOrganizationContestsRouteWithChildren
-  '/host/organizations/$organization/members': typeof HostOrganizationsOrganizationMembersRoute
-  '/host/organizations/$organization/': typeof HostOrganizationsOrganizationIndexRoute
-  '/host/organizations/$organization/contests/$contest': typeof HostOrganizationsOrganizationContestsContestRouteWithChildren
-  '/host/organizations/$organization/contests/': typeof HostOrganizationsOrganizationContestsIndexRoute
-  '/host/organizations/$organization/contests/$contest/configure': typeof HostOrganizationsOrganizationContestsContestConfigureRoute
-  '/host/organizations/$organization/contests/$contest/dashboard': typeof HostOrganizationsOrganizationContestsContestDashboardRoute
-  '/host/organizations/$organization/contests/$contest/entries': typeof HostOrganizationsOrganizationContestsContestEntriesRoute
+  '/host/orgs/$org': typeof HostOrgsOrgRouteWithChildren
+  '/host/orgs/': typeof HostOrgsIndexRoute
+  '/host/orgs/$org/calls': typeof HostOrgsOrgCallsRouteWithChildren
+  '/host/orgs/$org/members': typeof HostOrgsOrgMembersRoute
+  '/host/orgs/$org/': typeof HostOrgsOrgIndexRoute
+  '/host/orgs/$org/calls/$call': typeof HostOrgsOrgCallsCallRouteWithChildren
+  '/host/orgs/$org/calls/': typeof HostOrgsOrgCallsIndexRoute
+  '/host/orgs/$org/calls/$call/configure': typeof HostOrgsOrgCallsCallConfigureRoute
+  '/host/orgs/$org/calls/$call/dashboard': typeof HostOrgsOrgCallsCallDashboardRoute
+  '/host/orgs/$org/calls/$call/entries': typeof HostOrgsOrgCallsCallEntriesRoute
 }
 
 export interface FileRouteTypes {
@@ -404,18 +382,18 @@ export interface FileRouteTypes {
     | '/about'
     | '/host'
     | '/login'
-    | '/host/organizations'
+    | '/host/orgs'
     | '/host/profile'
-    | '/host/organizations/$organization'
-    | '/host/organizations/'
-    | '/host/organizations/$organization/contests'
-    | '/host/organizations/$organization/members'
-    | '/host/organizations/$organization/'
-    | '/host/organizations/$organization/contests/$contest'
-    | '/host/organizations/$organization/contests/'
-    | '/host/organizations/$organization/contests/$contest/configure'
-    | '/host/organizations/$organization/contests/$contest/dashboard'
-    | '/host/organizations/$organization/contests/$contest/entries'
+    | '/host/orgs/$org'
+    | '/host/orgs/'
+    | '/host/orgs/$org/calls'
+    | '/host/orgs/$org/members'
+    | '/host/orgs/$org/'
+    | '/host/orgs/$org/calls/$call'
+    | '/host/orgs/$org/calls/'
+    | '/host/orgs/$org/calls/$call/configure'
+    | '/host/orgs/$org/calls/$call/dashboard'
+    | '/host/orgs/$org/calls/$call/entries'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -423,32 +401,32 @@ export interface FileRouteTypes {
     | '/host'
     | '/login'
     | '/host/profile'
-    | '/host/organizations'
-    | '/host/organizations/$organization/members'
-    | '/host/organizations/$organization'
-    | '/host/organizations/$organization/contests/$contest'
-    | '/host/organizations/$organization/contests'
-    | '/host/organizations/$organization/contests/$contest/configure'
-    | '/host/organizations/$organization/contests/$contest/dashboard'
-    | '/host/organizations/$organization/contests/$contest/entries'
+    | '/host/orgs'
+    | '/host/orgs/$org/members'
+    | '/host/orgs/$org'
+    | '/host/orgs/$org/calls/$call'
+    | '/host/orgs/$org/calls'
+    | '/host/orgs/$org/calls/$call/configure'
+    | '/host/orgs/$org/calls/$call/dashboard'
+    | '/host/orgs/$org/calls/$call/entries'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/host'
     | '/login'
-    | '/host/organizations'
+    | '/host/orgs'
     | '/host/profile'
-    | '/host/organizations/$organization'
-    | '/host/organizations/'
-    | '/host/organizations/$organization/contests'
-    | '/host/organizations/$organization/members'
-    | '/host/organizations/$organization/'
-    | '/host/organizations/$organization/contests/$contest'
-    | '/host/organizations/$organization/contests/'
-    | '/host/organizations/$organization/contests/$contest/configure'
-    | '/host/organizations/$organization/contests/$contest/dashboard'
-    | '/host/organizations/$organization/contests/$contest/entries'
+    | '/host/orgs/$org'
+    | '/host/orgs/'
+    | '/host/orgs/$org/calls'
+    | '/host/orgs/$org/members'
+    | '/host/orgs/$org/'
+    | '/host/orgs/$org/calls/$call'
+    | '/host/orgs/$org/calls/'
+    | '/host/orgs/$org/calls/$call/configure'
+    | '/host/orgs/$org/calls/$call/dashboard'
+    | '/host/orgs/$org/calls/$call/entries'
   fileRoutesById: FileRoutesById
 }
 
@@ -491,78 +469,78 @@ export const routeTree = rootRoute
     "/host": {
       "filePath": "host.tsx",
       "children": [
-        "/host/organizations",
+        "/host/orgs",
         "/host/profile"
       ]
     },
     "/login": {
       "filePath": "login.tsx"
     },
-    "/host/organizations": {
-      "filePath": "host/organizations.tsx",
+    "/host/orgs": {
+      "filePath": "host/orgs.tsx",
       "parent": "/host",
       "children": [
-        "/host/organizations/$organization",
-        "/host/organizations/"
+        "/host/orgs/$org",
+        "/host/orgs/"
       ]
     },
     "/host/profile": {
       "filePath": "host/profile.tsx",
       "parent": "/host"
     },
-    "/host/organizations/$organization": {
-      "filePath": "host/organizations/$organization.tsx",
-      "parent": "/host/organizations",
+    "/host/orgs/$org": {
+      "filePath": "host/orgs/$org.tsx",
+      "parent": "/host/orgs",
       "children": [
-        "/host/organizations/$organization/contests",
-        "/host/organizations/$organization/members",
-        "/host/organizations/$organization/"
+        "/host/orgs/$org/calls",
+        "/host/orgs/$org/members",
+        "/host/orgs/$org/"
       ]
     },
-    "/host/organizations/": {
-      "filePath": "host/organizations/index.tsx",
-      "parent": "/host/organizations"
+    "/host/orgs/": {
+      "filePath": "host/orgs/index.tsx",
+      "parent": "/host/orgs"
     },
-    "/host/organizations/$organization/contests": {
-      "filePath": "host/organizations/$organization/contests.tsx",
-      "parent": "/host/organizations/$organization",
+    "/host/orgs/$org/calls": {
+      "filePath": "host/orgs/$org/calls.tsx",
+      "parent": "/host/orgs/$org",
       "children": [
-        "/host/organizations/$organization/contests/$contest",
-        "/host/organizations/$organization/contests/"
+        "/host/orgs/$org/calls/$call",
+        "/host/orgs/$org/calls/"
       ]
     },
-    "/host/organizations/$organization/members": {
-      "filePath": "host/organizations/$organization/members.tsx",
-      "parent": "/host/organizations/$organization"
+    "/host/orgs/$org/members": {
+      "filePath": "host/orgs/$org/members.tsx",
+      "parent": "/host/orgs/$org"
     },
-    "/host/organizations/$organization/": {
-      "filePath": "host/organizations/$organization/index.tsx",
-      "parent": "/host/organizations/$organization"
+    "/host/orgs/$org/": {
+      "filePath": "host/orgs/$org/index.tsx",
+      "parent": "/host/orgs/$org"
     },
-    "/host/organizations/$organization/contests/$contest": {
-      "filePath": "host/organizations/$organization/contests/$contest.tsx",
-      "parent": "/host/organizations/$organization/contests",
+    "/host/orgs/$org/calls/$call": {
+      "filePath": "host/orgs/$org/calls/$call.tsx",
+      "parent": "/host/orgs/$org/calls",
       "children": [
-        "/host/organizations/$organization/contests/$contest/configure",
-        "/host/organizations/$organization/contests/$contest/dashboard",
-        "/host/organizations/$organization/contests/$contest/entries"
+        "/host/orgs/$org/calls/$call/configure",
+        "/host/orgs/$org/calls/$call/dashboard",
+        "/host/orgs/$org/calls/$call/entries"
       ]
     },
-    "/host/organizations/$organization/contests/": {
-      "filePath": "host/organizations/$organization/contests/index.tsx",
-      "parent": "/host/organizations/$organization/contests"
+    "/host/orgs/$org/calls/": {
+      "filePath": "host/orgs/$org/calls/index.tsx",
+      "parent": "/host/orgs/$org/calls"
     },
-    "/host/organizations/$organization/contests/$contest/configure": {
-      "filePath": "host/organizations/$organization/contests/$contest/configure.tsx",
-      "parent": "/host/organizations/$organization/contests/$contest"
+    "/host/orgs/$org/calls/$call/configure": {
+      "filePath": "host/orgs/$org/calls/$call/configure.tsx",
+      "parent": "/host/orgs/$org/calls/$call"
     },
-    "/host/organizations/$organization/contests/$contest/dashboard": {
-      "filePath": "host/organizations/$organization/contests/$contest/dashboard.tsx",
-      "parent": "/host/organizations/$organization/contests/$contest"
+    "/host/orgs/$org/calls/$call/dashboard": {
+      "filePath": "host/orgs/$org/calls/$call/dashboard.tsx",
+      "parent": "/host/orgs/$org/calls/$call"
     },
-    "/host/organizations/$organization/contests/$contest/entries": {
-      "filePath": "host/organizations/$organization/contests/$contest/entries.tsx",
-      "parent": "/host/organizations/$organization/contests/$contest"
+    "/host/orgs/$org/calls/$call/entries": {
+      "filePath": "host/orgs/$org/calls/$call/entries.tsx",
+      "parent": "/host/orgs/$org/calls/$call"
     }
   }
 }

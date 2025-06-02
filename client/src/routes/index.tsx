@@ -263,7 +263,7 @@ function Index() {
               <blockquote>
                 <p class="text-lg font-medium italic mb-6">
                   "Kontest.app transformed how we manage our annual photography
-                  contest. What used to take weeks now takes days, and our
+                  call. What used to take weeks now takes days, and our
                   judges love the intuitive interface."
                 </p>
                 <footer class="flex items-center gap-4">
@@ -271,7 +271,7 @@ function Index() {
                   <div>
                     <p class="font-semibold">Sarah Johnson</p>
                     <p class="text-sm text-muted-foreground">
-                      Contest Director, PhotoVision Awards
+                      Call Director, PhotoVision Awards
                     </p>
                   </div>
                 </footer>
@@ -290,7 +290,7 @@ function Index() {
           Ready to Transform Your Submission Process?
         </h2>
         <p class="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-          Join thousands of organizations that trust Kontest.app to power their
+          Join thousands of orgs that trust Kontest.app to power their
           submission and judging workflows.
         </p>
         <div class="flex flex-wrap gap-4 justify-center">

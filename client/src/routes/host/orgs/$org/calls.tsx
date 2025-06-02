@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/solid-router";
 
 export const Route = createFileRoute(
-  "/host/organizations/$organization/contests",
+  "/host/orgs/$org/calls"
 )({
   component: RouteComponent,
 });

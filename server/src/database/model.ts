@@ -10,23 +10,23 @@ export const model = {
       user: createInsertSchema(table.user, {
         email: t.String({ format: "email" }),
       }),
-      organization: createInsertSchema(table.organization, {
+      org: createInsertSchema(table.org, {
         name: t.String({ minLength: 2, maxLength: 100 }),
         slug: t.String({ minLength: 2, maxLength: 100 }),
       }),
-      organizationToHost: createInsertSchema(table.organizationToHost),
-      contest: createInsertSchema(table.contest),
+      orgToHost: createInsertSchema(table.orgToHost),
+      call: createInsertSchema(table.call),
     },
     "insert",
   ),
   select: spreads(
     {
-      organizationToHosts: createSelectSchema(table.organizationToHost),
+      orgToHosts: createSelectSchema(table.orgToHost),
       user: createSelectSchema(table.user, {
         email: t.String({ format: "email" }),
       }),
-      organization: createSelectSchema(table.organization),
-      contest: createSelectSchema(table.contest),
+      org: createSelectSchema(table.org),
+      call: createSelectSchema(table.call),
     },
     "select",
   ),

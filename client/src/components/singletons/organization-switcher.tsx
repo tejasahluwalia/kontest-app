@@ -19,21 +19,21 @@ import {
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
-import CreateOrganizationForm from "@client/components/forms/create-organization-form";
+import CreateOrgForm from "@client/components/forms/create-org-form";
 import { useNavigate } from "@tanstack/solid-router";
 
-const routeApi = getRouteApi("/host/organizations");
+const routeApi = getRouteApi("/host/orgs");
 
-export function OrganizationSwitcher() {
-  const { organizations } = routeApi.useLoaderData()();
+export function OrgSwitcher() {
+  const { orgs } = routeApi.useLoaderData()();
 
-  const { organization: selectedOrganizationSlug } = useParams({
+  const { org: selectedOrgSlug } = useParams({
     strict: false,
   })();
 
-  const [selectedOrganization, setSelectedOrganization] = createSignal(
-    organizations.find((org) => org.slug === selectedOrganizationSlug) ??
-      organizations[0],
+  const [selectedOrg, setSelectedOrg] = createSignal(
+    orgs.find((org) => org.slug === selectedOrgSlug) ??
+      orgs[0],
   );
 
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ export function OrganizationSwitcher() {
     <Dialog>
       <SidebarMenu>
         <SidebarMenuItem>
-          <Show when={organizations && organizations.length > 0}>
+          <Show when={orgs && orgs.length > 0}>
             <DropdownMenu placement="bottom-start">
               <DropdownMenuTrigger
                 as={SidebarMenuButton}
@@ -53,48 +53,48 @@ export function OrganizationSwitcher() {
               >
                 <div class="flex flex-col gap-0.5 leading-none">
                   <span class="font-semibold">
-                    {selectedOrganization().name}
+                    {selectedOrg().name}
                   </span>
                 </div>
                 <IconSelector class="ml-auto" />
               </DropdownMenuTrigger>
               <DropdownMenuContent class="w-[--kb-popper-anchor-width]">
-                <For each={organizations}>
-                  {(organization) => (
+                <For each={orgs}>
+                  {(org) => (
                     <DropdownMenuItem
                       class="w-full"
                       onSelect={() => {
-                        setSelectedOrganization(organization);
+                        setSelectedOrg(org);
                       }}
                     >
-                      {organization.name}{" "}
-                      {organization === selectedOrganization() && (
+                      {org.name}{" "}
+                      {org === selectedOrg() && (
                         <IconCheck class="ml-auto" />
                       )}
                     </DropdownMenuItem>
                   )}
                 </For>
-                <DropdownMenuItem as={CreateOrganizationButton} />
+                <DropdownMenuItem as={CreateOrgButton} />
               </DropdownMenuContent>
             </DropdownMenu>
           </Show>
         </SidebarMenuItem>
       </SidebarMenu>
       <DialogContent>
-        <CreateOrganizationForm />
+        <CreateOrgForm />
       </DialogContent>
     </Dialog>
   );
 }
 
-function CreateOrganizationButton() {
+function CreateOrgButton() {
   return (
     <DialogTrigger as={SidebarMenuButton} size="md">
       <div class="flex aspect-square size-6 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
         <IconPlus class="size-3" />
       </div>
       <div class="flex flex-col gap-0.5 leading-none">
-        <span class="font-semibold">Create Organization</span>
+        <span class="font-semibold">Create Org</span>
       </div>
     </DialogTrigger>
   );

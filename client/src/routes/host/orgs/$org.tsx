@@ -4,41 +4,41 @@ import { SidebarProvider } from "~/components/ui/sidebar";
 import { Outlet } from "@tanstack/solid-router";
 import server from "@client/lib/server-api";
 import { ErrorBoundary } from "solid-js";
-import OrganizationContext from "@client/context/organization";
+import OrgContext from "@client/context/org";
 
-export const Route = createFileRoute("/host/organizations/$organization")({
+export const Route = createFileRoute("/host/orgs/$org")({
   component: RouteComponent,
-  beforeLoad: async ({ params, context: { organizations } }) => {
-    const organizationId = organizations.find(
-      (org) => org.slug === params.organization,
+  beforeLoad: async ({ params, context: { orgs } }) => {
+    const orgId = orgs.find(
+      (org) => org.slug === params.org,
     )?.id;
-    if (!organizationId) {
+    if (!orgId) {
       throw notFound();
     }
     const { data, error, status } = await server.api
-      .organizations({ organizationSlug: params.organization })
-      .index.get({ query: { organizationId } });
+      .orgs({ orgSlug: params.org })
+      .get({ query: { orgId } });
     if (error) {
       throw error.value;
     }
     if (status !== 200) {
-      throw new Error(`Failed to fetch organization: ${status}`);
+      throw new Error(`Failed to fetch org: ${status}`);
     }
     return {
-      organization: data,
+      org: data,
     };
   },
-  loader: async ({ context: { organization } }) => {
-    return { organization };
+  loader: async ({ context: { org } }) => {
+    return { org };
   },
 });
 
 
 function RouteComponent() {
-  const { organization } = Route.useLoaderData()();
+  const { org } = Route.useLoaderData()();
 
   return (
-    <OrganizationContext.Provider value={organization}>
+    <OrgContext.Provider value={org}>
       <SidebarProvider>
         <ErrorBoundary fallback={<div>Error in Sidebar</div>}>
           <AppSidebar />
@@ -47,6 +47,6 @@ function RouteComponent() {
           <Outlet />
         </main>
       </SidebarProvider>
-    </OrganizationContext.Provider>
+    </OrgContext.Provider>
   );
 }

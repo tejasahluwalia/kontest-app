@@ -1,5 +1,5 @@
-import ContestContext from "@client/context/contest";
-import OrganizationContext from "@client/context/organization";
+import CallContext from "@client/context/call";
+import OrgContext from "@client/context/org";
 import server from "@client/lib/server-api";
 import { nanoid } from "nanoid";
 import {
@@ -205,11 +205,11 @@ export const FormBuilderProvider: ParentComponent<{
   const canUndo = () => history.past.length > 0;
   const canRedo = () => history.future.length > 0;
 
-  const organization = useContext(OrganizationContext);
-  const contest = useContext(ContestContext);
+  const org = useContext(OrgContext);
+  const call = useContext(CallContext);
 
-  if (!contest || !organization) {
-    throw new Error("Contest or Organization not found");
+  if (!call || !org) {
+    throw new Error("Call or Org not found");
   }
 
   const saveForm = async () => {
@@ -225,20 +225,20 @@ export const FormBuilderProvider: ParentComponent<{
       );
 
       const { data, error, status } = await server.api
-        .organizations({ organizationSlug: organization.slug })
-        .contests({ contestSlug: contest.slug })
+        .orgs({ orgSlug: org.slug })
+        .calls({ callSlug: call.slug })
         .update.post(
           {
-            id: contest.id,
-            name: contest.name,
-            slug: contest.slug,
-            organizationId: contest.organizationId,
+            id: call.id,
+            name: call.name,
+            slug: call.slug,
+            orgId: call.orgId,
             schema: formSchema,
           },
           {
             query: {
-              contestId: contest.id,
-              organizationId: organization.id,
+              callId: call.id,
+              orgId: org.id,
             },
           },
         );

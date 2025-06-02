@@ -2,9 +2,8 @@ import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
 import betterAuthView from "./lib/auth-view";
 import { betterAuth } from "./middlewares/auth-middleware";
-import { checkContestAvailability } from "./services/contest";
-import { organizationController } from "./controllers/organization";
-import { contestController } from "./controllers/contest";
+import { orgController } from "./controllers/org";
+import { callController } from "./controllers/call";
 
 const app = new Elysia()
   .use(
@@ -16,18 +15,8 @@ const app = new Elysia()
     }),
   )
   .use(betterAuth)
-  .use(organizationController)
-  .use(contestController)
-  .get(
-    "/api/contests/checkAvailability/:slug",
-    async ({ params, set }) => {
-      const isAvailable = await checkContestAvailability(params.slug);
-      return {
-        isAvailable,
-      };
-    },
-    { auth: true },
-  )
+  .use(orgController)
+  .use(callController)
   .all("/api/auth/*", betterAuthView)
   .listen(3000);
 

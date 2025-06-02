@@ -6,6 +6,7 @@ import type {
   ValidComponent,
 } from "solid-js";
 import {
+  children,
   createContext,
   createEffect,
   createMemo,
@@ -309,7 +310,9 @@ const SidebarTrigger = <T extends ValidComponent = "button">(
         stroke-linecap="round"
         stroke-linejoin="round"
         class="size-4"
+
       >
+        <title>Toggle Sidebar</title>
         <rect width="18" height="18" x="3" y="3" rx="2" />
         <path d="M9 3v18" />
       </svg>
@@ -328,7 +331,6 @@ const SidebarRail: Component<ComponentProps<"button">> = (props) => {
       aria-label="Toggle Sidebar"
       tabIndex={-1}
       onClick={toggleSidebar}
-      title="Toggle Sidebar"
       class={cn(
         "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex",
         "[[data-side=left]_&]:cursor-w-resize [[data-side=right]_&]:cursor-e-resize",

@@ -9,22 +9,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import CreateContestForm from "~/components/forms/create-contest-form";
+import CreateCallForm from "~/components/forms/create-call-form";
 import { Card, CardContent, CardHeader } from "@client/components/ui/card";
 import Trash2 from "lucide-solid/icons/trash-2";
 
 export const Route = createFileRoute(
-  "/host/organizations/$organization/contests/",
+  "/host/orgs/$org/calls/"
 )({
   component: RouteComponent,
-  loader: async ({ context: { organization } }) => {
-    return { organization };
+  loader: async ({ context: { org } }) => {
+    return { org };
   },
 });
 
 function RouteComponent() {
-  const { organization } = Route.useLoaderData()();
-  const contests = organization.contests;
+  const { org } = Route.useLoaderData()();
+  const calls = org.calls;
 
   const router = useRouter();
 
@@ -34,11 +34,11 @@ function RouteComponent() {
     setDialogOpen(false);
   };
 
-  const deleteContest = ({ slug, id }: { slug: string, id: string }) => {
-    server.api.organizations({ organizationSlug: organization.slug }).contests({ contestSlug: slug }).index.delete({}, {
+  const deleteCall = ({ slug, id }: { slug: string, id: string }) => {
+    server.api.orgs({ orgSlug: org.slug }).calls({ callSlug: slug }).delete({}, {
       query: {
-        organizationId: organization.id,
-        contestId: id,
+        orgId: org.id,
+        callId: id,
       },
     });
     router.invalidate();
@@ -47,52 +47,52 @@ function RouteComponent() {
   return (
     <div class="space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold">Contests</h1>
+        <h1 class="text-3xl font-bold">Calls</h1>
         <Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
           <DialogTrigger>
-            <Button>Create Contest</Button>
+            <Button>Create Call</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create a new contest</DialogTitle>
+              <DialogTitle>Create a new call</DialogTitle>
             </DialogHeader>
-            <CreateContestForm
-              organizationId={organization.id}
-              organizationSlug={organization.slug}
+            <CreateCallForm
+              orgId={org.id}
+              orgSlug={org.slug}
               onSuccess={handleCreateSuccess}
             />
           </DialogContent>
         </Dialog>
       </div>
 
-      <Show when={organization}>
+      <Show when={org}>
         <Show
-          when={contests.length > 0}
+          when={calls.length > 0}
           fallback={
             <div class="text-center py-12">
-              <h3 class="text-lg font-medium">No contests found</h3>
+              <h3 class="text-lg font-medium">No calls found</h3>
               <p class="text-gray-500 dark:text-gray-400 mt-2">
-                {contests.length
+                {calls.length
                   ? "Try a different search term"
-                  : "Create your first contest to get started"}
+                  : "Create your first call to get started"}
               </p>
             </div>
           }
         >
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <For each={contests}>
-              {(contest) => {
-                const numberOfSubmissions = contest.submissions?.length || 0;
-                const numberOfParticipants = contest.contestToParticipant?.length || 0;
-                const { slug, name, id } = contest;
+            <For each={calls}>
+              {(call) => {
+                const numberOfSubmissions = call.submissions?.length || 0;
+                const numberOfParticipants = call.callToParticipant?.length || 0;
+                const { slug, name, id } = call;
                 return (
                   <div>
                     <Link
-                      from="/host/organizations/$organization/contests"
-                      to="/host/organizations/$organization/contests/$contest/dashboard"
+                      from="/host/orgs/$org/calls"
+                      to="/host/orgs/$org/calls/$call/dashboard"
                       params={{
-                        organization: organization.slug,
-                        contest: slug,
+                        org: org.slug,
+                        call: slug,
                       }}
                       class="block"
                     >
@@ -115,7 +115,7 @@ function RouteComponent() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => deleteContest({ slug, id })}
+                      onClick={() => deleteCall({ slug, id })}
                     >
                       <Trash2 class="h-4 w-4" />
                     </Button>

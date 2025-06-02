@@ -13,8 +13,8 @@ import {
 } from "~/components/ui/text-field";
 
 
-async function createOrganization(name: string, slug: string) {
-  const { data, error, status } = await server.api.organizations.create.post({
+async function createOrg(name: string, slug: string) {
+  const { data, error, status } = await server.api.orgs.create.post({
     name,
     slug,
   });
@@ -22,13 +22,13 @@ async function createOrganization(name: string, slug: string) {
     throw error.value;
   }
   if (status !== 201) {
-    throw new Error(`Failed to create organization: ${status}`);
+    throw new Error(`Failed to create org: ${status}`);
   }
   return data;
 }
 
 async function getSlugAvailability(slug: string) {
-  const { data, error, status } = await server.api.organizations.checkAvailability({ slug }).get();
+  const { data, error, status } = await server.api.orgs.checkAvailability({ slug }).get();
   if (error) {
     throw error.value;
   }
@@ -38,7 +38,7 @@ async function getSlugAvailability(slug: string) {
   return data.isAvailable;
 }
 
-export default function CreateOrganizationForm() {
+export default function CreateOrgForm() {
   const [name, setName] = createSignal("");
   const [slug, setSlug] = createSignal("");
   const [slugAvailable, setSlugAvailable] = createSignal<boolean | null>(null);
@@ -104,9 +104,9 @@ export default function CreateOrganizationForm() {
 
     setIsSubmitting(true);
     try {
-      await createOrganization(name(), slug());
+      await createOrg(name(), slug());
     } catch (error) {
-      console.error("Error creating organization:", error);
+      console.error("Error creating org:", error);
       resetForm();
     } finally {
       setIsSubmitting(false);
@@ -127,13 +127,13 @@ export default function CreateOrganizationForm() {
       <form onSubmit={handleSubmit}>
         <div class="grid gap-6">
           <TextField class="gap-2">
-            <TextFieldLabel>Organization Display Name</TextFieldLabel>
+            <TextFieldLabel>Org Display Name</TextFieldLabel>
             <TextFieldInput
               name="name"
               value={name()}
               onInput={handleInputNameChange}
               type="text"
-              placeholder="My Organization"
+              placeholder="My Org"
               required
             />
           </TextField>
@@ -145,7 +145,7 @@ export default function CreateOrganizationForm() {
               value={slug()}
               onInput={handleInputSlugChange}
               type="text"
-              placeholder="my-organization"
+              placeholder="my-org"
               required
             />
             <div class="mt-1 text-sm">
@@ -160,7 +160,7 @@ export default function CreateOrganizationForm() {
             disabled={isSubmitting() || !name() || !slug() || slugAvailable() === false}
           >
             {isSubmitting() && <IconLoader class="mr-2 size-4 animate-spin" />}
-            Create Organization
+            Create Org
           </Button>
         </div>
       </form>

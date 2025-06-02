@@ -42,7 +42,7 @@ export function FormSettings() {
       
       <Card>
         <CardHeader>
-          <CardTitle>Contest Rules</CardTitle>
+          <CardTitle>Call Rules</CardTitle>
         </CardHeader>
         <CardContent>
           <TextField>
@@ -50,7 +50,7 @@ export function FormSettings() {
               value={formSchema.rules || ""}
               onInput={(e) => updateFormSettings({ rules: e.currentTarget.value })}
               rows={6}
-              placeholder="Enter the rules for this contest..."
+              placeholder="Enter the rules for this call..."
             />
           </TextField>
           <p class="text-xs text-muted-foreground mt-1">
@@ -69,11 +69,11 @@ export function FormSettings() {
               value={formSchema.eligibility || ""}
               onInput={(e) => updateFormSettings({ eligibility: e.currentTarget.value })}
               rows={6}
-              placeholder="Enter the eligibility criteria for this contest..."
+              placeholder="Enter the eligibility criteria for this call..."
             />
           </TextField>
           <p class="text-xs text-muted-foreground mt-1">
-            Specify who is eligible to participate in this contest
+            Specify who is eligible to participate in this call
           </p>
         </CardContent>
       </Card>
