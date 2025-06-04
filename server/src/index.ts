@@ -1,9 +1,9 @@
 import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
 import betterAuthView from "./lib/auth-view";
-import { betterAuth } from "./middlewares/auth-middleware";
-import { orgController } from "./controllers/org";
-import { callController } from "./controllers/call";
+import { orgPlugin } from "./plugins/org";
+import { callPlugin } from "./plugins/call";
+import { setup } from "./plugins/setup";
 
 const app = new Elysia()
   .use(
@@ -14,10 +14,13 @@ const app = new Elysia()
       allowedHeaders: ["Content-Type", "Authorization"],
     }),
   )
-  .use(betterAuth)
-  .use(orgController)
-  .use(callController)
-  .all("/api/auth/*", betterAuthView)
+  .use(setup)
+  .group("/api", (api) => {
+    return api
+      .use(orgPlugin)
+      .use(callPlugin)
+      .all("/auth/*", betterAuthView);
+  })
   .listen(3000);
 
 console.log(

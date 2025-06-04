@@ -16,10 +16,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@tanstack/router-plugin": "^1.120.12",
-    "@tanstack/solid-router-devtools": "^1.120.12",
+    "@tanstack/router-plugin": "^1.120.13",
+    "@tanstack/solid-router-devtools": "^1.120.13",
     "@types/bun": "latest",
-    "@types/pg": "^8.15.2",
+    "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4",
     "vite": "^6.3.5",
@@ -38,14 +38,14 @@
     "@paralleldrive/cuid2": "^2.2.2",
     "@tailwindcss/vite": "^4.1.8",
     "@tanstack/solid-form": "^1.12.0",
-    "@tanstack/solid-router": "^1.120.10",
+    "@tanstack/solid-router": "^1.120.13",
     "better-auth": "^1.2.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
-    "drizzle-orm": "^0.44.0",
+    "drizzle-orm": "^0.44.1",
     "drizzle-typebox": "^0.3.3",
-    "effect": "^3.16.2",
+    "effect": "^3.16.3",
     "elysia": "^1.3.3",
     "lucide-solid": "^0.511.0",
     "nanoid": "^5.1.5",
@@ -54,8 +54,8 @@
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.8",
     "tailwindcss-animate": "^1.0.7",
-    "tw-animate-css": "^1.3.2",
-    "zod": "^3.25.42"
+    "tw-animate-css": "^1.3.3",
+    "zod": "^3.25.48"
   },
   "override": {
     "@sinclair/typebox": "0.34.27"
