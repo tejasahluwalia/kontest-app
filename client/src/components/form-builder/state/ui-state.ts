@@ -1,28 +1,28 @@
 // Preview state for the form builder
 export interface PreviewState {
-  active: boolean;
-  formData: Record<string, any>;
-  currentStepId?: string;
-  validationErrors: Record<string, string>;
-  submitting: boolean;
+	active: boolean;
+	formData: Record<string, any>;
+	currentStepId?: string;
+	validationErrors: Record<string, string>;
+	submitting: boolean;
 }
 
 // Interface for form builder UI state
 export interface FormBuilderUIState {
-  selectedNodeId: string | null;
-  expandedNodes: string[];
-  activeTab: 'builder' | 'settings' | 'preview';
-  isSaving: boolean;
-  lastSaved: string | null;
-  preview: PreviewState;
-  showTemplateLibrary: boolean;
-  isTemplateDrawerOpen: boolean;
-  viewMode: 'edit' | 'preview' | 'code';
-  zoomLevel: number;
-  panOffset: { x: number; y: number };
-  snapToGrid: boolean;
-  gridSize: number;
-  showConnections: boolean;
+	selectedNodeId: string | null;
+	expandedNodes: string[];
+	activeTab: "builder" | "settings" | "preview";
+	isSaving: boolean;
+	lastSaved: string | null;
+	preview: PreviewState;
+	showTemplateLibrary: boolean;
+	isTemplateDrawerOpen: boolean;
+	viewMode: "edit" | "preview" | "code";
+	zoomLevel: number;
+	panOffset: { x: number; y: number };
+	snapToGrid: boolean;
+	gridSize: number;
+	showConnections: boolean;
 }
 
 /**
@@ -30,27 +30,27 @@ export interface FormBuilderUIState {
  * @returns Default UI state for the form builder
  */
 export const createInitialUIState = (): FormBuilderUIState => {
-  return {
-    selectedNodeId: null,
-    isTemplateDrawerOpen: false,
-    viewMode: 'edit',
-    zoomLevel: 1,
-    panOffset: { x: 0, y: 0 },
-    snapToGrid: true,
-    gridSize: 10,
-    showConnections: true,
-    expandedNodes: [],
-    showTemplateLibrary: false,
-    isSaving: false,
-    lastSaved: null,
-    preview: {
-      active: false,
-      formData: {},
-      validationErrors: {},
-      submitting: false,
-    },
-    activeTab: 'builder',
-  };
+	return {
+		selectedNodeId: null,
+		isTemplateDrawerOpen: false,
+		viewMode: "edit",
+		zoomLevel: 1,
+		panOffset: { x: 0, y: 0 },
+		snapToGrid: true,
+		gridSize: 10,
+		showConnections: true,
+		expandedNodes: [],
+		showTemplateLibrary: false,
+		isSaving: false,
+		lastSaved: null,
+		preview: {
+			active: false,
+			formData: {},
+			validationErrors: {},
+			submitting: false,
+		},
+		activeTab: "builder",
+	};
 };
 
 /**
@@ -60,13 +60,13 @@ export const createInitialUIState = (): FormBuilderUIState => {
  * @returns Updated UI state
  */
 export const updateSelectedNode = (
-  state: FormBuilderUIState, 
-  nodeId: string | null
+	state: FormBuilderUIState,
+	nodeId: string | null,
 ): FormBuilderUIState => {
-  return {
-    ...state,
-    selectedNodeId: nodeId,
-  };
+	return {
+		...state,
+		selectedNodeId: nodeId,
+	};
 };
 
 /**
@@ -76,13 +76,14 @@ export const updateSelectedNode = (
  * @returns Updated UI state
  */
 export const toggleTemplateDrawer = (
-  state: FormBuilderUIState, 
-  isOpen?: boolean
+	state: FormBuilderUIState,
+	isOpen?: boolean,
 ): FormBuilderUIState => {
-  return {
-    ...state,
-    isTemplateDrawerOpen: isOpen !== undefined ? isOpen : !state.isTemplateDrawerOpen,
-  };
+	return {
+		...state,
+		isTemplateDrawerOpen:
+			isOpen !== undefined ? isOpen : !state.isTemplateDrawerOpen,
+	};
 };
 
 /**
@@ -92,13 +93,13 @@ export const toggleTemplateDrawer = (
  * @returns Updated UI state
  */
 export const updateViewMode = (
-  state: FormBuilderUIState, 
-  viewMode: 'edit' | 'preview' | 'code'
+	state: FormBuilderUIState,
+	viewMode: "edit" | "preview" | "code",
 ): FormBuilderUIState => {
-  return {
-    ...state,
-    viewMode,
-  };
+	return {
+		...state,
+		viewMode,
+	};
 };
 
 /**
@@ -108,13 +109,13 @@ export const updateViewMode = (
  * @returns Updated UI state
  */
 export const updateZoomLevel = (
-  state: FormBuilderUIState, 
-  zoomLevel: number
+	state: FormBuilderUIState,
+	zoomLevel: number,
 ): FormBuilderUIState => {
-  return {
-    ...state,
-    zoomLevel: Math.max(0.1, Math.min(2, zoomLevel)),
-  };
+	return {
+		...state,
+		zoomLevel: Math.max(0.1, Math.min(2, zoomLevel)),
+	};
 };
 
 /**
@@ -124,13 +125,13 @@ export const updateZoomLevel = (
  * @returns Updated UI state
  */
 export const updatePanOffset = (
-  state: FormBuilderUIState, 
-  panOffset: { x: number; y: number }
+	state: FormBuilderUIState,
+	panOffset: { x: number; y: number },
 ): FormBuilderUIState => {
-  return {
-    ...state,
-    panOffset,
-  };
+	return {
+		...state,
+		panOffset,
+	};
 };
 
 /**
@@ -140,13 +141,13 @@ export const updatePanOffset = (
  * @returns Updated UI state
  */
 export const toggleSnapToGrid = (
-  state: FormBuilderUIState, 
-  snapToGrid?: boolean
+	state: FormBuilderUIState,
+	snapToGrid?: boolean,
 ): FormBuilderUIState => {
-  return {
-    ...state,
-    snapToGrid: snapToGrid !== undefined ? snapToGrid : !state.snapToGrid,
-  };
+	return {
+		...state,
+		snapToGrid: snapToGrid !== undefined ? snapToGrid : !state.snapToGrid,
+	};
 };
 
 /**
@@ -156,13 +157,13 @@ export const toggleSnapToGrid = (
  * @returns Updated UI state
  */
 export const updateGridSize = (
-  state: FormBuilderUIState, 
-  gridSize: number
+	state: FormBuilderUIState,
+	gridSize: number,
 ): FormBuilderUIState => {
-  return {
-    ...state,
-    gridSize: Math.max(5, Math.min(50, gridSize)),
-  };
+	return {
+		...state,
+		gridSize: Math.max(5, Math.min(50, gridSize)),
+	};
 };
 
 /**
@@ -172,11 +173,12 @@ export const updateGridSize = (
  * @returns Updated UI state
  */
 export const toggleShowConnections = (
-  state: FormBuilderUIState, 
-  showConnections?: boolean
+	state: FormBuilderUIState,
+	showConnections?: boolean,
 ): FormBuilderUIState => {
-  return {
-    ...state,
-    showConnections: showConnections !== undefined ? showConnections : !state.showConnections,
-  };
+	return {
+		...state,
+		showConnections:
+			showConnections !== undefined ? showConnections : !state.showConnections,
+	};
 };

@@ -7,15 +7,15 @@ type Child = InputField | Display;
 type Children = Child[];
 
 const createChild = (): Child => ({
-  childType: "field",
-  id: nanoid(),
-  fieldType: "text",
-  label: "New Field",
-  name: "new_field",
-  required: false,
-  placeholder: "Enter value",
-  description: "",
-  defaultValue: "",
+	childType: "field",
+	id: nanoid(),
+	fieldType: "text",
+	label: "New Field",
+	name: "new_field",
+	required: false,
+	placeholder: "Enter value",
+	description: "",
+	defaultValue: "",
 });
 
 // Create an empty list

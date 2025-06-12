@@ -110,12 +110,12 @@ export const orgToHostRelations = relations(orgToHost, ({ one }) => ({
 	}),
 }));
 
-const callVisibilityEnum = pgEnum("visibility", [
+export const callVisibilityEnum = pgEnum("call_visibility", [
 	"public",
 	"private",
 	"restricted",
 ]);
-const callStatusEnum = pgEnum("status", ["open", "closed"]);
+export const callStatusEnum = pgEnum("call_status", ["open", "closed"]);
 
 export const call = pgTable("call", {
 	id: text("id")
@@ -127,7 +127,9 @@ export const call = pgTable("call", {
 		.notNull()
 		.references(() => org.id, { onDelete: "cascade" }),
 	schema: jsonb("schema"),
-	visibility: callVisibilityEnum().notNull().default("private"),
+	visibility: callVisibilityEnum("call_visibility")
+		.notNull()
+		.default("private"),
 	status: callStatusEnum().notNull().default("closed"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -144,6 +146,10 @@ export const callRelations = relations(call, ({ many, one }) => ({
 	submissions: many(submission),
 }));
 
+export const callToHostVisibilityEnum = pgEnum("call_to_host_visibility", [
+	"admin",
+]);
+
 export const callToHost = pgTable(
 	"call_to_host",
 	{
@@ -153,7 +159,9 @@ export const callToHost = pgTable(
 		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		visibility: text("visibility").notNull(),
+		visibility: callToHostVisibilityEnum("call_to_host_visibility")
+			.notNull()
+			.default("admin"),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},
@@ -200,7 +208,10 @@ export const callToParticipantRelations = relations(
 	}),
 );
 
-const jurorToCallStatusEnum = pgEnum("juror_status", ["pending", "completed"]);
+export const jurorToCallStatusEnum = pgEnum("juror_status", [
+	"pending",
+	"completed",
+]);
 
 export const jurorToCall = pgTable(
 	"juror_to_call",
@@ -214,7 +225,7 @@ export const jurorToCall = pgTable(
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 		data: jsonb("data"),
-		status: jurorToCallStatusEnum().notNull().default("pending"),
+		status: jurorToCallStatusEnum("juror_status").notNull().default("pending"),
 	},
 	(t) => [primaryKey({ columns: [t.callId, t.userId] })],
 );

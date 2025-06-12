@@ -1,4 +1,4 @@
-A submissions acceptance, management and judging platform for things like photography calls, grants, etc. The platform gives users everything they need to manage their calls and submissions no matter how complex or simple they are.
+A submissions acceptance, management and judging platform for things like open calls, grants, invites for applications, etc. 
 
 # Tech stack
 - SolidJS w/ Tanstack Router Frontend (/client)

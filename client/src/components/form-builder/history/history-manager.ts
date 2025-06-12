@@ -1,4 +1,4 @@
-import type { FormBuilderHistory, FormSchema } from '../primitives/form';
+import type { FormBuilderHistory, FormSchema } from "../primitives/form";
 
 /**
  * Creates a new history entry
@@ -6,7 +6,7 @@ import type { FormBuilderHistory, FormSchema } from '../primitives/form';
  * @returns A new history entry object
  */
 export const createHistoryEntry = (schema: FormSchema): FormSchema => {
-  return JSON.parse(JSON.stringify(schema)); // Deep clone the schema
+	return JSON.parse(JSON.stringify(schema)); // Deep clone the schema
 };
 
 /**
@@ -14,13 +14,15 @@ export const createHistoryEntry = (schema: FormSchema): FormSchema => {
  * @param initialSchema The initial form schema
  * @returns An initialized history state
  */
-export const createInitialHistory = (initialSchema: FormSchema): FormBuilderHistory => {
-  const initialEntry = createHistoryEntry(initialSchema);
-  
-  return {
-    past: [initialEntry],
-    future: [],
-  };
+export const createInitialHistory = (
+	initialSchema: FormSchema,
+): FormBuilderHistory => {
+	const initialEntry = createHistoryEntry(initialSchema);
+
+	return {
+		past: [initialEntry],
+		future: [],
+	};
 };
 
 /**
@@ -30,13 +32,13 @@ export const createInitialHistory = (initialSchema: FormSchema): FormBuilderHist
  * @returns Updated history state with the new entry
  */
 export const addHistoryEntry = (
-  history: FormBuilderHistory, 
-  schema: FormSchema
+	history: FormBuilderHistory,
+	schema: FormSchema,
 ): FormBuilderHistory => {
-  const newEntry = createHistoryEntry(schema);
-  
-  return {
-    past: [...history.past, newEntry],
-    future: [],
-  };
+	const newEntry = createHistoryEntry(schema);
+
+	return {
+		past: [...history.past, newEntry],
+		future: [],
+	};
 };

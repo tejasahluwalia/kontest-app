@@ -1,13 +1,4 @@
-import { createEffect, For, Show, Switch, type ComponentProps } from "solid-js";
-
-import {
-	IconCalendar,
-	IconHome,
-	IconMail,
-	IconSearch,
-	IconSettings,
-} from "~/components/icons";
-import type { Icon } from "~/components/icons";
+import { Show, Switch, type ComponentProps } from "solid-js";
 import {
 	Sidebar,
 	SidebarContent,
@@ -19,13 +10,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "~/components/ui/sidebar";
-import {
-	getRouteApi,
-	MatchRoute,
-	useParams,
-	type LinkComponent,
-} from "@tanstack/solid-router";
-import { SidebarTrigger } from "~/components/ui/sidebar";
+import { MatchRoute, useParams } from "@tanstack/solid-router";
 import { OrgSwitcher } from "../singletons/org-switcher";
 import { Link } from "@tanstack/solid-router";
 import { Match } from "solid-js";
@@ -41,13 +26,7 @@ export function AppSidebar({
 
 	return (
 		<Sidebar variant={variant}>
-			<SidebarHeader>
-				<Switch>
-					<Match when={org() && !call()}>
-						<OrgSwitcher />
-					</Match>
-				</Switch>
-			</SidebarHeader>
+			<SidebarHeader></SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarGroupLabel>
@@ -80,10 +59,7 @@ function OrgMenu({ org }: { org?: string }) {
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
-				<MatchRoute
-					to="/host/orgs/$org/calls"
-					params={{ org }}
-				>
+				<MatchRoute to="/host/orgs/$org/calls" params={{ org }}>
 					{(match) => (
 						<>
 							<SidebarMenuButton
@@ -92,7 +68,7 @@ function OrgMenu({ org }: { org?: string }) {
 										class="w-full"
 										to="/host/orgs/$org/calls"
 										params={{ org }}
-                    {...props}
+										{...props}
 									>
 										Calls
 									</Link>
@@ -104,10 +80,7 @@ function OrgMenu({ org }: { org?: string }) {
 				</MatchRoute>
 			</SidebarMenuItem>
 			<SidebarMenuItem>
-				<MatchRoute
-					to="/host/orgs/$org/members"
-					params={{ org }}
-				>
+				<MatchRoute to="/host/orgs/$org/members" params={{ org }}>
 					{(match) => (
 						<>
 							<SidebarMenuButton
@@ -116,7 +89,7 @@ function OrgMenu({ org }: { org?: string }) {
 										class="w-full"
 										to="/host/orgs/$org/members"
 										params={{ org }}
-                    {...props}
+										{...props}
 									>
 										Members
 									</Link>
@@ -131,10 +104,7 @@ function OrgMenu({ org }: { org?: string }) {
 	);
 }
 
-function CallMenu({
-	org,
-	call,
-}: { org?: string; call?: string }) {
+function CallMenu({ org, call }: { org?: string; call?: string }) {
 	if (!org || !call) return null;
 	return (
 		<SidebarMenu>

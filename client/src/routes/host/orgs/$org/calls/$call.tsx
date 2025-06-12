@@ -1,35 +1,35 @@
-import CallContext from '@client/context/call';
-import server from '@client/lib/server-api';
-import { createFileRoute, notFound, Outlet } from '@tanstack/solid-router'
+import CallContext from "@client/context/call";
+import server from "@client/lib/server-api";
+import { createFileRoute, notFound, Outlet } from "@tanstack/solid-router";
 
-export const Route = createFileRoute(
-  '/host/orgs/$org/calls/$call',
-)({
-  component: RouteComponent,
-  beforeLoad: async ({ params, context: { org } }) => {
-    const { calls } = org;
-    const callId = calls.find(
-      (call) => call.slug === params.call,
-    )?.id;
-    if (!callId) throw notFound({ data: { message: "Call not found" } });
-    const { data, error, status } = await server.api
-      .orgs({ orgSlug: params.org })
-      .calls({ callSlug: params.call })
-      .get({query: { orgId: org.id, callId }});
-    if (error) {
-      throw error.value;
-    }
-    if (status !== 200) {
-      throw new Error(`Failed to fetch call: ${status}`);
-    }
-    return { call: data };
-  },
-  loader(ctx) {
-    return { call: ctx.context.call };
-  },
-})
+export const Route = createFileRoute("/host/orgs/$org/calls/$call")({
+	component: RouteComponent,
+	beforeLoad: async ({ params, context: { org } }) => {
+		const { calls } = org;
+		const callId = calls.find((call) => call.slug === params.call)?.id;
+		if (!callId) throw notFound({ data: { message: "Call not found" } });
+		const { data, error, status } = await server.api.host
+			.orgs({ orgId: org.id })
+			.calls({ callId: callId })
+			.get();
+		if (error) {
+			throw error.value;
+		}
+		if (status !== 200) {
+			throw new Error(`Failed to fetch call: ${status}`);
+		}
+		return { call: data };
+	},
+	loader(ctx) {
+		return { call: ctx.context.call };
+	},
+});
 
 function RouteComponent() {
-  const { call } = Route.useLoaderData()();
-  return <CallContext.Provider value={call}><Outlet /></CallContext.Provider>
+	const { call } = Route.useLoaderData()();
+	return (
+		<CallContext.Provider value={call}>
+			<Outlet />
+		</CallContext.Provider>
+	);
 }

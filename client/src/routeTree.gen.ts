@@ -12,11 +12,12 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
-import { Route as HostImport } from './routes/host'
 import { Route as AboutImport } from './routes/about'
+import { Route as HostRouteImport } from './routes/host/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as HostIndexImport } from './routes/host/index'
 import { Route as HostProfileImport } from './routes/host/profile'
-import { Route as HostOrgsImport } from './routes/host/orgs'
+import { Route as HostOrgsRouteImport } from './routes/host/orgs/route'
 import { Route as HostOrgsIndexImport } from './routes/host/orgs/index'
 import { Route as HostOrgsOrgImport } from './routes/host/orgs/$org'
 import { Route as HostOrgsOrgIndexImport } from './routes/host/orgs/$org/index'
@@ -36,15 +37,15 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const HostRoute = HostImport.update({
-  id: '/host',
-  path: '/host',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AboutRoute = AboutImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const HostRouteRoute = HostRouteImport.update({
+  id: '/host',
+  path: '/host',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -54,28 +55,34 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const HostIndexRoute = HostIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HostRouteRoute,
+} as any)
+
 const HostProfileRoute = HostProfileImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => HostRoute,
+  getParentRoute: () => HostRouteRoute,
 } as any)
 
-const HostOrgsRoute = HostOrgsImport.update({
+const HostOrgsRouteRoute = HostOrgsRouteImport.update({
   id: '/orgs',
   path: '/orgs',
-  getParentRoute: () => HostRoute,
+  getParentRoute: () => HostRouteRoute,
 } as any)
 
 const HostOrgsIndexRoute = HostOrgsIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => HostOrgsRoute,
+  getParentRoute: () => HostOrgsRouteRoute,
 } as any)
 
 const HostOrgsOrgRoute = HostOrgsOrgImport.update({
   id: '/$org',
   path: '/$org',
-  getParentRoute: () => HostOrgsRoute,
+  getParentRoute: () => HostOrgsRouteRoute,
 } as any)
 
 const HostOrgsOrgIndexRoute = HostOrgsOrgIndexImport.update({
@@ -140,18 +147,18 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/host': {
+      id: '/host'
+      path: '/host'
+      fullPath: '/host'
+      preLoaderRoute: typeof HostRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutImport
-      parentRoute: typeof rootRoute
-    }
-    '/host': {
-      id: '/host'
-      path: '/host'
-      fullPath: '/host'
-      preLoaderRoute: typeof HostImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -165,29 +172,36 @@ declare module '@tanstack/solid-router' {
       id: '/host/orgs'
       path: '/orgs'
       fullPath: '/host/orgs'
-      preLoaderRoute: typeof HostOrgsImport
-      parentRoute: typeof HostImport
+      preLoaderRoute: typeof HostOrgsRouteImport
+      parentRoute: typeof HostRouteImport
     }
     '/host/profile': {
       id: '/host/profile'
       path: '/profile'
       fullPath: '/host/profile'
       preLoaderRoute: typeof HostProfileImport
-      parentRoute: typeof HostImport
+      parentRoute: typeof HostRouteImport
+    }
+    '/host/': {
+      id: '/host/'
+      path: '/'
+      fullPath: '/host/'
+      preLoaderRoute: typeof HostIndexImport
+      parentRoute: typeof HostRouteImport
     }
     '/host/orgs/$org': {
       id: '/host/orgs/$org'
       path: '/$org'
       fullPath: '/host/orgs/$org'
       preLoaderRoute: typeof HostOrgsOrgImport
-      parentRoute: typeof HostOrgsImport
+      parentRoute: typeof HostOrgsRouteImport
     }
     '/host/orgs/': {
       id: '/host/orgs/'
       path: '/'
       fullPath: '/host/orgs/'
       preLoaderRoute: typeof HostOrgsIndexImport
-      parentRoute: typeof HostOrgsImport
+      parentRoute: typeof HostOrgsRouteImport
     }
     '/host/orgs/$org/calls': {
       id: '/host/orgs/$org/calls'
@@ -294,39 +308,44 @@ const HostOrgsOrgRouteWithChildren = HostOrgsOrgRoute._addFileChildren(
   HostOrgsOrgRouteChildren,
 )
 
-interface HostOrgsRouteChildren {
+interface HostOrgsRouteRouteChildren {
   HostOrgsOrgRoute: typeof HostOrgsOrgRouteWithChildren
   HostOrgsIndexRoute: typeof HostOrgsIndexRoute
 }
 
-const HostOrgsRouteChildren: HostOrgsRouteChildren = {
+const HostOrgsRouteRouteChildren: HostOrgsRouteRouteChildren = {
   HostOrgsOrgRoute: HostOrgsOrgRouteWithChildren,
   HostOrgsIndexRoute: HostOrgsIndexRoute,
 }
 
-const HostOrgsRouteWithChildren = HostOrgsRoute._addFileChildren(
-  HostOrgsRouteChildren,
+const HostOrgsRouteRouteWithChildren = HostOrgsRouteRoute._addFileChildren(
+  HostOrgsRouteRouteChildren,
 )
 
-interface HostRouteChildren {
-  HostOrgsRoute: typeof HostOrgsRouteWithChildren
+interface HostRouteRouteChildren {
+  HostOrgsRouteRoute: typeof HostOrgsRouteRouteWithChildren
   HostProfileRoute: typeof HostProfileRoute
+  HostIndexRoute: typeof HostIndexRoute
 }
 
-const HostRouteChildren: HostRouteChildren = {
-  HostOrgsRoute: HostOrgsRouteWithChildren,
+const HostRouteRouteChildren: HostRouteRouteChildren = {
+  HostOrgsRouteRoute: HostOrgsRouteRouteWithChildren,
   HostProfileRoute: HostProfileRoute,
+  HostIndexRoute: HostIndexRoute,
 }
 
-const HostRouteWithChildren = HostRoute._addFileChildren(HostRouteChildren)
+const HostRouteRouteWithChildren = HostRouteRoute._addFileChildren(
+  HostRouteRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/host': typeof HostRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/orgs': typeof HostOrgsRouteWithChildren
+  '/host/orgs': typeof HostOrgsRouteRouteWithChildren
   '/host/profile': typeof HostProfileRoute
+  '/host/': typeof HostIndexRoute
   '/host/orgs/$org': typeof HostOrgsOrgRouteWithChildren
   '/host/orgs/': typeof HostOrgsIndexRoute
   '/host/orgs/$org/calls': typeof HostOrgsOrgCallsRouteWithChildren
@@ -342,9 +361,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
   '/host/profile': typeof HostProfileRoute
+  '/host': typeof HostIndexRoute
   '/host/orgs': typeof HostOrgsIndexRoute
   '/host/orgs/$org/members': typeof HostOrgsOrgMembersRoute
   '/host/orgs/$org': typeof HostOrgsOrgIndexRoute
@@ -358,11 +377,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/host': typeof HostRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/host': typeof HostRouteWithChildren
   '/login': typeof LoginRoute
-  '/host/orgs': typeof HostOrgsRouteWithChildren
+  '/host/orgs': typeof HostOrgsRouteRouteWithChildren
   '/host/profile': typeof HostProfileRoute
+  '/host/': typeof HostIndexRoute
   '/host/orgs/$org': typeof HostOrgsOrgRouteWithChildren
   '/host/orgs/': typeof HostOrgsIndexRoute
   '/host/orgs/$org/calls': typeof HostOrgsOrgCallsRouteWithChildren
@@ -379,11 +399,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/host'
+    | '/about'
     | '/login'
     | '/host/orgs'
     | '/host/profile'
+    | '/host/'
     | '/host/orgs/$org'
     | '/host/orgs/'
     | '/host/orgs/$org/calls'
@@ -398,9 +419,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/host'
     | '/login'
     | '/host/profile'
+    | '/host'
     | '/host/orgs'
     | '/host/orgs/$org/members'
     | '/host/orgs/$org'
@@ -412,11 +433,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/host'
+    | '/about'
     | '/login'
     | '/host/orgs'
     | '/host/profile'
+    | '/host/'
     | '/host/orgs/$org'
     | '/host/orgs/'
     | '/host/orgs/$org/calls'
@@ -432,15 +454,15 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HostRouteRoute: typeof HostRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  HostRoute: typeof HostRouteWithChildren
   LoginRoute: typeof LoginRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HostRouteRoute: HostRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  HostRoute: HostRouteWithChildren,
   LoginRoute: LoginRoute,
 }
 
@@ -455,29 +477,30 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about",
         "/host",
+        "/about",
         "/login"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/about": {
-      "filePath": "about.tsx"
-    },
     "/host": {
-      "filePath": "host.tsx",
+      "filePath": "host/route.tsx",
       "children": [
         "/host/orgs",
-        "/host/profile"
+        "/host/profile",
+        "/host/"
       ]
+    },
+    "/about": {
+      "filePath": "about.tsx"
     },
     "/login": {
       "filePath": "login.tsx"
     },
     "/host/orgs": {
-      "filePath": "host/orgs.tsx",
+      "filePath": "host/orgs/route.tsx",
       "parent": "/host",
       "children": [
         "/host/orgs/$org",
@@ -486,6 +509,10 @@ export const routeTree = rootRoute
     },
     "/host/profile": {
       "filePath": "host/profile.tsx",
+      "parent": "/host"
+    },
+    "/host/": {
+      "filePath": "host/index.tsx",
       "parent": "/host"
     },
     "/host/orgs/$org": {

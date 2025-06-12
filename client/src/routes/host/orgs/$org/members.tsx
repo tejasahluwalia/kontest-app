@@ -1,9 +1,35 @@
-import { createFileRoute } from '@tanstack/solid-router'
+import server from "@client/lib/server-api";
+import { createFileRoute } from "@tanstack/solid-router";
+import { For } from "solid-js";
 
-export const Route = createFileRoute('/host/orgs/$org/members')({
-  component: RouteComponent,
-})
+export const Route = createFileRoute("/host/orgs/$org/members")({
+	component: RouteComponent,
+	loader: async ({ context: { org } }) => {
+		const orgId = org.id;
+		const { data, error, status } = await server.api.host
+			.orgs({ orgId })
+			.members.get();
+		if (error) {
+			throw error.value;
+		}
+		if (status !== 200) {
+			throw new Error(`Failed to fetch call: ${status}`);
+		}
+		return { members: data };
+	},
+});
 
 function RouteComponent() {
-  return <div>Hello "/host/$org/member"!</div>
+	const data = Route.useLoaderData()();
+	return (
+		<div>
+			<For each={data.members}>
+				{(member) => (
+					<div>
+						{member.user.email}, {member.role}
+					</div>
+				)}
+			</For>
+		</div>
+	);
 }

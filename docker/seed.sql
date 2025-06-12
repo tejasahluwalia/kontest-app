@@ -1,1 +1,1 @@
-CREATE DATABASE kontest;
+CREATE DATABASE postgres;
