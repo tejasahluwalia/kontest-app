@@ -1,9 +1,9 @@
 import server from "@client/lib/server-api";
-import { createFileRoute, notFound } from "@tanstack/solid-router";
+import { notFound } from "@tanstack/solid-router";
 import { FormBuilder } from "~/components/form-builder";
 import type { FormSchema } from "~/components/form-builder/primitives/form";
 
-export const Route = createFileRoute("/host/orgs/$org/calls/$call/configure")({
+export const Route = createFileRoute({
 	component: RouteComponent,
 	loader: async ({ context: { org, call } }) => {
 		if (!call.schema) {

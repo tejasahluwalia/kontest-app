@@ -1,6 +1,11 @@
 import server from "@client/lib/server-api";
-import { useNavigate, useRouter } from "@tanstack/solid-router";
-import { Show, createSignal } from "solid-js";
+import {
+	createFileRoute,
+	Navigate,
+	redirect,
+	useRouter,
+} from "@tanstack/solid-router";
+import { Show, For, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
 import { createEffect } from "solid-js";
 import { IconLoader } from "~/components/icons";
@@ -11,42 +16,24 @@ import {
 	TextFieldInput,
 	TextFieldLabel,
 } from "~/components/ui/text-field";
-import { createDefaultFormSchema } from "../form-builder/primitives/form";
 
-interface CreateCallFormProps {
-	orgId: string;
-	onSuccess: () => void;
-}
-
-async function createCall(name: string, slug: string, orgId: string) {
-	const { data, error, status } = await server.api.host
-		.orgs({ orgId })
-		.calls.post(
-			{
-				name,
-				slug,
-				orgId,
-				schema: createDefaultFormSchema(),
-			},
-			{
-				query: {
-					orgId,
-				},
-			},
-		);
+async function createOrg(name: string, slug: string) {
+	const { data, error, status } = await server.api.host.orgs.post({
+		name,
+		slug,
+	});
 	if (error) {
 		throw error.value;
 	}
 	if (status !== 201) {
-		throw new Error(`Failed to create call: ${status}`);
+		throw new Error(`Failed to create org: ${status}`);
 	}
 	return data;
 }
 
-async function getSlugAvailability(slug: string, orgId: string) {
-	const { data, error, status } = await server.api.host
-		.orgs({ orgId })
-		.calls.checkAvailability({ slug })
+async function getSlugAvailability(slug: string) {
+	const { data, error, status } = await server.api.host.orgs
+		.checkAvailability({ slug })
 		.get();
 	if (error) {
 		throw error.value;
@@ -57,7 +44,7 @@ async function getSlugAvailability(slug: string, orgId: string) {
 	return data.isAvailable;
 }
 
-export default function CreateCallForm(props: CreateCallFormProps) {
+export default function NewOrgForm() {
 	const [name, setName] = createSignal("");
 	const [slug, setSlug] = createSignal("");
 	const [slugAvailable, setSlugAvailable] = createSignal<boolean | null>(null);
@@ -65,10 +52,10 @@ export default function CreateCallForm(props: CreateCallFormProps) {
 	const [slugManuallyEdited, setSlugManuallyEdited] = createSignal(false);
 	const [isSubmitting, setIsSubmitting] = createSignal(false);
 	const router = useRouter();
-	const navigate = useNavigate();
 
 	// Create a debounced version of the slug availability check
-	const debouncedCheckSlugAvailability = debounce((slug: string) => {
+	const debouncedCheckSlugAvailability = debounce((...args: unknown[]) => {
+		const slug = args[0] as string;
 		checkSlugAvailability(slug);
 	}, 500); // 500ms debounce time
 
@@ -108,7 +95,7 @@ export default function CreateCallForm(props: CreateCallFormProps) {
 			return;
 		}
 		setCheckingSlug(true);
-		const isAvailable = await getSlugAvailability(slug, props.orgId);
+		const isAvailable = await getSlugAvailability(slug);
 		setSlugAvailable(isAvailable);
 		setCheckingSlug(false);
 	};
@@ -131,14 +118,14 @@ export default function CreateCallForm(props: CreateCallFormProps) {
 
 		setIsSubmitting(true);
 		try {
-			await createCall(name(), slug(), props.orgId);
-			props.onSuccess();
-			await router.invalidate();
+			await createOrg(name(), slug());
 		} catch (error) {
-			console.error("Error creating call:", error);
+			console.error("Error creating org:", error);
 			resetForm();
 		} finally {
 			setIsSubmitting(false);
+			router.invalidate();
+			resetForm();
 		}
 	};
 
@@ -154,13 +141,13 @@ export default function CreateCallForm(props: CreateCallFormProps) {
 			<form onSubmit={handleSubmit}>
 				<div class="grid gap-6">
 					<TextField class="gap-2">
-						<TextFieldLabel>Call Name</TextFieldLabel>
+						<TextFieldLabel>Org Display Name</TextFieldLabel>
 						<TextFieldInput
 							name="name"
 							value={name()}
 							onInput={handleInputNameChange}
 							type="text"
-							placeholder="My Call"
+							placeholder="My Org"
 							required
 						/>
 					</TextField>
@@ -172,7 +159,7 @@ export default function CreateCallForm(props: CreateCallFormProps) {
 							value={slug()}
 							onInput={handleInputSlugChange}
 							type="text"
-							placeholder="my-call"
+							placeholder="my-org"
 							required
 						/>
 						<div class="mt-1 text-sm">
@@ -195,7 +182,7 @@ export default function CreateCallForm(props: CreateCallFormProps) {
 						}
 					>
 						{isSubmitting() && <IconLoader class="mr-2 size-4 animate-spin" />}
-						Create Call
+						Create Org
 					</Button>
 				</div>
 			</form>

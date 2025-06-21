@@ -1,7 +1,7 @@
-import { createFileRoute, notFound } from "@tanstack/solid-router";
+import { notFound } from "@tanstack/solid-router";
 import server from "@client/lib/server-api";
 
-export const Route = createFileRoute("/host/orgs/$org/calls/$call/dashboard")({
+export const Route = createFileRoute({
 	component: RouteComponent,
 });
 

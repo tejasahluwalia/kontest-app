@@ -18,7 +18,13 @@ export const hostPlugin = new Elysia({
 				const orgsToHost = await db.query.orgToHost.findMany({
 					where: (oh, { eq }) => eq(oh.userId, user.id),
 					with: {
-						org: true,
+						org: {
+							with: {
+								calls: {
+									columns: { id: true, slug: true, name: true },
+								},
+							},
+						},
 					},
 				});
 				const orgs = orgsToHost.map((orgToHost) => {
@@ -49,7 +55,7 @@ export const hostPlugin = new Elysia({
 				const existingOrg = await db.query.org.findFirst({
 					where: (org, { eq }) => eq(org.slug, params.slug),
 				});
-				const isAvailable = !Boolean(existingOrg);
+				const isAvailable = !existingOrg;
 				return {
 					isAvailable,
 				};
@@ -116,7 +122,7 @@ export const hostPlugin = new Elysia({
 								},
 								{
 									beforeHandle: ({ status, orgToHost }) => {
-										if (orgToHost.role != "admin") {
+										if (orgToHost.role !== "admin") {
 											return status(401);
 										}
 									},
@@ -137,7 +143,7 @@ export const hostPlugin = new Elysia({
 											eq(call.slug, params.slug),
 										),
 								});
-								const isAvailable = !Boolean(existingCall);
+								const isAvailable = !existingCall;
 								return {
 									isAvailable,
 								};

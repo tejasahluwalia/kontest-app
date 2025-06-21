@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/solid-router";
+import { Link, useRouter } from "@tanstack/solid-router";
 import { Show, For, createSignal } from "solid-js";
 import server from "@client/lib/server-api";
 import { Button } from "~/components/ui/button";
@@ -9,11 +9,11 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "~/components/ui/dialog";
-import CreateCallForm from "~/components/forms/create-call-form";
+import NewCallForm from "@client/components/forms/new-call-form";
 import { Card, CardContent, CardHeader } from "@client/components/ui/card";
 import Trash2 from "lucide-solid/icons/trash-2";
 
-export const Route = createFileRoute("/host/orgs/$org/calls/")({
+export const Route = createFileRoute({
 	component: RouteComponent,
 	loader: async ({ context: { org } }) => {
 		return { org };
@@ -49,7 +49,7 @@ function RouteComponent() {
 						<DialogHeader>
 							<DialogTitle>Create a new call</DialogTitle>
 						</DialogHeader>
-						<CreateCallForm orgId={org.id} onSuccess={handleCreateSuccess} />
+						<NewCallForm orgId={org.id} onSuccess={handleCreateSuccess} />
 					</DialogContent>
 				</Dialog>
 			</div>

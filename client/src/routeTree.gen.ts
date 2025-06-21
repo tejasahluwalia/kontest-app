@@ -8,405 +8,145 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/solid-router'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as LoginImport } from './routes/login'
-import { Route as AboutImport } from './routes/about'
-import { Route as HostRouteImport } from './routes/host/route'
-import { Route as IndexImport } from './routes/index'
-import { Route as HostIndexImport } from './routes/host/index'
-import { Route as HostProfileImport } from './routes/host/profile'
-import { Route as HostOrgsRouteImport } from './routes/host/orgs/route'
-import { Route as HostOrgsIndexImport } from './routes/host/orgs/index'
-import { Route as HostOrgsOrgImport } from './routes/host/orgs/$org'
-import { Route as HostOrgsOrgIndexImport } from './routes/host/orgs/$org/index'
-import { Route as HostOrgsOrgMembersImport } from './routes/host/orgs/$org/members'
-import { Route as HostOrgsOrgCallsImport } from './routes/host/orgs/$org/calls'
-import { Route as HostOrgsOrgCallsIndexImport } from './routes/host/orgs/$org/calls/index'
-import { Route as HostOrgsOrgCallsCallImport } from './routes/host/orgs/$org/calls/$call'
-import { Route as HostOrgsOrgCallsCallEntriesImport } from './routes/host/orgs/$org/calls/$call/entries'
-import { Route as HostOrgsOrgCallsCallDashboardImport } from './routes/host/orgs/$org/calls/$call/dashboard'
-import { Route as HostOrgsOrgCallsCallConfigureImport } from './routes/host/orgs/$org/calls/$call/configure'
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as hostHostRouteImport } from './routes/(host)/host'
+import { Route as hostHostIndexRouteImport } from './routes/(host)/host.index'
+import { Route as hostHostOrgsOrgRouteImport } from './routes/(host)/host.orgs.$org'
+import { Route as hostHostOrgsOrgIndexRouteImport } from './routes/(host)/host.orgs.$org.index'
+import { Route as hostHostOrgsOrgMembersRouteImport } from './routes/(host)/host.orgs.$org.members'
+import { Route as hostHostOrgsOrgCallsRouteImport } from './routes/(host)/host.orgs.$org.calls'
+import { Route as hostHostOrgsOrgCallsIndexRouteImport } from './routes/(host)/host.orgs.$org.calls.index'
+import { Route as hostHostOrgsOrgCallsCallRouteImport } from './routes/(host)/host.orgs.$org.calls.$call'
+import { Route as hostHostOrgsOrgCallsCallEntriesRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.entries'
+import { Route as hostHostOrgsOrgCallsCallDashboardRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.dashboard'
+import { Route as hostHostOrgsOrgCallsCallConfigureRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.configure'
 
-// Create/Update Routes
-
-const LoginRoute = LoginImport.update({
+const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AboutRoute = AboutImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRoute,
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const HostRouteRoute = HostRouteImport.update({
-  id: '/host',
+const hostHostRoute = hostHostRouteImport.update({
+  id: '/(host)/host',
   path: '/host',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const hostHostIndexRoute = hostHostIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => hostHostRoute,
 } as any)
-
-const HostIndexRoute = HostIndexImport.update({
+const hostHostOrgsOrgRoute = hostHostOrgsOrgRouteImport.update({
+  id: '/orgs/$org',
+  path: '/orgs/$org',
+  getParentRoute: () => hostHostRoute,
+} as any)
+const hostHostOrgsOrgIndexRoute = hostHostOrgsOrgIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => HostRouteRoute,
+  getParentRoute: () => hostHostOrgsOrgRoute,
 } as any)
-
-const HostProfileRoute = HostProfileImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => HostRouteRoute,
-} as any)
-
-const HostOrgsRouteRoute = HostOrgsRouteImport.update({
-  id: '/orgs',
-  path: '/orgs',
-  getParentRoute: () => HostRouteRoute,
-} as any)
-
-const HostOrgsIndexRoute = HostOrgsIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => HostOrgsRouteRoute,
-} as any)
-
-const HostOrgsOrgRoute = HostOrgsOrgImport.update({
-  id: '/$org',
-  path: '/$org',
-  getParentRoute: () => HostOrgsRouteRoute,
-} as any)
-
-const HostOrgsOrgIndexRoute = HostOrgsOrgIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => HostOrgsOrgRoute,
-} as any)
-
-const HostOrgsOrgMembersRoute = HostOrgsOrgMembersImport.update({
+const hostHostOrgsOrgMembersRoute = hostHostOrgsOrgMembersRouteImport.update({
   id: '/members',
   path: '/members',
-  getParentRoute: () => HostOrgsOrgRoute,
+  getParentRoute: () => hostHostOrgsOrgRoute,
 } as any)
-
-const HostOrgsOrgCallsRoute = HostOrgsOrgCallsImport.update({
+const hostHostOrgsOrgCallsRoute = hostHostOrgsOrgCallsRouteImport.update({
   id: '/calls',
   path: '/calls',
-  getParentRoute: () => HostOrgsOrgRoute,
+  getParentRoute: () => hostHostOrgsOrgRoute,
 } as any)
-
-const HostOrgsOrgCallsIndexRoute = HostOrgsOrgCallsIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => HostOrgsOrgCallsRoute,
-} as any)
-
-const HostOrgsOrgCallsCallRoute = HostOrgsOrgCallsCallImport.update({
-  id: '/$call',
-  path: '/$call',
-  getParentRoute: () => HostOrgsOrgCallsRoute,
-} as any)
-
-const HostOrgsOrgCallsCallEntriesRoute =
-  HostOrgsOrgCallsCallEntriesImport.update({
+const hostHostOrgsOrgCallsIndexRoute =
+  hostHostOrgsOrgCallsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => hostHostOrgsOrgCallsRoute,
+  } as any)
+const hostHostOrgsOrgCallsCallRoute =
+  hostHostOrgsOrgCallsCallRouteImport.update({
+    id: '/$call',
+    path: '/$call',
+    getParentRoute: () => hostHostOrgsOrgCallsRoute,
+  } as any)
+const hostHostOrgsOrgCallsCallEntriesRoute =
+  hostHostOrgsOrgCallsCallEntriesRouteImport.update({
     id: '/entries',
     path: '/entries',
-    getParentRoute: () => HostOrgsOrgCallsCallRoute,
+    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
   } as any)
-
-const HostOrgsOrgCallsCallDashboardRoute =
-  HostOrgsOrgCallsCallDashboardImport.update({
+const hostHostOrgsOrgCallsCallDashboardRoute =
+  hostHostOrgsOrgCallsCallDashboardRouteImport.update({
     id: '/dashboard',
     path: '/dashboard',
-    getParentRoute: () => HostOrgsOrgCallsCallRoute,
+    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
   } as any)
-
-const HostOrgsOrgCallsCallConfigureRoute =
-  HostOrgsOrgCallsCallConfigureImport.update({
+const hostHostOrgsOrgCallsCallConfigureRoute =
+  hostHostOrgsOrgCallsCallConfigureRouteImport.update({
     id: '/configure',
     path: '/configure',
-    getParentRoute: () => HostOrgsOrgCallsCallRoute,
+    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
   } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/solid-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/host': {
-      id: '/host'
-      path: '/host'
-      fullPath: '/host'
-      preLoaderRoute: typeof HostRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
-      parentRoute: typeof rootRoute
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
-    '/host/orgs': {
-      id: '/host/orgs'
-      path: '/orgs'
-      fullPath: '/host/orgs'
-      preLoaderRoute: typeof HostOrgsRouteImport
-      parentRoute: typeof HostRouteImport
-    }
-    '/host/profile': {
-      id: '/host/profile'
-      path: '/profile'
-      fullPath: '/host/profile'
-      preLoaderRoute: typeof HostProfileImport
-      parentRoute: typeof HostRouteImport
-    }
-    '/host/': {
-      id: '/host/'
-      path: '/'
-      fullPath: '/host/'
-      preLoaderRoute: typeof HostIndexImport
-      parentRoute: typeof HostRouteImport
-    }
-    '/host/orgs/$org': {
-      id: '/host/orgs/$org'
-      path: '/$org'
-      fullPath: '/host/orgs/$org'
-      preLoaderRoute: typeof HostOrgsOrgImport
-      parentRoute: typeof HostOrgsRouteImport
-    }
-    '/host/orgs/': {
-      id: '/host/orgs/'
-      path: '/'
-      fullPath: '/host/orgs/'
-      preLoaderRoute: typeof HostOrgsIndexImport
-      parentRoute: typeof HostOrgsRouteImport
-    }
-    '/host/orgs/$org/calls': {
-      id: '/host/orgs/$org/calls'
-      path: '/calls'
-      fullPath: '/host/orgs/$org/calls'
-      preLoaderRoute: typeof HostOrgsOrgCallsImport
-      parentRoute: typeof HostOrgsOrgImport
-    }
-    '/host/orgs/$org/members': {
-      id: '/host/orgs/$org/members'
-      path: '/members'
-      fullPath: '/host/orgs/$org/members'
-      preLoaderRoute: typeof HostOrgsOrgMembersImport
-      parentRoute: typeof HostOrgsOrgImport
-    }
-    '/host/orgs/$org/': {
-      id: '/host/orgs/$org/'
-      path: '/'
-      fullPath: '/host/orgs/$org/'
-      preLoaderRoute: typeof HostOrgsOrgIndexImport
-      parentRoute: typeof HostOrgsOrgImport
-    }
-    '/host/orgs/$org/calls/$call': {
-      id: '/host/orgs/$org/calls/$call'
-      path: '/$call'
-      fullPath: '/host/orgs/$org/calls/$call'
-      preLoaderRoute: typeof HostOrgsOrgCallsCallImport
-      parentRoute: typeof HostOrgsOrgCallsImport
-    }
-    '/host/orgs/$org/calls/': {
-      id: '/host/orgs/$org/calls/'
-      path: '/'
-      fullPath: '/host/orgs/$org/calls/'
-      preLoaderRoute: typeof HostOrgsOrgCallsIndexImport
-      parentRoute: typeof HostOrgsOrgCallsImport
-    }
-    '/host/orgs/$org/calls/$call/configure': {
-      id: '/host/orgs/$org/calls/$call/configure'
-      path: '/configure'
-      fullPath: '/host/orgs/$org/calls/$call/configure'
-      preLoaderRoute: typeof HostOrgsOrgCallsCallConfigureImport
-      parentRoute: typeof HostOrgsOrgCallsCallImport
-    }
-    '/host/orgs/$org/calls/$call/dashboard': {
-      id: '/host/orgs/$org/calls/$call/dashboard'
-      path: '/dashboard'
-      fullPath: '/host/orgs/$org/calls/$call/dashboard'
-      preLoaderRoute: typeof HostOrgsOrgCallsCallDashboardImport
-      parentRoute: typeof HostOrgsOrgCallsCallImport
-    }
-    '/host/orgs/$org/calls/$call/entries': {
-      id: '/host/orgs/$org/calls/$call/entries'
-      path: '/entries'
-      fullPath: '/host/orgs/$org/calls/$call/entries'
-      preLoaderRoute: typeof HostOrgsOrgCallsCallEntriesImport
-      parentRoute: typeof HostOrgsOrgCallsCallImport
-    }
-  }
-}
-
-// Create and export the route tree
-
-interface HostOrgsOrgCallsCallRouteChildren {
-  HostOrgsOrgCallsCallConfigureRoute: typeof HostOrgsOrgCallsCallConfigureRoute
-  HostOrgsOrgCallsCallDashboardRoute: typeof HostOrgsOrgCallsCallDashboardRoute
-  HostOrgsOrgCallsCallEntriesRoute: typeof HostOrgsOrgCallsCallEntriesRoute
-}
-
-const HostOrgsOrgCallsCallRouteChildren: HostOrgsOrgCallsCallRouteChildren = {
-  HostOrgsOrgCallsCallConfigureRoute: HostOrgsOrgCallsCallConfigureRoute,
-  HostOrgsOrgCallsCallDashboardRoute: HostOrgsOrgCallsCallDashboardRoute,
-  HostOrgsOrgCallsCallEntriesRoute: HostOrgsOrgCallsCallEntriesRoute,
-}
-
-const HostOrgsOrgCallsCallRouteWithChildren =
-  HostOrgsOrgCallsCallRoute._addFileChildren(HostOrgsOrgCallsCallRouteChildren)
-
-interface HostOrgsOrgCallsRouteChildren {
-  HostOrgsOrgCallsCallRoute: typeof HostOrgsOrgCallsCallRouteWithChildren
-  HostOrgsOrgCallsIndexRoute: typeof HostOrgsOrgCallsIndexRoute
-}
-
-const HostOrgsOrgCallsRouteChildren: HostOrgsOrgCallsRouteChildren = {
-  HostOrgsOrgCallsCallRoute: HostOrgsOrgCallsCallRouteWithChildren,
-  HostOrgsOrgCallsIndexRoute: HostOrgsOrgCallsIndexRoute,
-}
-
-const HostOrgsOrgCallsRouteWithChildren =
-  HostOrgsOrgCallsRoute._addFileChildren(HostOrgsOrgCallsRouteChildren)
-
-interface HostOrgsOrgRouteChildren {
-  HostOrgsOrgCallsRoute: typeof HostOrgsOrgCallsRouteWithChildren
-  HostOrgsOrgMembersRoute: typeof HostOrgsOrgMembersRoute
-  HostOrgsOrgIndexRoute: typeof HostOrgsOrgIndexRoute
-}
-
-const HostOrgsOrgRouteChildren: HostOrgsOrgRouteChildren = {
-  HostOrgsOrgCallsRoute: HostOrgsOrgCallsRouteWithChildren,
-  HostOrgsOrgMembersRoute: HostOrgsOrgMembersRoute,
-  HostOrgsOrgIndexRoute: HostOrgsOrgIndexRoute,
-}
-
-const HostOrgsOrgRouteWithChildren = HostOrgsOrgRoute._addFileChildren(
-  HostOrgsOrgRouteChildren,
-)
-
-interface HostOrgsRouteRouteChildren {
-  HostOrgsOrgRoute: typeof HostOrgsOrgRouteWithChildren
-  HostOrgsIndexRoute: typeof HostOrgsIndexRoute
-}
-
-const HostOrgsRouteRouteChildren: HostOrgsRouteRouteChildren = {
-  HostOrgsOrgRoute: HostOrgsOrgRouteWithChildren,
-  HostOrgsIndexRoute: HostOrgsIndexRoute,
-}
-
-const HostOrgsRouteRouteWithChildren = HostOrgsRouteRoute._addFileChildren(
-  HostOrgsRouteRouteChildren,
-)
-
-interface HostRouteRouteChildren {
-  HostOrgsRouteRoute: typeof HostOrgsRouteRouteWithChildren
-  HostProfileRoute: typeof HostProfileRoute
-  HostIndexRoute: typeof HostIndexRoute
-}
-
-const HostRouteRouteChildren: HostRouteRouteChildren = {
-  HostOrgsRouteRoute: HostOrgsRouteRouteWithChildren,
-  HostProfileRoute: HostProfileRoute,
-  HostIndexRoute: HostIndexRoute,
-}
-
-const HostRouteRouteWithChildren = HostRouteRoute._addFileChildren(
-  HostRouteRouteChildren,
-)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/host': typeof HostRouteRouteWithChildren
-  '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/host/orgs': typeof HostOrgsRouteRouteWithChildren
-  '/host/profile': typeof HostProfileRoute
-  '/host/': typeof HostIndexRoute
-  '/host/orgs/$org': typeof HostOrgsOrgRouteWithChildren
-  '/host/orgs/': typeof HostOrgsIndexRoute
-  '/host/orgs/$org/calls': typeof HostOrgsOrgCallsRouteWithChildren
-  '/host/orgs/$org/members': typeof HostOrgsOrgMembersRoute
-  '/host/orgs/$org/': typeof HostOrgsOrgIndexRoute
-  '/host/orgs/$org/calls/$call': typeof HostOrgsOrgCallsCallRouteWithChildren
-  '/host/orgs/$org/calls/': typeof HostOrgsOrgCallsIndexRoute
-  '/host/orgs/$org/calls/$call/configure': typeof HostOrgsOrgCallsCallConfigureRoute
-  '/host/orgs/$org/calls/$call/dashboard': typeof HostOrgsOrgCallsCallDashboardRoute
-  '/host/orgs/$org/calls/$call/entries': typeof HostOrgsOrgCallsCallEntriesRoute
+  '/host': typeof hostHostRouteWithChildren
+  '/host/': typeof hostHostIndexRoute
+  '/host/orgs/$org': typeof hostHostOrgsOrgRouteWithChildren
+  '/host/orgs/$org/calls': typeof hostHostOrgsOrgCallsRouteWithChildren
+  '/host/orgs/$org/members': typeof hostHostOrgsOrgMembersRoute
+  '/host/orgs/$org/': typeof hostHostOrgsOrgIndexRoute
+  '/host/orgs/$org/calls/$call': typeof hostHostOrgsOrgCallsCallRouteWithChildren
+  '/host/orgs/$org/calls/': typeof hostHostOrgsOrgCallsIndexRoute
+  '/host/orgs/$org/calls/$call/configure': typeof hostHostOrgsOrgCallsCallConfigureRoute
+  '/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
+  '/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/host/profile': typeof HostProfileRoute
-  '/host': typeof HostIndexRoute
-  '/host/orgs': typeof HostOrgsIndexRoute
-  '/host/orgs/$org/members': typeof HostOrgsOrgMembersRoute
-  '/host/orgs/$org': typeof HostOrgsOrgIndexRoute
-  '/host/orgs/$org/calls/$call': typeof HostOrgsOrgCallsCallRouteWithChildren
-  '/host/orgs/$org/calls': typeof HostOrgsOrgCallsIndexRoute
-  '/host/orgs/$org/calls/$call/configure': typeof HostOrgsOrgCallsCallConfigureRoute
-  '/host/orgs/$org/calls/$call/dashboard': typeof HostOrgsOrgCallsCallDashboardRoute
-  '/host/orgs/$org/calls/$call/entries': typeof HostOrgsOrgCallsCallEntriesRoute
+  '/host': typeof hostHostIndexRoute
+  '/host/orgs/$org/members': typeof hostHostOrgsOrgMembersRoute
+  '/host/orgs/$org': typeof hostHostOrgsOrgIndexRoute
+  '/host/orgs/$org/calls/$call': typeof hostHostOrgsOrgCallsCallRouteWithChildren
+  '/host/orgs/$org/calls': typeof hostHostOrgsOrgCallsIndexRoute
+  '/host/orgs/$org/calls/$call/configure': typeof hostHostOrgsOrgCallsCallConfigureRoute
+  '/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
+  '/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/host': typeof HostRouteRouteWithChildren
-  '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/host/orgs': typeof HostOrgsRouteRouteWithChildren
-  '/host/profile': typeof HostProfileRoute
-  '/host/': typeof HostIndexRoute
-  '/host/orgs/$org': typeof HostOrgsOrgRouteWithChildren
-  '/host/orgs/': typeof HostOrgsIndexRoute
-  '/host/orgs/$org/calls': typeof HostOrgsOrgCallsRouteWithChildren
-  '/host/orgs/$org/members': typeof HostOrgsOrgMembersRoute
-  '/host/orgs/$org/': typeof HostOrgsOrgIndexRoute
-  '/host/orgs/$org/calls/$call': typeof HostOrgsOrgCallsCallRouteWithChildren
-  '/host/orgs/$org/calls/': typeof HostOrgsOrgCallsIndexRoute
-  '/host/orgs/$org/calls/$call/configure': typeof HostOrgsOrgCallsCallConfigureRoute
-  '/host/orgs/$org/calls/$call/dashboard': typeof HostOrgsOrgCallsCallDashboardRoute
-  '/host/orgs/$org/calls/$call/entries': typeof HostOrgsOrgCallsCallEntriesRoute
+  '/(host)/host': typeof hostHostRouteWithChildren
+  '/(host)/host/': typeof hostHostIndexRoute
+  '/(host)/host/orgs/$org': typeof hostHostOrgsOrgRouteWithChildren
+  '/(host)/host/orgs/$org/calls': typeof hostHostOrgsOrgCallsRouteWithChildren
+  '/(host)/host/orgs/$org/members': typeof hostHostOrgsOrgMembersRoute
+  '/(host)/host/orgs/$org/': typeof hostHostOrgsOrgIndexRoute
+  '/(host)/host/orgs/$org/calls/$call': typeof hostHostOrgsOrgCallsCallRouteWithChildren
+  '/(host)/host/orgs/$org/calls/': typeof hostHostOrgsOrgCallsIndexRoute
+  '/(host)/host/orgs/$org/calls/$call/configure': typeof hostHostOrgsOrgCallsCallConfigureRoute
+  '/(host)/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
+  '/(host)/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/host'
-    | '/about'
     | '/login'
-    | '/host/orgs'
-    | '/host/profile'
+    | '/host'
     | '/host/'
     | '/host/orgs/$org'
-    | '/host/orgs/'
     | '/host/orgs/$org/calls'
     | '/host/orgs/$org/members'
     | '/host/orgs/$org/'
@@ -418,11 +158,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/login'
-    | '/host/profile'
     | '/host'
-    | '/host/orgs'
     | '/host/orgs/$org/members'
     | '/host/orgs/$org'
     | '/host/orgs/$org/calls/$call'
@@ -433,142 +170,308 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/host'
-    | '/about'
     | '/login'
-    | '/host/orgs'
-    | '/host/profile'
-    | '/host/'
-    | '/host/orgs/$org'
-    | '/host/orgs/'
-    | '/host/orgs/$org/calls'
-    | '/host/orgs/$org/members'
-    | '/host/orgs/$org/'
-    | '/host/orgs/$org/calls/$call'
-    | '/host/orgs/$org/calls/'
-    | '/host/orgs/$org/calls/$call/configure'
-    | '/host/orgs/$org/calls/$call/dashboard'
-    | '/host/orgs/$org/calls/$call/entries'
+    | '/(host)/host'
+    | '/(host)/host/'
+    | '/(host)/host/orgs/$org'
+    | '/(host)/host/orgs/$org/calls'
+    | '/(host)/host/orgs/$org/members'
+    | '/(host)/host/orgs/$org/'
+    | '/(host)/host/orgs/$org/calls/$call'
+    | '/(host)/host/orgs/$org/calls/'
+    | '/(host)/host/orgs/$org/calls/$call/configure'
+    | '/(host)/host/orgs/$org/calls/$call/dashboard'
+    | '/(host)/host/orgs/$org/calls/$call/entries'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  HostRouteRoute: typeof HostRouteRouteWithChildren
-  AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
+  hostHostRoute: typeof hostHostRouteWithChildren
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  HostRouteRoute: HostRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
-  LoginRoute: LoginRoute,
-}
-
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/host",
-        "/about",
-        "/login"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/host": {
-      "filePath": "host/route.tsx",
-      "children": [
-        "/host/orgs",
-        "/host/profile",
-        "/host/"
-      ]
-    },
-    "/about": {
-      "filePath": "about.tsx"
-    },
-    "/login": {
-      "filePath": "login.tsx"
-    },
-    "/host/orgs": {
-      "filePath": "host/orgs/route.tsx",
-      "parent": "/host",
-      "children": [
-        "/host/orgs/$org",
-        "/host/orgs/"
-      ]
-    },
-    "/host/profile": {
-      "filePath": "host/profile.tsx",
-      "parent": "/host"
-    },
-    "/host/": {
-      "filePath": "host/index.tsx",
-      "parent": "/host"
-    },
-    "/host/orgs/$org": {
-      "filePath": "host/orgs/$org.tsx",
-      "parent": "/host/orgs",
-      "children": [
-        "/host/orgs/$org/calls",
-        "/host/orgs/$org/members",
-        "/host/orgs/$org/"
-      ]
-    },
-    "/host/orgs/": {
-      "filePath": "host/orgs/index.tsx",
-      "parent": "/host/orgs"
-    },
-    "/host/orgs/$org/calls": {
-      "filePath": "host/orgs/$org/calls.tsx",
-      "parent": "/host/orgs/$org",
-      "children": [
-        "/host/orgs/$org/calls/$call",
-        "/host/orgs/$org/calls/"
-      ]
-    },
-    "/host/orgs/$org/members": {
-      "filePath": "host/orgs/$org/members.tsx",
-      "parent": "/host/orgs/$org"
-    },
-    "/host/orgs/$org/": {
-      "filePath": "host/orgs/$org/index.tsx",
-      "parent": "/host/orgs/$org"
-    },
-    "/host/orgs/$org/calls/$call": {
-      "filePath": "host/orgs/$org/calls/$call.tsx",
-      "parent": "/host/orgs/$org/calls",
-      "children": [
-        "/host/orgs/$org/calls/$call/configure",
-        "/host/orgs/$org/calls/$call/dashboard",
-        "/host/orgs/$org/calls/$call/entries"
-      ]
-    },
-    "/host/orgs/$org/calls/": {
-      "filePath": "host/orgs/$org/calls/index.tsx",
-      "parent": "/host/orgs/$org/calls"
-    },
-    "/host/orgs/$org/calls/$call/configure": {
-      "filePath": "host/orgs/$org/calls/$call/configure.tsx",
-      "parent": "/host/orgs/$org/calls/$call"
-    },
-    "/host/orgs/$org/calls/$call/dashboard": {
-      "filePath": "host/orgs/$org/calls/$call/dashboard.tsx",
-      "parent": "/host/orgs/$org/calls/$call"
-    },
-    "/host/orgs/$org/calls/$call/entries": {
-      "filePath": "host/orgs/$org/calls/$call/entries.tsx",
-      "parent": "/host/orgs/$org/calls/$call"
+declare module '@tanstack/solid-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(host)/host': {
+      id: '/(host)/host'
+      path: '/host'
+      fullPath: '/host'
+      preLoaderRoute: typeof hostHostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(host)/host/': {
+      id: '/(host)/host/'
+      path: '/'
+      fullPath: '/host/'
+      preLoaderRoute: typeof hostHostIndexRouteImport
+      parentRoute: typeof hostHostRoute
+    }
+    '/(host)/host/orgs/$org': {
+      id: '/(host)/host/orgs/$org'
+      path: '/orgs/$org'
+      fullPath: '/host/orgs/$org'
+      preLoaderRoute: typeof hostHostOrgsOrgRouteImport
+      parentRoute: typeof hostHostRoute
+    }
+    '/(host)/host/orgs/$org/calls': {
+      id: '/(host)/host/orgs/$org/calls'
+      path: '/calls'
+      fullPath: '/host/orgs/$org/calls'
+      preLoaderRoute: typeof hostHostOrgsOrgCallsRouteImport
+      parentRoute: typeof hostHostOrgsOrgRoute
+    }
+    '/(host)/host/orgs/$org/members': {
+      id: '/(host)/host/orgs/$org/members'
+      path: '/members'
+      fullPath: '/host/orgs/$org/members'
+      preLoaderRoute: typeof hostHostOrgsOrgMembersRouteImport
+      parentRoute: typeof hostHostOrgsOrgRoute
+    }
+    '/(host)/host/orgs/$org/': {
+      id: '/(host)/host/orgs/$org/'
+      path: '/'
+      fullPath: '/host/orgs/$org/'
+      preLoaderRoute: typeof hostHostOrgsOrgIndexRouteImport
+      parentRoute: typeof hostHostOrgsOrgRoute
+    }
+    '/(host)/host/orgs/$org/calls/$call': {
+      id: '/(host)/host/orgs/$org/calls/$call'
+      path: '/$call'
+      fullPath: '/host/orgs/$org/calls/$call'
+      preLoaderRoute: typeof hostHostOrgsOrgCallsCallRouteImport
+      parentRoute: typeof hostHostOrgsOrgCallsRoute
+    }
+    '/(host)/host/orgs/$org/calls/': {
+      id: '/(host)/host/orgs/$org/calls/'
+      path: '/'
+      fullPath: '/host/orgs/$org/calls/'
+      preLoaderRoute: typeof hostHostOrgsOrgCallsIndexRouteImport
+      parentRoute: typeof hostHostOrgsOrgCallsRoute
+    }
+    '/(host)/host/orgs/$org/calls/$call/configure': {
+      id: '/(host)/host/orgs/$org/calls/$call/configure'
+      path: '/configure'
+      fullPath: '/host/orgs/$org/calls/$call/configure'
+      preLoaderRoute: typeof hostHostOrgsOrgCallsCallConfigureRouteImport
+      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
+    }
+    '/(host)/host/orgs/$org/calls/$call/dashboard': {
+      id: '/(host)/host/orgs/$org/calls/$call/dashboard'
+      path: '/dashboard'
+      fullPath: '/host/orgs/$org/calls/$call/dashboard'
+      preLoaderRoute: typeof hostHostOrgsOrgCallsCallDashboardRouteImport
+      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
+    }
+    '/(host)/host/orgs/$org/calls/$call/entries': {
+      id: '/(host)/host/orgs/$org/calls/$call/entries'
+      path: '/entries'
+      fullPath: '/host/orgs/$org/calls/$call/entries'
+      preLoaderRoute: typeof hostHostOrgsOrgCallsCallEntriesRouteImport
+      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
     }
   }
 }
-ROUTE_MANIFEST_END */
+
+declare module './routes/index' {
+  const createFileRoute: CreateFileRoute<
+    '/',
+    FileRoutesByPath['/']['parentRoute'],
+    FileRoutesByPath['/']['id'],
+    FileRoutesByPath['/']['path'],
+    FileRoutesByPath['/']['fullPath']
+  >
+}
+declare module './routes/login' {
+  const createFileRoute: CreateFileRoute<
+    '/login',
+    FileRoutesByPath['/login']['parentRoute'],
+    FileRoutesByPath['/login']['id'],
+    FileRoutesByPath['/login']['path'],
+    FileRoutesByPath['/login']['fullPath']
+  >
+}
+declare module './routes/(host)/host' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host',
+    FileRoutesByPath['/(host)/host']['parentRoute'],
+    FileRoutesByPath['/(host)/host']['id'],
+    FileRoutesByPath['/(host)/host']['path'],
+    FileRoutesByPath['/(host)/host']['fullPath']
+  >
+}
+declare module './routes/(host)/host.index' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/',
+    FileRoutesByPath['/(host)/host/']['parentRoute'],
+    FileRoutesByPath['/(host)/host/']['id'],
+    FileRoutesByPath['/(host)/host/']['path'],
+    FileRoutesByPath['/(host)/host/']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org',
+    FileRoutesByPath['/(host)/host/orgs/$org']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.calls' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/calls',
+    FileRoutesByPath['/(host)/host/orgs/$org/calls']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.members' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/members',
+    FileRoutesByPath['/(host)/host/orgs/$org/members']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/members']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/members']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/members']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.index' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/',
+    FileRoutesByPath['/(host)/host/orgs/$org/']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.calls.$call' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/calls/$call',
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.calls.index' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/calls/',
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.calls.$call.configure' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/calls/$call/configure',
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/configure']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/configure']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/configure']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/configure']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.calls.$call.dashboard' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/calls/$call/dashboard',
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/dashboard']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/dashboard']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/dashboard']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/dashboard']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.calls.$call.entries' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/calls/$call/entries',
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['fullPath']
+  >
+}
+
+interface hostHostOrgsOrgCallsCallRouteChildren {
+  hostHostOrgsOrgCallsCallConfigureRoute: typeof hostHostOrgsOrgCallsCallConfigureRoute
+  hostHostOrgsOrgCallsCallDashboardRoute: typeof hostHostOrgsOrgCallsCallDashboardRoute
+  hostHostOrgsOrgCallsCallEntriesRoute: typeof hostHostOrgsOrgCallsCallEntriesRoute
+}
+
+const hostHostOrgsOrgCallsCallRouteChildren: hostHostOrgsOrgCallsCallRouteChildren =
+  {
+    hostHostOrgsOrgCallsCallConfigureRoute:
+      hostHostOrgsOrgCallsCallConfigureRoute,
+    hostHostOrgsOrgCallsCallDashboardRoute:
+      hostHostOrgsOrgCallsCallDashboardRoute,
+    hostHostOrgsOrgCallsCallEntriesRoute: hostHostOrgsOrgCallsCallEntriesRoute,
+  }
+
+const hostHostOrgsOrgCallsCallRouteWithChildren =
+  hostHostOrgsOrgCallsCallRoute._addFileChildren(
+    hostHostOrgsOrgCallsCallRouteChildren,
+  )
+
+interface hostHostOrgsOrgCallsRouteChildren {
+  hostHostOrgsOrgCallsCallRoute: typeof hostHostOrgsOrgCallsCallRouteWithChildren
+  hostHostOrgsOrgCallsIndexRoute: typeof hostHostOrgsOrgCallsIndexRoute
+}
+
+const hostHostOrgsOrgCallsRouteChildren: hostHostOrgsOrgCallsRouteChildren = {
+  hostHostOrgsOrgCallsCallRoute: hostHostOrgsOrgCallsCallRouteWithChildren,
+  hostHostOrgsOrgCallsIndexRoute: hostHostOrgsOrgCallsIndexRoute,
+}
+
+const hostHostOrgsOrgCallsRouteWithChildren =
+  hostHostOrgsOrgCallsRoute._addFileChildren(hostHostOrgsOrgCallsRouteChildren)
+
+interface hostHostOrgsOrgRouteChildren {
+  hostHostOrgsOrgCallsRoute: typeof hostHostOrgsOrgCallsRouteWithChildren
+  hostHostOrgsOrgMembersRoute: typeof hostHostOrgsOrgMembersRoute
+  hostHostOrgsOrgIndexRoute: typeof hostHostOrgsOrgIndexRoute
+}
+
+const hostHostOrgsOrgRouteChildren: hostHostOrgsOrgRouteChildren = {
+  hostHostOrgsOrgCallsRoute: hostHostOrgsOrgCallsRouteWithChildren,
+  hostHostOrgsOrgMembersRoute: hostHostOrgsOrgMembersRoute,
+  hostHostOrgsOrgIndexRoute: hostHostOrgsOrgIndexRoute,
+}
+
+const hostHostOrgsOrgRouteWithChildren = hostHostOrgsOrgRoute._addFileChildren(
+  hostHostOrgsOrgRouteChildren,
+)
+
+interface hostHostRouteChildren {
+  hostHostIndexRoute: typeof hostHostIndexRoute
+  hostHostOrgsOrgRoute: typeof hostHostOrgsOrgRouteWithChildren
+}
+
+const hostHostRouteChildren: hostHostRouteChildren = {
+  hostHostIndexRoute: hostHostIndexRoute,
+  hostHostOrgsOrgRoute: hostHostOrgsOrgRouteWithChildren,
+}
+
+const hostHostRouteWithChildren = hostHostRoute._addFileChildren(
+  hostHostRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  LoginRoute: LoginRoute,
+  hostHostRoute: hostHostRouteWithChildren,
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()

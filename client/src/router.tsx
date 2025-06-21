@@ -10,4 +10,5 @@ export const router = createRouter({
 	defaultPreload: "intent",
 	defaultStaleTime: 5000,
 	scrollRestoration: true,
+	trailingSlash: "never"
 });

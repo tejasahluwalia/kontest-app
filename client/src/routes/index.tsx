@@ -1,8 +1,7 @@
-import { createFileRoute } from "@tanstack/solid-router";
 import { createSignal, onMount } from "solid-js";
 import { Button } from "~/components/ui/button";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute({
 	component: Index,
 });
 

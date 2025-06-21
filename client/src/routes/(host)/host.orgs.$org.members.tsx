@@ -1,8 +1,7 @@
 import server from "@client/lib/server-api";
-import { createFileRoute } from "@tanstack/solid-router";
 import { For } from "solid-js";
 
-export const Route = createFileRoute("/host/orgs/$org/members")({
+export const Route = createFileRoute({
 	component: RouteComponent,
 	loader: async ({ context: { org } }) => {
 		const orgId = org.id;

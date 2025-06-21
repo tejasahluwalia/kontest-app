@@ -3,7 +3,7 @@
 
 @plugin '@kobalte/tailwindcss';
 
-@custom-variant dark (&:is([data-kb-theme="dark"]));
+@custom-variant dark (&:is([data-kb-theme="dark"] *));
 
 :root {
 	--radius: 0.625rem;

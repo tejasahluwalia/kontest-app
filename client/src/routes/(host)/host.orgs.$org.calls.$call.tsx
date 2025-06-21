@@ -1,8 +1,8 @@
 import CallContext from "@client/context/call";
 import server from "@client/lib/server-api";
-import { createFileRoute, notFound, Outlet } from "@tanstack/solid-router";
+import { notFound, Outlet } from "@tanstack/solid-router";
 
-export const Route = createFileRoute("/host/orgs/$org/calls/$call")({
+export const Route = createFileRoute({
 	component: RouteComponent,
 	beforeLoad: async ({ params, context: { org } }) => {
 		const { calls } = org;
