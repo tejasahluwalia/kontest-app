@@ -4,13 +4,12 @@ import { nanoid } from "nanoid";
 
 interface BaseBlock {
 	id: string;
-	label?: string;
+	label: string;
 	children: Children;
 	conditionalDisplay?: Condition | ConditionGroup;
 }
 
 interface BlockTemplate extends BaseBlock {
-	name: string;
 	description?: string;
 	createdAt?: string;
 	updatedAt?: string;
@@ -25,6 +24,7 @@ type Blocks = Block[];
 // Create a single empty block
 const createBlock = (): Block => ({
 	id: nanoid(),
+	label: "New Block",
 	children: createChildren(),
 });
 

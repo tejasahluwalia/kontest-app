@@ -3,31 +3,34 @@ import OrgContext from "@client/context/org";
 import server from "@client/lib/server-api";
 import { nanoid } from "nanoid";
 import {
+	type Accessor,
 	createContext,
-	createEffect,
 	createMemo,
 	createSignal,
-	onCleanup,
-	useContext,
-	type Accessor,
 	type ParentComponent,
+	useContext,
 } from "solid-js";
-import { createStore, produce, reconcile } from "solid-js/store";
+import {
+	createStore,
+	produce,
+	reconcile,
+	type SetStoreFunction,
+} from "solid-js/store";
 import { showToast } from "../ui/toast";
 import {
 	addHistoryEntry,
 	createInitialHistory,
 } from "./history/history-manager";
 import { appendBlock, type Block } from "./primitives/blocks";
-import { type Child } from "./primitives/children";
+import type { Child } from "./primitives/children";
 import type { ConditionalRule } from "./primitives/conditions";
-import {
-	type FormBuilderHistory,
-	type FormSchema,
-	type InputFormData,
-	type StepGraphNode,
-} from "./primitives/form";
 import type { InputField } from "./primitives/fields";
+import type {
+	FormBuilderHistory,
+	FormSchema,
+	InputFormData,
+	StepGraphNode,
+} from "./primitives/form";
 import type { FormBuilderUIState } from "./state/ui-state";
 import { createInitialUIState } from "./state/ui-state";
 
@@ -35,6 +38,7 @@ import { createInitialUIState } from "./state/ui-state";
 interface FormBuilderContextType {
 	// Form data access
 	formSchema: FormSchema;
+	setFormSchema: SetStoreFunction<FormSchema>;
 	uiState: FormBuilderUIState;
 	history: FormBuilderHistory;
 
@@ -233,7 +237,7 @@ export const FormBuilderProvider: ParentComponent<{
 					name: call.name,
 				});
 
-			if (error && error?.status >= 400) {
+			if (error) {
 				showToast({
 					title: "Error",
 					description: JSON.stringify(error.value),
@@ -268,7 +272,7 @@ export const FormBuilderProvider: ParentComponent<{
 
 	const removeStepFromGraph = (stepId: string): void => {
 		saveToHistory();
-		const step = formSchema.graph.find((node) => node.step.id == stepId);
+		const step = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!step) throw new Error("Step not found");
 		setFormSchema(
 			"graph",
@@ -281,27 +285,16 @@ export const FormBuilderProvider: ParentComponent<{
 		data: Partial<StepGraphNode>,
 	): void => {
 		saveToHistory();
-		const step = formSchema.graph.find((node) => node.step.id == stepId);
+		const step = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!step) throw new Error("Step not found");
 		const newStep = { ...step, ...data };
-		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"step",
-			newStep.step,
-		);
-		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"edges",
-			newStep.edges,
-		);
+		setFormSchema("graph", (node) => node.step.id === stepId, newStep);
 	};
 
 	// Block operations
 	const addBlockToStep = (block: Block, stepId: string): void => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
+		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		setFormSchema(
 			"graph",
@@ -312,17 +305,15 @@ export const FormBuilderProvider: ParentComponent<{
 		);
 	};
 
-	const removeBlockFromStep = (blockId: string, stepId: string): void => {
+	const removeBlockFromStep = (blockId: string): void => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
-		if (!node) throw new Error("Step not found");
-		const newBlocks = node.blocks.filter((block) => block.id !== blockId);
 		setFormSchema(
 			"graph",
-			(node) => node.step.id === stepId,
+			(node) => node.step.id === selectedStepId(),
 			"blocks",
-			reconcile(newBlocks),
+			(blocks) => blocks.filter((block) => block.id !== blockId),
 		);
+		saveForm();
 	};
 
 	const updateBlockInStep = (
@@ -332,7 +323,7 @@ export const FormBuilderProvider: ParentComponent<{
 	): void => {
 		saveToHistory();
 		const node = formSchema.graph.find(
-			(node) => node.step.id == (stepId ?? selectedStepId()),
+			(node) => node.step.id === (stepId ?? selectedStepId()),
 		);
 		if (!node) throw new Error("Step not found");
 		const newBlocks = node.blocks.map((block) =>
@@ -348,7 +339,7 @@ export const FormBuilderProvider: ParentComponent<{
 
 	const duplicateBlock = (blockId: string, stepId: string): void => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
+		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
@@ -367,7 +358,7 @@ export const FormBuilderProvider: ParentComponent<{
 		stepId: string,
 	): void => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
+		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
@@ -388,7 +379,7 @@ export const FormBuilderProvider: ParentComponent<{
 		stepId: string,
 	): void => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
+		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
@@ -410,7 +401,7 @@ export const FormBuilderProvider: ParentComponent<{
 		stepId: string,
 	): void => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
+		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
@@ -440,7 +431,7 @@ export const FormBuilderProvider: ParentComponent<{
 
 	const addEdgeToStep = (edge: ConditionalRule, stepId: string) => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
+		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		setFormSchema(
 			"graph",
@@ -453,7 +444,7 @@ export const FormBuilderProvider: ParentComponent<{
 
 	const removeEdgeFromStep = (edgeId: string, stepId: string) => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
+		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		const newEdges = node.edges.filter((edge) => edge.id !== edgeId);
 		setFormSchema(
@@ -470,7 +461,7 @@ export const FormBuilderProvider: ParentComponent<{
 		data: Partial<ConditionalRule>,
 	) => {
 		saveToHistory();
-		const node = formSchema.graph.find((node) => node.step.id == stepId);
+		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		setFormSchema(
 			"graph",
@@ -547,6 +538,7 @@ export const FormBuilderProvider: ParentComponent<{
 	const contextValue: FormBuilderContextType = {
 		// Schema state
 		formSchema,
+		setFormSchema,
 		uiState,
 		history,
 

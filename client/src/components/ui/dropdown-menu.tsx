@@ -1,8 +1,7 @@
-import type { Component, ComponentProps, JSX, ValidComponent } from "solid-js";
-import { splitProps } from "solid-js";
-
 import * as DropdownMenuPrimitive from "@kobalte/core/dropdown-menu";
 import type { PolymorphicProps } from "@kobalte/core/polymorphic";
+import type { Component, ComponentProps, JSX, ValidComponent } from "solid-js";
+import { splitProps } from "solid-js";
 
 import { cn } from "~/lib/utils";
 
@@ -11,6 +10,8 @@ const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
 const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+const DropdownMenuItemIndicator = DropdownMenuPrimitive.ItemIndicator;
+const DropdownMenuItemLabel = DropdownMenuPrimitive.ItemLabel;
 
 const DropdownMenu: Component<DropdownMenuPrimitive.DropdownMenuRootProps> = (
 	props,
@@ -268,6 +269,8 @@ export {
 	DropdownMenuPortal,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuItemIndicator,
+	DropdownMenuItemLabel,
 	DropdownMenuShortcut,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,

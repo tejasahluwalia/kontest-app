@@ -61,7 +61,7 @@ export function FormFlowCanvas() {
 	};
 
 	return (
-		<div class="space-y-8 p-4">
+		<div>
 			<div class="flex flex-col gap-6">
 				<For each={graphNodes()}>
 					{(node) => (
@@ -132,7 +132,7 @@ function StepNode(props: {
 						<InlineEdit
 							value={label}
 							onSave={setLabel}
-							displayComponent={({ value, class: className }) => (
+							displayComponent={({ value }) => (
 								<h3 class="text-lg font-medium">{value}</h3>
 							)}
 						/>
@@ -162,6 +162,9 @@ function StepNode(props: {
 					<div class="space-y-2">
 						<For each={props.node.edges}>
 							{(edge) => {
+								if (edge.action.id === "submit") {
+									return "Submit"
+								}
 								const targetStep = props.allNodes.find(
 									(n) => n.step.id === edge.action.id,
 								);
@@ -169,7 +172,7 @@ function StepNode(props: {
 									<div class="flex items-center gap-2">
 										<ArrowRight class="h-4 w-4 text-muted-foreground" />
 										<span class="flex-1">
-											{targetStep ? targetStep.step.id : "Unknown Step"}
+											{targetStep ? targetStep.step.label : "Unknown Step"}
 										</span>
 										<Button
 											variant="ghost"

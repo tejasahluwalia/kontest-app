@@ -3,22 +3,19 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@client/components/ui/dialog";
+import { Input } from "@client/components/ui/input";
+import { Label } from "@client/components/ui/label";
+import { Switch as ToggleSwitch } from "@client/components/ui/switch";
 import {
 	Tabs,
+	TabsContent,
 	TabsList,
 	TabsTrigger,
-	TabsContent,
 } from "@client/components/ui/tabs";
-import { Switch as ToggleSwitch } from "@client/components/ui/switch";
-import { createSignal, For, Switch } from "solid-js";
-import { Label } from "@client/components/ui/label";
-import { Show } from "solid-js";
-import { Input } from "@client/components/ui/input";
-import type { ParentComponent, Accessor } from "solid-js";
-import type { FieldOption, InputField } from "../primitives/fields";
+import type { Accessor, ParentComponent } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import { useFormBuilder } from "../form-builder-context";
-import { Button } from "@client/components/ui/button";
-import { nanoid } from "nanoid";
+import type { InputField } from "../primitives/fields";
 
 const FieldPropertiesModal: ParentComponent<{
 	field: Accessor<InputField>;
@@ -33,37 +30,6 @@ const FieldPropertiesModal: ParentComponent<{
 		updateChildInBlock(field().id, blockId, data, stepId);
 	};
 
-	const handleAddOption = () => {
-		if (!field().options) return;
-
-		const newOption: FieldOption = {
-			id: nanoid(),
-			label: `Option ${(field().options?.length || 0) + 1}`,
-			value: `option_${(field().options?.length || 0) + 1}`,
-		};
-
-		const updatedOptions = [...(field().options || []), newOption];
-		handleUpdateField({ options: updatedOptions });
-	};
-
-	const handleUpdateOption = (optionId: string, data: Partial<FieldOption>) => {
-		if (!field().options) return;
-
-		const updatedOptions = (field().options || []).map((option) =>
-			option.id === optionId ? { ...option, ...data } : option,
-		);
-
-		handleUpdateField({ options: updatedOptions });
-	};
-
-	const handleRemoveOption = (optionId: string) => {
-		if (!field().options) return;
-
-		const updatedOptions = (field().options || []).filter(
-			(option) => option.id !== optionId,
-		);
-		handleUpdateField({ options: updatedOptions });
-	};
 	return (
 		<DialogContent>
 			<DialogHeader>
@@ -107,32 +73,10 @@ const FieldPropertiesModal: ParentComponent<{
 
 						<div>
 							<Label for="field-name">Field Name</Label>
-							<Input id="field-name" value={field().id} disabled />
+							<Input id="field-name" value={field().name} />
 							<p class="text-xs text-muted-foreground mt-1">
 								Field identifier in form submissions
 							</p>
-						</div>
-
-						<div>
-							<Label for="field-placeholder">Placeholder</Label>
-							<Input
-								id="field-placeholder"
-								value={field().placeholder || ""}
-								onInput={(e) =>
-									handleUpdateField({ placeholder: e.currentTarget.value })
-								}
-							/>
-						</div>
-
-						<div>
-							<Label for="field-help-text">Help Text</Label>
-							<Input
-								id="field-help-text"
-								value={field().helpText || ""}
-								onInput={(e) =>
-									handleUpdateField({ helpText: e.currentTarget.value })
-								}
-							/>
 						</div>
 
 						<div>
@@ -145,23 +89,6 @@ const FieldPropertiesModal: ParentComponent<{
 								}
 							/>
 						</div>
-
-						<Show when={field().defaultValue !== undefined}>
-							<div>
-								<Label for="field-default-value">Default Value</Label>
-								<Input
-									id="field-default-value"
-									value={
-										typeof field().defaultValue === "object"
-											? JSON.stringify(field().defaultValue)
-											: String(field().defaultValue || "")
-									}
-									onInput={(e) =>
-										handleUpdateField({ defaultValue: e.currentTarget.value })
-									}
-								/>
-							</div>
-						</Show>
 					</TabsContent>
 
 					{/* Validation Tab */}
@@ -243,80 +170,6 @@ const FieldPropertiesModal: ParentComponent<{
 									}}
 								/>
 							</div>
-						</Show>
-					</TabsContent>
-
-					{/* Options Tab */}
-					<TabsContent value="options" class="space-y-4">
-						<Show
-							when={(() => {
-								const f = field();
-								if (!f || f.childType !== "field") return null;
-								if (
-									f.fieldType == "select" ||
-									f.fieldType == "radio" ||
-									f.fieldType == "checkbox"
-								) {
-									return f;
-								}
-								return null;
-							})()}
-						>
-							{(fieldWithOptions) => (
-								<div class="space-y-2">
-									<For each={fieldWithOptions().options || []}>
-										{(option) => (
-											<div class="flex items-center gap-2">
-												<Input
-													value={option.label}
-													onInput={(e) =>
-														handleUpdateOption(option.id, {
-															label: e.currentTarget.value,
-														})
-													}
-													placeholder="Option label"
-												/>
-												<Input
-													value={option.value}
-													onInput={(e) =>
-														handleUpdateOption(option.id, {
-															value: e.currentTarget.value,
-														})
-													}
-													placeholder="Option value"
-												/>
-												<Button
-													variant="ghost"
-													size="icon"
-													onClick={() => handleRemoveOption(option.id)}
-												>
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="16"
-														height="16"
-														viewBox="0 0 24 24"
-														fill="none"
-														stroke="currentColor"
-														stroke-width="2"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-													>
-														<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-													</svg>
-												</Button>
-											</div>
-										)}
-									</For>
-
-									<Button
-										variant="outline"
-										class="w-full"
-										onClick={handleAddOption}
-									>
-										Add Option
-									</Button>
-								</div>
-							)}
 						</Show>
 					</TabsContent>
 

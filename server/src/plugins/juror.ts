@@ -42,6 +42,8 @@ export const jurorPlugin = new Elysia({
 						});
 						return { ...jurorToCall, submissions };
 					})
-					.put("/submissions/:submissionId", async ({}) => {}),
+					.put("/submissions/:submissionId", async ({ db }) => {
+						
+					}),
 			),
 	);

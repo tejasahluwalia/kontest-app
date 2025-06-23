@@ -1,24 +1,4 @@
-import { useIsMobile } from "@client/lib/utils";
-import {
-	getRouteApi,
-	Link,
-	type LinkComponentProps,
-	useParams,
-} from "@tanstack/solid-router";
-import ChevronsUpDown from "lucide-solid/icons/chevrons-up-down";
-import {
-	type Component,
-	type ComponentProps,
-	createContext,
-	createSignal,
-	For,
-	type JSX,
-	mergeProps,
-	type ParentComponent,
-	Show,
-	splitProps,
-	useContext,
-} from "solid-js";
+import { Button, type ButtonProps } from "@client/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -26,45 +6,21 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-
-// type HostNavbarContext = {
-// 	menu: "org" | "call";
-//   params: {
-//     org: string;
-//     call: string;
-//   }
-// };
-
-// const HostNavbarContext = createContext<HostNavbarContext>({
-// 	menu: "org",
-//   params: {
-//     org: "",
-//     call: "",
-//   },
-// });
-
-// function useHostNavbar() {
-// 	const context = useContext(HostNavbarContext);
-// 	if (!context) {
-// 		throw new Error("useHostNavbar must be used within a HostNavbarProvider");
-// 	}
-// 	return context;
-// }
-
-// type HostNavbarProviderProps = Omit<ComponentProps<"div">, "style"> &
-// 	HostNavbarContext;
-
-// const HostNavbarProvider: Component<HostNavbarProviderProps> = (rawProps) => {
-// 	const props = mergeProps(rawProps);
-// 	const [local, others] = splitProps(props, ["class", "children"]);
-
-// 	return (
-// 		<HostNavbarContext.Provider value={{}}>
-// 			{local.children}
-// 		</HostNavbarContext.Provider>
-// 	);
-// };
+} from "@client/components/ui/dropdown-menu";
+import { cn, useIsMobile } from "@client/lib/utils";
+import type { PolymorphicCallbackProps } from "@kobalte/core";
+import type { ButtonRootOptions } from "@kobalte/core/button";
+import {
+	getRouteApi,
+	Link,
+	type LinkComponent,
+	type LinkComponentProps,
+	MatchRoute,
+	useParams,
+} from "@tanstack/solid-router";
+import ChevronsUpDown from "lucide-solid/icons/chevrons-up-down";
+import Slash from "lucide-solid/icons/slash";
+import { For, Show } from "solid-js";
 
 const routeApi = getRouteApi("/(host)/host");
 
@@ -82,14 +38,20 @@ export default function HostNavbar() {
 
 	return (
 		<div class="border-b">
-			<header class="flex justify-between">
-				<div class="flex">
+			<header class="flex justify-between px-6 mb-2">
+				<div class="flex space-x-1 py-2 text-sm items-center">
 					{/* Breadcrumbs */}
 					<Show when={ctx().orgs.length > 0} fallback={<div>Create org</div>}>
 						<Show when={selectedOrg()}>
 							{(currOrg) => (
 								<>
-									<Link to="/host/orgs/$org" params={{ org: currOrg().slug }}>
+									<Link
+										class={cn({
+											"hidden md:block": Boolean(selectedCall()),
+										})}
+										to="/host/orgs/$org"
+										params={{ org: currOrg().slug }}
+									>
 										{currOrg().name}
 									</Link>
 									<DropdownSwitcher
@@ -103,6 +65,9 @@ export default function HostNavbar() {
 									<Show when={selectedCall()}>
 										{(currCall) => (
 											<>
+												<div class="px-2 md:px-4 text-muted-foreground/50">
+													<Slash size={20} strokeWidth={1} />
+												</div>
 												<Link
 													to="/host/orgs/$org/calls/$call"
 													params={{
@@ -136,7 +101,7 @@ export default function HostNavbar() {
 			</header>
 			<Show when={selectedOrg()}>
 				{(currOrg) => (
-					<nav>
+					<nav class="flex px-6 space-x-1">
 						<Show
 							when={selectedCall()}
 							fallback={
@@ -195,15 +160,39 @@ function NavigationMenu(props: {
 }) {
 	const { links } = props;
 	return (
-		<ul class="flex space-x-2">
-			<For each={links}>
-				{(link) => (
-					<li>
-						<Link {...link}>{link.label}</Link>
-					</li>
-				)}
-			</For>
-		</ul>
+		<For each={links}>
+			{(link) => (
+				<MatchRoute to={link.to} params={link.params}>
+					{(match) => (
+						<div
+							class={cn({
+								"pb-2": true,
+								"border-b-2 border-foreground": !!match,
+							})}
+						>
+							<Button
+								variant="ghost"
+								as={(
+									props: PolymorphicCallbackProps<
+										LinkComponent<"a", string>,
+										ButtonRootOptions,
+										ButtonProps<"a">
+									>,
+								) => (
+									<Link
+										{...link}
+										{...props}
+										activeProps={{ class: "bg-accent dark:bg-accent/50" }}
+									/>
+								)}
+							>
+								{link.label}
+							</Button>
+						</div>
+					)}
+				</MatchRoute>
+			)}
+		</For>
 	);
 }
 
@@ -214,7 +203,7 @@ function DropdownSwitcher(props: {
 	const { options, menuLabel } = props;
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>
+			<DropdownMenuTrigger class="hover:bg-accent dark:hover:bg-accent/50 text-muted-foreground/50 px-1 py-2">
 				<ChevronsUpDown size={16} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>

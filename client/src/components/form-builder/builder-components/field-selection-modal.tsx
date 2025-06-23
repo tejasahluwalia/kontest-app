@@ -6,7 +6,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@client/components/ui/dialog";
-import { For, createSignal, type Component } from "solid-js";
+import { type Component, createSignal, For } from "solid-js";
 import { useFormBuilder } from "../form-builder-context";
 import { createChild } from "../primitives/children";
 import type { InputField } from "../primitives/fields";
@@ -42,13 +42,12 @@ const fieldTypes: FieldTypeOption[] = [
 
 interface FieldSelectionModalProps {
 	blockId: string;
-	stepId: string;
 }
 
 export const FieldSelectionModal: Component<FieldSelectionModalProps> = (
 	props,
 ) => {
-	const { addChildToBlock } = useFormBuilder();
+	const { addChildToBlock, selectedStepId, saveForm } = useFormBuilder();
 	const [isOpen, setIsOpen] = createSignal(false);
 
 	const handleAddField = (
@@ -66,8 +65,9 @@ export const FieldSelectionModal: Component<FieldSelectionModalProps> = (
 	) => {
 		const newChild = createChild() as InputField;
 		newChild.fieldType = type;
-		addChildToBlock(newChild, props.blockId, props.stepId);
+		addChildToBlock(newChild, props.blockId, selectedStepId());
 		setIsOpen(false);
+		saveForm();
 	};
 
 	return (

@@ -9,7 +9,7 @@ function Card(props: ComponentProps<"div">) {
 		<div
 			data-slot="card"
 			class={cn(
-				"bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+				"bg-card text-card-foreground flex flex-col gap-4 rounded-md border py-4 shadow-sm",
 				local.class,
 			)}
 			{...others}
@@ -23,7 +23,7 @@ function CardHeader(props: ComponentProps<"div">) {
 		<div
 			data-slot="card-header"
 			class={cn(
-				"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+				"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-4",
 				local.class,
 			)}
 			{...others}
@@ -70,7 +70,7 @@ function CardAction(props: ComponentProps<"div">) {
 function CardContent(props: ComponentProps<"div">) {
 	const [local, others] = splitProps(props, ["class"]);
 	return (
-		<div data-slot="card-content" class={cn("px-6", local.class)} {...others} />
+		<div data-slot="card-content" class={cn("px-4", local.class)} {...others} />
 	);
 }
 
@@ -79,7 +79,7 @@ function CardFooter(props: ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="card-footer"
-			class={cn("flex items-center px-6 [.border-t]:pt-6", local.class)}
+			class={cn("flex items-center px-4 [.border-t]:pt-4", local.class)}
 			{...others}
 		/>
 	);

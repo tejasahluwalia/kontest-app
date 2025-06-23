@@ -18,56 +18,7 @@ function FormBuilderContent() {
 
 	return (
 		<div class="space-y-6">
-			<Tabs defaultValue="flow" class="w-full">
-				<TabsList class="w-full max-w-md mx-auto">
-					<TabsTrigger value="flow" class="flex-1">
-						Form Flow
-					</TabsTrigger>
-					<TabsTrigger value="builder" class="flex-1">
-						Form Builder
-					</TabsTrigger>
-					<TabsTrigger value="settings" class="flex-1">
-						Form Settings
-					</TabsTrigger>
-					<TabsTrigger value="preview" class="flex-1">
-						Preview
-					</TabsTrigger>
-				</TabsList>
-
-				<TabsContent value="flow" class="pt-6">
-					<div class="grid">
-						<FormFlowCanvas />
-					</div>
-				</TabsContent>
-
-				<TabsContent value="builder" class="pt-6">
-					<div class="grid">
-						<FormBuilderCanvas />
-					</div>
-				</TabsContent>
-
-				<TabsContent value="settings" class="pt-6">
-					<FormSettings />
-				</TabsContent>
-
-				<TabsContent value="preview" class="pt-6">
-					<Show
-						when={isPreviewMode()}
-						fallback={
-							<div class="border rounded-lg p-6 text-center">
-								<p class="text-muted-foreground mb-4">
-									Preview your form to test the conditional logic and navigation
-									flow
-								</p>
-								<Button onClick={startPreview}>Start Preview</Button>
-							</div>
-						}
-					>
-						<FormPreview formSchema={formSchema} onClose={stopPreview} />
-					</Show>
-				</TabsContent>
-			</Tabs>
-			<Button onclick={saveForm}>Save Form</Button>
+			<FormBuilderCanvas />
 		</div>
 	);
 }

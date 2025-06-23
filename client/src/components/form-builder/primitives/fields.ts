@@ -17,6 +17,7 @@ export type FieldType =
 
 export interface FieldOption {
 	id: string;
+	name: string;
 	label: string;
 	value: string;
 }
@@ -48,15 +49,12 @@ export interface BaseField {
 	conditionalDisplay?: Condition | ConditionGroup;
 	required?: boolean;
 	validation?: FieldValidation;
-	helpText?: string;
-	placeholder?: string;
 }
 
 export interface TextField extends BaseField {
 	fieldType: "text";
 	minLength?: number;
 	maxLength?: number;
-	defaultValue?: string;
 	value?: string;
 }
 
@@ -66,7 +64,6 @@ export interface RichTextField extends BaseField {
 	maxLength?: number;
 	toolbarOptions?: string[];
 	rows?: number;
-	defaultValue?: unknown;
 	value?: unknown;
 }
 
@@ -75,7 +72,6 @@ export interface NumberField extends BaseField {
 	min?: number | null;
 	max?: number | null;
 	step?: number;
-	defaultValue?: number;
 	value?: number;
 }
 
@@ -83,7 +79,6 @@ export interface SelectField extends BaseField {
 	fieldType: "select";
 	options: FieldOption[];
 	allowOther?: boolean;
-	defaultValue?: string;
 	value?: string;
 }
 
@@ -92,7 +87,6 @@ export interface DateField extends BaseField {
 	minDate?: Date;
 	maxDate?: Date;
 	dateFormat?: string;
-	defaultValue?: Date;
 	value?: Date;
 }
 
@@ -102,7 +96,6 @@ export interface TimeField extends BaseField {
 	minDate?: string | null;
 	maxDate?: string | null;
 	dateFormat?: string;
-	defaultValue?: string;
 	value?: string;
 }
 
@@ -111,21 +104,18 @@ export interface FileField extends BaseField {
 	maxSize?: number;
 	allowedTypes?: string[];
 	multiple?: boolean;
-	defaultValue?: string[];
 	value?: string[];
 }
 
 export interface CheckboxField extends BaseField {
 	fieldType: "checkbox";
 	options: FieldOption[];
-	defaultValue?: string[];
 	value?: string[];
 }
 
 export interface RadioField extends BaseField {
 	fieldType: "radio";
 	options: FieldOption[];
-	defaultValue?: string;
 	value?: string;
 }
 
@@ -136,7 +126,6 @@ export interface ArrayField extends BaseField {
 	maxItems?: number;
 	addLabel?: string;
 	itemLabel?: string;
-	defaultValue?: unknown[];
 	value?: unknown[];
 }
 
