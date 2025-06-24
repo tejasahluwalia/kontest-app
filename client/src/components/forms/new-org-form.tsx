@@ -5,17 +5,16 @@ import {
 	redirect,
 	useRouter,
 } from "@tanstack/solid-router";
-import { Show, For, createSignal } from "solid-js";
 import type { JSX } from "solid-js";
-import { createEffect } from "solid-js";
+import { createEffect, createSignal, For, Show } from "solid-js";
 import { IconLoader } from "~/components/icons";
 import { Button } from "~/components/ui/button";
-import { debounce } from "~/lib/utils";
 import {
 	TextField,
 	TextFieldInput,
 	TextFieldLabel,
 } from "~/components/ui/text-field";
+import { debounce } from "~/lib/utils";
 
 async function createOrg(name: string, slug: string) {
 	const { data, error, status } = await server.api.host.orgs.post({
@@ -28,7 +27,14 @@ async function createOrg(name: string, slug: string) {
 	if (status !== 201) {
 		throw new Error(`Failed to create org: ${status}`);
 	}
-	return data;
+
+	const newOrg = data[0];
+	return redirect({
+		to: "/host/orgs/$org",
+		params: {
+			org: newOrg.slug,
+		},
+	});
 }
 
 async function getSlugAvailability(slug: string) {

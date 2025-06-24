@@ -1,15 +1,19 @@
-import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
+import { Elysia } from "elysia";
 import betterAuthView from "./lib/auth-view";
-import { setup } from "./plugins/setup";
-import { publicPlugin } from "./plugins/public";
 import { hostPlugin } from "./plugins/host";
 import { jurorPlugin } from "./plugins/juror";
+import { publicPlugin } from "./plugins/public";
+import { setup } from "./plugins/setup";
 
 const app = new Elysia()
 	.use(
 		cors({
-			origin: ["http://localhost:5173", "http://localhost:4173"],
+			origin: [
+				"http://localhost:5173",
+				"http://localhost:4173",
+				"http://192.168.1.15:5173",
+			],
 			methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],

@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/solid-router";
-import { Navigate } from "@tanstack/solid-router";
 import { For } from "solid-js";
 
 export const Route = createFileRoute({

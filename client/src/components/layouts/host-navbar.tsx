@@ -26,14 +26,14 @@ const routeApi = getRouteApi("/(host)/host");
 
 export default function HostNavbar() {
 	const ctx = routeApi.useRouteContext();
-	const params = useParams({ strict: false });
+	const params = useParams({ strict: false })();
 
 	const selectedOrg = () => {
-		return ctx().orgs.find((org) => org.slug === params().org);
+		return ctx().orgs.find((org) => org.slug === params.org);
 	};
 
 	const selectedCall = () => {
-		return selectedOrg()?.calls.find((call) => call.slug === params().call);
+		return selectedOrg()?.calls.find((call) => call.slug === params.call);
 	};
 
 	return (
@@ -80,7 +80,7 @@ export default function HostNavbar() {
 												<DropdownSwitcher
 													menuLabel="Calls"
 													options={currOrg().calls.map((call) => ({
-														to: "/host/orgs/$org/calls/$call",
+														to: "/host/orgs/$org/calls/$call/dashboard",
 														params: { org: currOrg().slug, call: call.slug },
 														label: call.name,
 													}))}
@@ -110,6 +110,7 @@ export default function HostNavbar() {
 									links={[
 										{
 											label: "Calls",
+											from: "/host/orgs/$org",
 											to: "/host/orgs/$org/calls",
 											params: { org: currOrg().slug },
 										},
@@ -129,18 +130,18 @@ export default function HostNavbar() {
 										{
 											label: "Dashboard",
 											to: "/host/orgs/$org/calls/$call/dashboard",
-											params: {
-												org: currOrg().slug,
-												call: call().slug,
-											},
+											params: (prev) => ({
+												org: prev.org,
+												call: prev.call,
+											}),
 										},
 										{
 											label: "Configure",
 											to: "/host/orgs/$org/calls/$call/configure",
-											params: {
-												org: currOrg().slug,
-												call: call().slug,
-											},
+											params: (prev) => ({
+												org: prev.org,
+												call: prev.call,
+											}),
 										},
 									]}
 								/>

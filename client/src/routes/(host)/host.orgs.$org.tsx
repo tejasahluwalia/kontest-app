@@ -1,8 +1,6 @@
-import { getRouteApi, notFound } from "@tanstack/solid-router";
-import { Outlet } from "@tanstack/solid-router";
-import server from "@client/lib/server-api";
-import { ErrorBoundary } from "solid-js";
 import OrgContext from "@client/context/org";
+import server from "@client/lib/server-api";
+import { notFound, Outlet } from "@tanstack/solid-router";
 
 export const Route = createFileRoute({
 	component: RouteComponent,

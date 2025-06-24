@@ -1,8 +1,8 @@
 import { model } from "@server/database/model";
-import Elysia, { t } from "elysia";
-import { setup } from "./setup";
 import { call, callToHost, org, orgToHost } from "@server/database/schema";
 import { eq } from "drizzle-orm";
+import Elysia, { t } from "elysia";
+import { setup } from "./setup";
 
 export const hostPlugin = new Elysia({
 	name: "hostPlugin",
@@ -37,12 +37,12 @@ export const hostPlugin = new Elysia({
 			})
 			.post(
 				"/",
-				async ({ body, user, db, redirect }) => {
+				async ({ body, user, db }) => {
 					const newOrg = await db.insert(org).values(body).returning();
 					await db
 						.insert(orgToHost)
 						.values({ orgId: newOrg[0].id, userId: user.id, role: "admin" });
-					return redirect(`http://localhost:5173/host/orgs/${body.slug}`, 302);
+					return newOrg;
 				},
 				{
 					body: t.Object({

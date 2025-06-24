@@ -1,18 +1,11 @@
-import { Button } from "@client/components/ui/button";
 import { InlineEdit } from "@client/components/ui/inline-edit";
-import { type Component, createSignal, For } from "solid-js";
+import { type Component, createSignal, ErrorBoundary, For } from "solid-js";
 import { useFormBuilder } from "../form-builder-context";
-import { createBlock } from "../primitives/blocks";
 import BuilderBlockRenderer from "./builder-block-renderer";
 
 const BuilderStepRenderer: Component = () => {
-	const {
-		setFormSchema,
-		addBlockToStep,
-		selectedStepId,
-		selectedStep,
-		saveForm,
-	} = useFormBuilder();
+	const { setFormSchema, selectedStepId, selectedStep, saveForm } =
+		useFormBuilder();
 	const [label, setLabel] = createSignal(selectedStep()?.step.label || "");
 
 	function handleLabelChange() {
@@ -37,7 +30,11 @@ const BuilderStepRenderer: Component = () => {
 
 			<div class="space-y-4 mb-4">
 				<For each={selectedStep()?.blocks}>
-					{(block) => <BuilderBlockRenderer block={block} />}
+					{(block) => (
+						<ErrorBoundary fallback={"Error rendering block"}>
+							<BuilderBlockRenderer block={block} />
+						</ErrorBoundary>
+					)}
 				</For>
 			</div>
 

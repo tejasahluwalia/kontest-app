@@ -58,6 +58,18 @@ export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({
 		saveForm();
 	}
 
+	function handleOnDelete() {
+		setFormSchema(
+			"graph",
+			(node) => node.step.id === selectedStepId(),
+			"blocks",
+			(block) => block.id === blockId,
+			"children",
+			(children) => children.filter((child) => child.id !== field().id),
+		);
+		saveForm();
+	}
+
 	function handleChangeIsRequired(isChecked: boolean) {
 		setIsRequired(isChecked);
 		setFormSchema(
@@ -102,7 +114,10 @@ export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({
 								<EllipsisVertical />
 							</DropdownMenuTrigger>
 							<DropdownMenuContent class="w-48">
-								<DropdownMenuItem class="text-destructive focus:text-destructive flex justify-between">
+								<DropdownMenuItem
+									onClick={handleOnDelete}
+									class="text-destructive focus:text-destructive flex justify-between"
+								>
 									<DropdownMenuItemLabel>
 										<span>Delete</span>
 									</DropdownMenuItemLabel>
