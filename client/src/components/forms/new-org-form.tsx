@@ -1,12 +1,7 @@
 import server from "@client/lib/server-api";
-import {
-	createFileRoute,
-	Navigate,
-	redirect,
-	useRouter,
-} from "@tanstack/solid-router";
+import { redirect, useRouter } from "@tanstack/solid-router";
 import type { JSX } from "solid-js";
-import { createEffect, createSignal, For, Show } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 import { IconLoader } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import {
@@ -17,15 +12,12 @@ import {
 import { debounce } from "~/lib/utils";
 
 async function createOrg(name: string, slug: string) {
-	const { data, error, status } = await server.api.host.orgs.post({
+	const { data, error } = await server.api.host.orgs.post({
 		name,
 		slug,
 	});
 	if (error) {
 		throw error.value;
-	}
-	if (status !== 201) {
-		throw new Error(`Failed to create org: ${status}`);
 	}
 
 	const newOrg = data[0];
@@ -82,17 +74,18 @@ export default function NewOrgForm() {
 		InputEvent
 	> = (event) => {
 		const target = event.target as HTMLInputElement;
-		setSlug(target.value);
+		const newSlug = generateSlugFromName(target.value);
+		setSlug(newSlug);
 		setSlugManuallyEdited(true);
-		debouncedCheckSlugAvailability(target.value);
+		debouncedCheckSlugAvailability(newSlug);
 	};
 
-	const generateSlugFromName = async (name: string) => {
+	const generateSlugFromName = (name: string) => {
 		const slug = name
 			.toLowerCase()
 			.replace(/[^a-z0-9]+/g, "-")
 			.replace(/^-|-$/g, "");
-		setSlug(slug);
+		return slug;
 	};
 
 	const checkSlugAvailability = async (slug: string) => {
@@ -137,8 +130,9 @@ export default function NewOrgForm() {
 
 	createEffect(() => {
 		if (name() && !slugManuallyEdited()) {
-			generateSlugFromName(name());
-			debouncedCheckSlugAvailability(slug());
+			const slug = generateSlugFromName(name());
+			setSlug(slug);
+			debouncedCheckSlugAvailability(slug);
 		}
 	});
 

@@ -13,6 +13,6 @@ export const createEdge = (): ConditionalRule => ({
 	action: {
 		id: "submit",
 		name: "Submit",
-		value: "submitFrom",
+		value: "submit",
 	},
 });

@@ -12,38 +12,32 @@ export const jurorPlugin = new Elysia({
 	.group("/calls", (app) =>
 		app
 			.get("/", async ({ db, user }) => {
-				const calls = await db.query.jurorToCall.findMany({
-					where: (jc, { eq }) => eq(jc.userId, user.id),
+				const calls = await db.query.juror.findMany({
+					where: (juror, { eq }) => eq(juror.id, user.id),
 				});
 				return calls;
 			})
-			.group("/:callId", (app) =>
+			.group("/:roundId", (app) =>
 				app
 					.resolve(async ({ db, user, params, status }) => {
-						const jurorToCall = await db.query.jurorToCall.findFirst({
-							where: (jc, { eq, and }) =>
-								and(eq(jc.userId, user.id), eq(jc.callId, params.callId)),
+						const juror = await db.query.juror.findFirst({
+							where: (juror, { eq, and }) =>
+								and(eq(juror.id, user.id), eq(juror.roundId, params.roundId)),
 							with: {
-								call: {
-									columns: {
-										schema: false,
-									},
-								},
+								judgements: true,
 							},
 						});
-						if (!jurorToCall) {
+						if (!juror) {
 							return status(401);
 						}
-						return { jurorToCall };
+						return { juror };
 					})
-					.get("/", async ({ db, jurorToCall }) => {
+					.get("/", async ({ db, juror }) => {
 						const submissions = await db.query.submission.findMany({
-							where: (s, { eq }) => eq(s.callId, jurorToCall?.callId),
+							where: (s, { eq }) => eq(s.roundId, juror.roundId),
 						});
-						return { ...jurorToCall, submissions };
+						return { ...juror, submissions };
 					})
-					.put("/submissions/:submissionId", async ({ db }) => {
-						
-					}),
+					.put("/submissions/:submissionId", async ({ db }) => {}),
 			),
 	);

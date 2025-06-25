@@ -1,6 +1,9 @@
-import { Link, useRouter } from "@tanstack/solid-router";
-import { Show, For, createSignal } from "solid-js";
+import NewCallForm from "@client/components/forms/new-call-form";
+import { Card, CardContent, CardHeader } from "@client/components/ui/card";
 import server from "@client/lib/server-api";
+import { Link, useRouter } from "@tanstack/solid-router";
+import Trash2 from "lucide-solid/icons/trash-2";
+import { createSignal, For, Show } from "solid-js";
 import { Button } from "~/components/ui/button";
 import {
 	Dialog,
@@ -9,9 +12,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "~/components/ui/dialog";
-import NewCallForm from "@client/components/forms/new-call-form";
-import { Card, CardContent, CardHeader } from "@client/components/ui/card";
-import Trash2 from "lucide-solid/icons/trash-2";
 
 export const Route = createFileRoute({
 	component: RouteComponent,
@@ -39,41 +39,34 @@ function RouteComponent() {
 
 	return (
 		<div class="space-y-6">
-			<div class="flex items-center justify-between">
-				<h1 class="text-3xl font-bold">Calls</h1>
-				<Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
-					<DialogTrigger>
-						<Button>Create Call</Button>
-					</DialogTrigger>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>Create a new call</DialogTitle>
-						</DialogHeader>
-						<NewCallForm orgId={org.id} onSuccess={handleCreateSuccess} />
-					</DialogContent>
-				</Dialog>
-			</div>
-
 			<Show when={org}>
 				<Show
 					when={calls.length > 0}
 					fallback={
 						<div class="text-center py-12">
-							<h3 class="text-lg font-medium">No calls found</h3>
-							<p class="text-gray-500 dark:text-gray-400 mt-2">
+							<h3 class="text-lg font-medium mb-4">No calls found</h3>
+							<p class="text-gray-500 dark:text-gray-400 mb-4">
 								{calls.length
 									? "Try a different search term"
 									: "Create your first call to get started"}
 							</p>
+							<Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
+								<DialogTrigger>
+									<Button>Create Call</Button>
+								</DialogTrigger>
+								<DialogContent>
+									<DialogHeader>
+										<DialogTitle>Create a new call</DialogTitle>
+									</DialogHeader>
+									<NewCallForm orgId={org.id} onSuccess={handleCreateSuccess} />
+								</DialogContent>
+							</Dialog>
 						</div>
 					}
 				>
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 						<For each={calls}>
 							{(call) => {
-								const numberOfSubmissions = call.submissions?.length || 0;
-								const numberOfParticipants =
-									call.callToParticipant?.length || 0;
 								const { slug, name, id } = call;
 								return (
 									<div>
@@ -90,16 +83,6 @@ function RouteComponent() {
 												<CardHeader class="flex items-center justify-between">
 													<h3 class="text-xl font-semibold mb-2">{name}</h3>
 												</CardHeader>
-												<CardContent>
-													<div class="flex items-center justify-between">
-														<span class="text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
-															{numberOfSubmissions} submissions
-														</span>
-														<span class="text-sm bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
-															{numberOfParticipants} participants
-														</span>
-													</div>
-												</CardContent>
 											</Card>
 										</Link>
 										<Button
@@ -113,6 +96,20 @@ function RouteComponent() {
 								);
 							}}
 						</For>
+						<Card>
+							<CardHeader>Create call</CardHeader>
+							<Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
+								<DialogTrigger>
+									<Button>Create Call</Button>
+								</DialogTrigger>
+								<DialogContent>
+									<DialogHeader>
+										<DialogTitle>Create a new call</DialogTitle>
+									</DialogHeader>
+									<NewCallForm orgId={org.id} onSuccess={handleCreateSuccess} />
+								</DialogContent>
+							</Dialog>
+						</Card>
 					</div>
 				</Show>
 			</Show>

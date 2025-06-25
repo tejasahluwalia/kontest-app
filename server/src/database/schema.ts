@@ -1,15 +1,15 @@
+import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
-	pgTable,
-	text,
 	boolean,
-	timestamp,
 	jsonb,
-	primaryKey,
 	pgEnum,
+	pgTable,
+	primaryKey,
+	text,
+	timestamp,
+	unique,
 } from "drizzle-orm/pg-core";
-
-import { createId } from "@paralleldrive/cuid2";
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
@@ -20,13 +20,6 @@ export const user = pgTable("user", {
 	createdAt: timestamp("created_at").notNull(),
 	updatedAt: timestamp("updated_at").notNull(),
 });
-
-export const userRelations = relations(user, ({ many }) => ({
-	orgToHosts: many(orgToHost),
-	callToHosts: many(callToHost),
-	callToParticipants: many(callToParticipant),
-	jurorToCalls: many(jurorToCall),
-}));
 
 export const session = pgTable("session", {
 	id: text("id").primaryKey(),
@@ -74,40 +67,72 @@ export const org = pgTable("org", {
 		.primaryKey(),
 	name: text("name").notNull(),
 	slug: text("slug").notNull().unique(),
+	metadata: jsonb("metadata"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const orgRelations = relations(org, ({ many }) => ({
-	orgToHost: many(orgToHost),
+	members: many(member),
 	calls: many(call),
 }));
 
-export const orgToHost = pgTable(
-	"org_to_host",
+export const memberRoleEnum = pgEnum("org_member_role", ["admin", "member"]);
+
+export const member = pgTable(
+	"member",
 	{
+		id: text("id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" })
+			.primaryKey(),
 		orgId: text("org_id")
 			.notNull()
 			.references(() => org.id, { onDelete: "cascade" }),
-		userId: text("user_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-		role: text("role").notNull(),
+		role: memberRoleEnum("org_member_role").notNull().default("member"),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},
-	(t) => [primaryKey({ columns: [t.orgId, t.userId] })],
+	(t) => [unique().on(t.orgId, t.id)],
 );
 
-export const orgToHostRelations = relations(orgToHost, ({ one }) => ({
+export const memberRelations = relations(member, ({ one }) => ({
 	org: one(org, {
-		fields: [orgToHost.orgId],
+		fields: [member.orgId],
 		references: [org.id],
 	}),
 	user: one(user, {
-		fields: [orgToHost.userId],
+		fields: [member.id],
 		references: [user.id],
 	}),
+}));
+
+export const round = pgTable("round", {
+	id: text("id")
+		.$defaultFn(() => createId())
+		.primaryKey(),
+	name: text("name").notNull(),
+	slug: text("slug").notNull().unique(),
+	callId: text("call_id")
+		.notNull()
+		.references(() => call.id, { onDelete: "cascade" }),
+	formSchema: jsonb("form_schema"),
+	judgingSchema: jsonb("judging_schema"),
+	metadata: jsonb("metadata"),
+	startDate: timestamp("start_date"),
+	endDate: timestamp("end_date"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const roundRelations = relations(round, ({ one, many }) => ({
+	call: one(call, {
+		fields: [round.callId],
+		references: [call.id],
+	}),
+	jurors: many(juror),
+	submissions: many(submission),
+	judgements: many(judgement),
 }));
 
 export const callVisibilityEnum = pgEnum("call_visibility", [
@@ -115,7 +140,6 @@ export const callVisibilityEnum = pgEnum("call_visibility", [
 	"private",
 	"restricted",
 ]);
-export const callStatusEnum = pgEnum("call_status", ["open", "closed"]);
 
 export const call = pgTable("call", {
 	id: text("id")
@@ -126,11 +150,10 @@ export const call = pgTable("call", {
 	orgId: text("org_id")
 		.notNull()
 		.references(() => org.id, { onDelete: "cascade" }),
-	schema: jsonb("schema"),
+	metadata: jsonb("metadata"),
 	visibility: callVisibilityEnum("call_visibility")
 		.notNull()
 		.default("private"),
-	status: callStatusEnum().notNull().default("closed"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -140,127 +163,143 @@ export const callRelations = relations(call, ({ many, one }) => ({
 		fields: [call.orgId],
 		references: [org.id],
 	}),
-	callToHost: many(callToHost),
-	callToParticipant: many(callToParticipant),
-	jurorToCall: many(jurorToCall),
+	callToMembers: many(callToMember),
+	rounds: many(round),
+	participants: many(participant),
+}));
+
+export const callToMemberRoleEnum = pgEnum("call_to_member_role", ["admin"]);
+
+export const callToMember = pgTable(
+	"call_to_member",
+	{
+		callId: text("call_id")
+			.notNull()
+			.references(() => call.id, { onDelete: "cascade" }),
+		memberId: text("member_id")
+			.notNull()
+			.references(() => member.id, { onDelete: "cascade" }),
+		role: callToMemberRoleEnum("call_to_member_role")
+			.notNull()
+			.default("admin"),
+	},
+	(t) => [primaryKey({ columns: [t.callId, t.memberId] })],
+);
+
+export const callToMemberRelations = relations(callToMember, ({ one }) => ({
+	call: one(call, {
+		fields: [callToMember.callId],
+		references: [call.id],
+	}),
+	member: one(member, {
+		fields: [callToMember.memberId],
+		references: [member.id],
+	}),
+}));
+
+export const participant = pgTable(
+	"participant",
+	{
+		id: text("id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" })
+			.primaryKey(),
+		callId: text("call_id")
+			.notNull()
+			.references(() => call.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	},
+	(t) => [unique().on(t.callId, t.id)],
+);
+
+export const participantRelations = relations(participant, ({ one, many }) => ({
+	call: one(call, {
+		fields: [participant.callId],
+		references: [call.id],
+	}),
+	user: one(user, {
+		fields: [participant.id],
+		references: [user.id],
+	}),
 	submissions: many(submission),
 }));
 
-export const callToHostVisibilityEnum = pgEnum("call_to_host_visibility", [
-	"admin",
-]);
-
-export const callToHost = pgTable(
-	"call_to_host",
+export const juror = pgTable(
+	"juror",
 	{
-		callId: text("call_id")
+		id: text("id")
 			.notNull()
-			.references(() => call.id, { onDelete: "cascade" }),
-		userId: text("user_id")
+			.references(() => user.id, { onDelete: "cascade" })
+			.primaryKey(),
+		roundId: text("round_id")
 			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-		visibility: callToHostVisibilityEnum("call_to_host_visibility")
-			.notNull()
-			.default("admin"),
+			.references(() => round.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},
-	(t) => [primaryKey({ columns: [t.callId, t.userId] })],
+	(t) => [unique().on(t.id, t.roundId)],
 );
 
-export const callToHostRelations = relations(callToHost, ({ one }) => ({
-	call: one(call, {
-		fields: [callToHost.callId],
-		references: [call.id],
-	}),
+export const jurorRelations = relations(juror, ({ one, many }) => ({
 	user: one(user, {
-		fields: [callToHost.userId],
+		fields: [juror.id],
 		references: [user.id],
 	}),
-}));
-
-export const callToParticipant = pgTable(
-	"call_to_participant",
-	{
-		callId: text("call_id")
-			.notNull()
-			.references(() => call.id, { onDelete: "cascade" }),
-		userId: text("user_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at").defaultNow().notNull(),
-	},
-	(t) => [primaryKey({ columns: [t.callId, t.userId] })],
-);
-
-export const callToParticipantRelations = relations(
-	callToParticipant,
-	({ one }) => ({
-		call: one(call, {
-			fields: [callToParticipant.callId],
-			references: [call.id],
-		}),
-		user: one(user, {
-			fields: [callToParticipant.userId],
-			references: [user.id],
-		}),
+	round: one(round, {
+		fields: [juror.roundId],
+		references: [round.id],
 	}),
-);
-
-export const jurorToCallStatusEnum = pgEnum("juror_status", [
-	"pending",
-	"completed",
-]);
-
-export const jurorToCall = pgTable(
-	"juror_to_call",
-	{
-		userId: text("user_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-		callId: text("call_id")
-			.notNull()
-			.references(() => call.id, { onDelete: "cascade" }),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at").defaultNow().notNull(),
-		data: jsonb("data"),
-		status: jurorToCallStatusEnum("juror_status").notNull().default("pending"),
-	},
-	(t) => [primaryKey({ columns: [t.callId, t.userId] })],
-);
-
-export const jurorToCallRelations = relations(jurorToCall, ({ one }) => ({
-	user: one(user, {
-		fields: [jurorToCall.userId],
-		references: [user.id],
-	}),
-	call: one(call, {
-		fields: [jurorToCall.callId],
-		references: [call.id],
-	}),
+	judgements: many(judgement),
 }));
 
 export const submission = pgTable("submission", {
 	id: text("id").notNull().primaryKey(),
-	callId: text("call_id")
+	roundId: text("round_id")
 		.notNull()
-		.references(() => call.id, { onDelete: "cascade" }),
-	userId: text("user_id")
+		.references(() => round.id, { onDelete: "cascade" }),
+	participantId: text("participant_id")
 		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
+		.references(() => participant.id, { onDelete: "cascade" }),
 	data: jsonb("data"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const submissionRelations = relations(submission, ({ one }) => ({
-	call: one(call, {
-		fields: [submission.callId],
-		references: [call.id],
+export const submissionRelations = relations(submission, ({ one, many }) => ({
+	round: one(round, {
+		fields: [submission.roundId],
+		references: [round.id],
 	}),
-	user: one(user, {
-		fields: [submission.userId],
-		references: [user.id],
+	participant: one(participant, {
+		fields: [submission.participantId],
+		references: [participant.id],
+	}),
+	judgement: many(judgement),
+}));
+
+export const judgement = pgTable(
+	"judgement",
+	{
+		id: text("id").notNull().primaryKey(),
+		submissionId: text("submission_id")
+			.notNull()
+			.references(() => submission.id, { onDelete: "cascade" }),
+		jurorId: text("juror_id")
+			.notNull()
+			.references(() => juror.id, { onDelete: "cascade" }),
+		data: jsonb("data"),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(t) => [unique().on(t.jurorId, t.submissionId)],
+);
+
+export const judgementRelations = relations(judgement, ({ one }) => ({
+	submission: one(submission, {
+		fields: [judgement.submissionId],
+		references: [submission.id],
+	}),
+	juror: one(juror, {
+		fields: [judgement.jurorId],
+		references: [juror.id],
 	}),
 }));

@@ -1,5 +1,4 @@
-import { model } from "@server/database/model";
-import Elysia, { status, t } from "elysia";
+import Elysia, { status } from "elysia";
 import { setup } from "./setup";
 
 export const publicPlugin = new Elysia({
@@ -8,31 +7,19 @@ export const publicPlugin = new Elysia({
 	.use(setup)
 	.group("/calls", (app) =>
 		app
-			.get(
-				"/",
-				async ({ db, query }) => {
-					const calls = await db.query.call.findMany({
-						where: (call, { eq, and }) =>
-							and(
-								eq(call.visibility, "public"),
-								eq(call.status, query.status || "open"),
-							),
-						columns: {
-							id: true,
-							name: true,
-							slug: true,
-							createdAt: true,
-							updatedAt: true,
-						},
-					});
-					return calls;
-				},
-				{
-					query: t.Object({
-						status: t.Optional(model.select.call.status),
-					}),
-				},
-			)
+			.get("/", async ({ db }) => {
+				const calls = await db.query.call.findMany({
+					where: (call, { eq, and }) => and(eq(call.visibility, "public")),
+					columns: {
+						id: true,
+						name: true,
+						slug: true,
+						createdAt: true,
+						updatedAt: true,
+					},
+				});
+				return calls;
+			})
 			.get(
 				"/:id",
 				async ({ db, params, user }) => {
@@ -45,10 +32,6 @@ export const publicPlugin = new Elysia({
 							createdAt: true,
 							updatedAt: true,
 							visibility: true,
-							status: true,
-						},
-						with: {
-							callToParticipant: true,
 						},
 					});
 					if (!call) {
@@ -66,11 +49,12 @@ export const publicPlugin = new Elysia({
 						);
 					}
 
-					const isUserHost = await db.query.callToHost.findFirst({
-						where: (table, { eq }) => eq(table.callId, call.id),
-						columns: {
-							userId: true,
-						},
+					const isUserHost = await db.query.callToMember.findFirst({
+						where: (callToMember, { eq, and }) =>
+							and(
+								eq(callToMember.callId, call.id),
+								eq(callToMember.memberId, user.id),
+							),
 					});
 
 					if (call.visibility === "private" && !isUserHost) {
@@ -80,11 +64,9 @@ export const publicPlugin = new Elysia({
 						);
 					}
 
-					const isUserParticipant = await db.query.callToParticipant.findFirst({
-						where: (table, { eq }) => eq(table.callId, call.id),
-						columns: {
-							userId: true,
-						},
+					const isUserParticipant = await db.query.participant.findFirst({
+						where: (participant, { eq, and }) =>
+							and(eq(participant.callId, call.id), eq(participant.id, user.id)),
 					});
 
 					if (

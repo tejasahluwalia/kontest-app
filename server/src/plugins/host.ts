@@ -1,5 +1,5 @@
 import { model } from "@server/database/model";
-import { call, callToHost, org, orgToHost } from "@server/database/schema";
+import * as schema from "@server/database/schema";
 import { eq } from "drizzle-orm";
 import Elysia, { t } from "elysia";
 import { setup } from "./setup";
@@ -15,8 +15,8 @@ export const hostPlugin = new Elysia({
 	.group("/orgs", (app) =>
 		app
 			.get("/", async ({ db, user }) => {
-				const orgsToHost = await db.query.orgToHost.findMany({
-					where: (oh, { eq }) => eq(oh.userId, user.id),
+				const memberProfiles = await db.query.member.findMany({
+					where: (member, { eq }) => eq(member.id, user.id),
 					with: {
 						org: {
 							with: {
@@ -27,10 +27,10 @@ export const hostPlugin = new Elysia({
 						},
 					},
 				});
-				const orgs = orgsToHost.map((orgToHost) => {
+				const orgs = memberProfiles.map((memberProfile) => {
 					return {
-						...orgToHost.org,
-						role: orgToHost.role,
+						...memberProfile.org,
+						role: memberProfile.role,
 					};
 				});
 				return orgs;
@@ -38,10 +38,10 @@ export const hostPlugin = new Elysia({
 			.post(
 				"/",
 				async ({ body, user, db }) => {
-					const newOrg = await db.insert(org).values(body).returning();
+					const newOrg = await db.insert(schema.org).values(body).returning();
 					await db
-						.insert(orgToHost)
-						.values({ orgId: newOrg[0].id, userId: user.id, role: "admin" });
+						.insert(schema.member)
+						.values({ orgId: newOrg[0].id, id: user.id, role: "admin" });
 					return newOrg;
 				},
 				{
@@ -63,46 +63,37 @@ export const hostPlugin = new Elysia({
 			.group("/:orgId", (app) =>
 				app
 					.resolve(async ({ params, user, db, status }) => {
-						const orgToHost = await db.query.orgToHost.findFirst({
-							where: (orgToHost, { and, eq }) =>
-								and(
-									eq(orgToHost.userId, user.id),
-									eq(orgToHost.orgId, params.orgId),
-								),
+						const member = await db.query.member.findFirst({
+							where: (member, { and, eq }) =>
+								and(eq(member.id, user.id), eq(member.orgId, params.orgId)),
 							with: {
 								org: true,
 							},
 						});
-						if (!orgToHost) {
+						if (!member) {
 							return status(401);
 						}
-						return { orgToHost };
+						return { member };
 					})
-					.get("/", async ({ params, db, orgToHost }) => {
+					.get("/", async ({ params, db, member }) => {
 						const calls = await db.query.call.findMany({
 							where: (call, { eq }) => eq(call.orgId, params.orgId),
-							with: {
-								callToParticipant: true,
-								submissions: {
-									columns: { id: true },
-								},
-							},
 						});
 						return {
-							...orgToHost.org,
+							...member.org,
 							calls,
 						};
 					})
 					.group("/members", (app) =>
 						app
 							.get("/", async ({ db, params, status }) => {
-								const orgMembers = await db.query.orgToHost.findMany({
-									where: (oh, { eq }) => eq(oh.orgId, params.orgId),
+								const members = await db.query.member.findMany({
+									where: (member, { eq }) => eq(member.orgId, params.orgId),
 									with: {
 										user: true,
 									},
 								});
-								return status(200, orgMembers);
+								return status(200, members);
 							})
 							.post(
 								"/",
@@ -113,22 +104,22 @@ export const hostPlugin = new Elysia({
 									if (!invitedUser) {
 										return status(404);
 									}
-									await db.insert(orgToHost).values({
+									await db.insert(schema.member).values({
 										orgId: params.orgId,
-										userId: invitedUser.id,
+										id: invitedUser.id,
 										role: query.role,
 									});
 									return status(204);
 								},
 								{
-									beforeHandle: ({ status, orgToHost }) => {
-										if (orgToHost.role !== "admin") {
+									beforeHandle: ({ status, member }) => {
+										if (member.role !== "admin") {
 											return status(401);
 										}
 									},
 									query: t.Object({
 										email: model.select.user.email,
-										role: model.insert.orgToHost.role,
+										role: model.insert.member.role,
 									}),
 								},
 							),
@@ -150,15 +141,15 @@ export const hostPlugin = new Elysia({
 							})
 							.post(
 								"/",
-								async ({ body, user, status, db }) => {
+								async ({ body, status, db, member }) => {
 									const newCall = await db
-										.insert(call)
+										.insert(schema.call)
 										.values(body)
 										.returning();
-									await db.insert(callToHost).values({
+									await db.insert(schema.callToMember).values({
 										callId: newCall[0].id,
-										userId: user.id,
-										visibility: "admin",
+										memberId: member.id,
+										role: "admin",
 									});
 									return status(201, newCall[0].id);
 								},
@@ -168,38 +159,38 @@ export const hostPlugin = new Elysia({
 							)
 							.group("/:callId", (app) =>
 								app
-									.resolve(async ({ params, user, db, status }) => {
-										const callToHost = await db.query.callToHost.findFirst({
+									.resolve(async ({ params, status, db, member }) => {
+										const callToMember = await db.query.callToMember.findFirst({
 											where: (ch, { eq, and }) =>
 												and(
 													eq(ch.callId, params.callId),
-													eq(ch.userId, user.id),
+													eq(ch.memberId, member.id),
 												),
 											with: {
-												call: true,
+												call: {
+													with: {
+														rounds: true,
+													},
+												},
 											},
 										});
-										if (!callToHost) {
+										if (!callToMember) {
 											return status(401);
 										}
 										return {
-											callToHost,
+											callToMember,
 										};
 									})
 									.put(
 										"/",
 										async ({ body, params, status, db }) => {
 											await db
-												.insert(call)
-												.values({
+												.update(schema.call)
+												.set({
 													...body,
-													id: params.callId,
 													updatedAt: new Date(),
 												})
-												.onConflictDoUpdate({
-													target: call.id,
-													set: { ...body },
-												});
+												.where(eq(schema.call.id, params.callId));
 
 											return status(202);
 										},
@@ -207,13 +198,115 @@ export const hostPlugin = new Elysia({
 											body: t.Object(model.insert.call),
 										},
 									)
-									.get("/", async ({ callToHost }) => {
-										return { ...callToHost.call };
+									.get("/", async ({ callToMember }) => {
+										return { ...callToMember.call };
 									})
 									.delete("/", async ({ db, params, status }) => {
-										await db.delete(call).where(eq(call.id, params.callId));
+										await db
+											.delete(schema.call)
+											.where(eq(schema.call.id, params.callId));
 										return status(202);
-									}),
+									})
+									.group(
+										"/rounds",
+										(
+											app, // New rounds group
+										) =>
+											app
+												.post(
+													"/",
+													async ({
+														body,
+														status,
+														db,
+														params,
+														callToMember,
+													}) => {
+														if (callToMember.role !== "admin") {
+															return status(401);
+														}
+														const newRound = await db
+															.insert(schema.round)
+															.values({ ...body, callId: params.callId })
+															.returning();
+														return status(201, newRound[0].id);
+													},
+													{
+														body: t.Object(model.insert.round),
+													},
+												)
+												.get("/", async ({ db, params }) => {
+													const rounds = await db.query.round.findMany({
+														where: (round, { eq }) =>
+															eq(round.callId, params.callId),
+													});
+													return rounds;
+												})
+												.get(
+													"/checkAvailability/:slug",
+													async ({ db, params }) => {
+														const existingRound =
+															await db.query.round.findFirst({
+																where: (round, { eq, and }) =>
+																	and(
+																		eq(round.callId, params.callId),
+																		eq(round.slug, params.slug),
+																	),
+															});
+														const isAvailable = !existingRound;
+														return {
+															isAvailable,
+														};
+													},
+												)
+												.group("/:roundId", (app) =>
+													app
+														.resolve(async ({ params, db, status }) => {
+															const round = await db.query.round.findFirst({
+																where: (round, { and, eq }) =>
+																	and(
+																		eq(round.id, params.roundId),
+																		eq(round.callId, params.callId),
+																	),
+															});
+															if (!round) {
+																return status(404);
+															}
+															return { round };
+														})
+														.get("/", async ({ round }) => round)
+														.put(
+															"/",
+															async ({ body, params, status, db }) => {
+																await db
+																	.update(schema.round)
+																	.set({
+																		...body,
+																		updatedAt: new Date(),
+																	})
+																	.where(eq(schema.round.id, params.roundId));
+																return status(202);
+															},
+															{
+																body: t.Object({
+																	name: t.Optional(model.insert.round.name),
+																	slug: t.Optional(model.insert.round.slug),
+																	formSchema: t.Optional(t.Any()),
+																	judgingSchema: t.Optional(t.Any()),
+																	metadata: t.Optional(t.Any()),
+																	startDate: t.Optional(t.Date()),
+																	endDate: t.Optional(t.Date()),
+																}),
+															},
+														)
+														.delete("/", async ({ db, params, status }) => {
+															await db
+																.delete(schema.round)
+																.where(eq(schema.round.id, params.roundId));
+															return status(202);
+														}),
+												),
+									),
 							),
 					),
 			),

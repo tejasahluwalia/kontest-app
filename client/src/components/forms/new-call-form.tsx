@@ -1,17 +1,15 @@
 import server from "@client/lib/server-api";
-import { useNavigate, useRouter } from "@tanstack/solid-router";
-import { Show, createSignal } from "solid-js";
+import { useRouter } from "@tanstack/solid-router";
 import type { JSX } from "solid-js";
-import { createEffect } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 import { IconLoader } from "~/components/icons";
 import { Button } from "~/components/ui/button";
-import { debounce } from "~/lib/utils";
 import {
 	TextField,
 	TextFieldInput,
 	TextFieldLabel,
 } from "~/components/ui/text-field";
-import { createDefaultFormSchema } from "../form-builder/primitives/form";
+import { debounce } from "~/lib/utils";
 
 interface NewCallFormProps {
 	orgId: string;
@@ -19,26 +17,20 @@ interface NewCallFormProps {
 }
 
 async function createCall(name: string, slug: string, orgId: string) {
-	const { data, error, status } = await server.api.host
-		.orgs({ orgId })
-		.calls.post(
-			{
-				name,
-				slug,
+	const { data, error } = await server.api.host.orgs({ orgId }).calls.post(
+		{
+			name,
+			slug,
+			orgId,
+		},
+		{
+			query: {
 				orgId,
-				schema: createDefaultFormSchema(),
 			},
-			{
-				query: {
-					orgId,
-				},
-			},
-		);
+		},
+	);
 	if (error) {
 		throw error.value;
-	}
-	if (status !== 201) {
-		throw new Error(`Failed to create call: ${status}`);
 	}
 	return data;
 }
@@ -65,13 +57,20 @@ export default function NewCallForm(props: NewCallFormProps) {
 	const [slugManuallyEdited, setSlugManuallyEdited] = createSignal(false);
 	const [isSubmitting, setIsSubmitting] = createSignal(false);
 	const router = useRouter();
-	const navigate = useNavigate();
+
+	const checkSlugAvailability = async (slug: string) => {
+		if (!slug) {
+			setSlugAvailable(null);
+			return;
+		}
+		setCheckingSlug(true);
+		const isAvailable = await getSlugAvailability(slug, props.orgId);
+		setSlugAvailable(isAvailable);
+		setCheckingSlug(false);
+	};
 
 	// Create a debounced version of the slug availability check
-	const debouncedCheckSlugAvailability = debounce((...args: unknown[]) => {
-		const slug = args[0] as string;
-		checkSlugAvailability(slug);
-	}, 500); // 500ms debounce time
+	const debouncedCheckSlugAvailability = debounce(checkSlugAvailability, 500); // 500ms debounce time
 
 	const handleInputNameChange: JSX.EventHandler<
 		HTMLInputElement,
@@ -90,28 +89,24 @@ export default function NewCallForm(props: NewCallFormProps) {
 		InputEvent
 	> = (event) => {
 		const target = event.target as HTMLInputElement;
-		setSlug(target.value);
+		if (target.value === "") {
+			setSlug("");
+			setSlugAvailable(null);
+			setSlugManuallyEdited(false);
+			return;
+		}
+		const newSlug = generateSlugFromName(target.value);
+		setSlug(newSlug);
 		setSlugManuallyEdited(true);
-		debouncedCheckSlugAvailability(target.value);
+		debouncedCheckSlugAvailability(newSlug);
 	};
 
-	const generateSlugFromName = async (name: string) => {
+	const generateSlugFromName = (name: string) => {
 		const slug = name
 			.toLowerCase()
 			.replace(/[^a-z0-9]+/g, "-")
 			.replace(/^-|-$/g, "");
-		setSlug(slug);
-	};
-
-	const checkSlugAvailability = async (slug: string) => {
-		if (!slug) {
-			setSlugAvailable(null);
-			return;
-		}
-		setCheckingSlug(true);
-		const isAvailable = await getSlugAvailability(slug, props.orgId);
-		setSlugAvailable(isAvailable);
-		setCheckingSlug(false);
+		return slug;
 	};
 
 	const resetForm = () => {
@@ -145,8 +140,9 @@ export default function NewCallForm(props: NewCallFormProps) {
 
 	createEffect(() => {
 		if (name() && !slugManuallyEdited()) {
-			generateSlugFromName(name());
-			debouncedCheckSlugAvailability(slug());
+			const slug = generateSlugFromName(name());
+			setSlug(slug);
+			debouncedCheckSlugAvailability(slug);
 		}
 	});
 
@@ -159,7 +155,7 @@ export default function NewCallForm(props: NewCallFormProps) {
 						<TextFieldInput
 							name="name"
 							value={name()}
-							onInput={handleInputNameChange}
+							on:input={handleInputNameChange}
 							type="text"
 							placeholder="My Call"
 							required
@@ -171,7 +167,7 @@ export default function NewCallForm(props: NewCallFormProps) {
 						<TextFieldInput
 							name="slug"
 							value={slug()}
-							onInput={handleInputSlugChange}
+							on:input={handleInputSlugChange}
 							type="text"
 							placeholder="my-call"
 							required
