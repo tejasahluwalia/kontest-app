@@ -136,6 +136,7 @@ const DropdownMenuSubTrigger = <T extends ValidComponent = "div">(
 				stroke-linejoin="round"
 				class="ml-auto size-4"
 			>
+				<title>Open menu</title>
 				<path d="M9 6l6 6l-6 6" />
 			</svg>
 		</DropdownMenuPrimitive.SubTrigger>
@@ -195,6 +196,7 @@ const DropdownMenuCheckboxItem = <T extends ValidComponent = "div">(
 						stroke-linejoin="round"
 						class="size-4"
 					>
+						<title>Check</title>
 						<path d="M5 12l5 5l10 -10" />
 					</svg>
 				</DropdownMenuPrimitive.ItemIndicator>
@@ -254,6 +256,7 @@ const DropdownMenuRadioItem = <T extends ValidComponent = "div">(
 						stroke-linejoin="round"
 						class="size-2 fill-current"
 					>
+						<title>Check</title>
 						<path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
 					</svg>
 				</DropdownMenuPrimitive.ItemIndicator>

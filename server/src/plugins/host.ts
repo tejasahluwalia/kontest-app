@@ -22,6 +22,11 @@ export const hostPlugin = new Elysia({
 							with: {
 								calls: {
 									columns: { id: true, slug: true, name: true },
+									with: {
+										rounds: {
+											columns: { id: true, slug: true, name: true },
+										},
+									},
 								},
 							},
 						},

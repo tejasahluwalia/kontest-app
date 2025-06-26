@@ -1,9 +1,8 @@
-import type { Component, ComponentProps, JSX, ValidComponent } from "solid-js";
-import { splitProps } from "solid-js";
-
 import * as SheetPrimitive from "@kobalte/core/dialog";
 import type { PolymorphicProps } from "@kobalte/core/polymorphic";
 import { cva, type VariantProps } from "class-variance-authority";
+import type { Component, ComponentProps, JSX, ValidComponent } from "solid-js";
+import { splitProps } from "solid-js";
 
 import { cn } from "~/lib/utils";
 
@@ -114,6 +113,7 @@ const SheetContent = <T extends ValidComponent = "div">(
 						stroke-linejoin="round"
 						class="size-4"
 					>
+						<title>Close</title>
 						<path d="M18 6l-12 12" />
 						<path d="M6 6l12 12" />
 					</svg>

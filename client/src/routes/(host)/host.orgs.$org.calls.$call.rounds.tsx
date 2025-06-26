@@ -1,5 +1,23 @@
+import { Badge } from "@client/components/ui/badge";
+import type { ButtonProps } from "@client/components/ui/button";
+import { Button } from "@client/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@client/components/ui/card";
+import {
+	TextField,
+	TextFieldInput,
+	TextFieldLabel,
+} from "@client/components/ui/text-field";
 import server from "@client/lib/server-api";
-import { notFound } from "@tanstack/solid-router";
+import type { ButtonRootOptions } from "@kobalte/core/button";
+import type { PolymorphicCallbackProps } from "@kobalte/core/polymorphic";
+import type { LinkComponent } from "@tanstack/solid-router";
+import { Link, notFound } from "@tanstack/solid-router";
 import { createSignal, For } from "solid-js";
 
 export const Route = createFileRoute({
@@ -60,97 +78,109 @@ function RouteComponent() {
 			</div>
 
 			{/* Create Round Form */}
-			<div class="bg-white p-6 rounded-lg border">
-				<h2 class="text-lg font-semibold mb-4">Create New Round</h2>
-				<div class="space-y-4">
-					<div>
-						<label
-							for="round-name"
-							class="block text-sm font-medium text-gray-700 mb-1"
-						>
-							Round Name
-						</label>
-						<input
+			<Card>
+				<CardHeader>
+					<CardTitle>Create New Round</CardTitle>
+					<CardDescription>Add a new round to this call</CardDescription>
+				</CardHeader>
+				<CardContent class="space-y-4">
+					<TextField>
+						<TextFieldLabel for="round-name">Round Name</TextFieldLabel>
+						<TextFieldInput
 							id="round-name"
 							type="text"
 							value={newRoundName()}
 							onInput={(e) => setNewRoundName(e.target.value)}
 							placeholder="Enter round name"
-							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
-					</div>
-					<div>
-						<label
-							for="round-slug"
-							class="block text-sm font-medium text-gray-700 mb-1"
-						>
-							Round Slug
-						</label>
-						<input
+					</TextField>
+					<TextField>
+						<TextFieldLabel for="round-slug">Round Slug</TextFieldLabel>
+						<TextFieldInput
 							id="round-slug"
 							type="text"
 							value={newRoundSlug()}
 							onInput={(e) => setNewRoundSlug(e.target.value)}
 							placeholder="Enter round slug (URL-friendly)"
-							class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
-					</div>
-					<button
+					</TextField>
+					<Button
 						type="button"
 						onClick={createRound}
 						disabled={
 							isCreating() || !newRoundName().trim() || !newRoundSlug().trim()
 						}
-						class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
 					>
 						{isCreating() ? "Creating..." : "Create Round"}
-					</button>
-				</div>
-			</div>
+					</Button>
+				</CardContent>
+			</Card>
 
 			{/* Rounds List */}
-			<div class="bg-white rounded-lg border">
-				<div class="px-6 py-4 border-b">
-					<h2 class="text-lg font-semibold">Existing Rounds</h2>
-				</div>
-				<div class="divide-y">
-					<For
-						each={rounds}
-						fallback={
-							<div class="px-6 py-8 text-center text-gray-500">
-								No rounds created yet. Create your first round above.
-							</div>
-						}
-					>
-						{(round) => (
-							<div class="px-6 py-4 hover:bg-gray-50">
-								<div class="flex items-center justify-between">
-									<div>
-										<h3 class="font-medium text-gray-900">{round.name}</h3>
-										<p class="text-sm text-gray-500">Slug: {round.slug}</p>
-										{round.startDate && (
-											<p class="text-sm text-gray-500">
-												Start: {new Date(round.startDate).toLocaleDateString()}
-											</p>
-										)}
-										{round.endDate && (
-											<p class="text-sm text-gray-500">
-												End: {new Date(round.endDate).toLocaleDateString()}
-											</p>
-										)}
-									</div>
-									<a
-										href={`/host/orgs/${org().slug}/calls/${call().slug}/rounds/${round.slug}`}
-										class="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200"
-									>
-										View Details
-									</a>
+			<Card>
+				<CardHeader>
+					<CardTitle>Existing Rounds</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<div class="space-y-4">
+						<For
+							each={rounds}
+							fallback={
+								<div class="text-center text-muted-foreground py-8">
+									No rounds created yet. Create your first round above.
 								</div>
-							</div>
-						)}
-					</For>
-				</div>
-			</div>
+							}
+						>
+							{(round) => (
+								<Card class="p-4">
+									<div class="flex items-center justify-between">
+										<div class="space-y-1">
+											<h3 class="font-medium">{round.name}</h3>
+											<div class="flex items-center gap-2">
+												<Badge variant="outline">{round.slug}</Badge>
+											</div>
+											{round.startDate && (
+												<p class="text-sm text-muted-foreground">
+													Start:{" "}
+													{new Date(round.startDate).toLocaleDateString()}
+												</p>
+											)}
+											{round.endDate && (
+												<p class="text-sm text-muted-foreground">
+													End: {new Date(round.endDate).toLocaleDateString()}
+												</p>
+											)}
+										</div>
+										<Button
+											variant="outline"
+											size="sm"
+											as={(
+												props: PolymorphicCallbackProps<
+													LinkComponent<"a", string>,
+													ButtonRootOptions,
+													ButtonProps<"a">
+												>,
+											) => (
+												<Link
+													{...props}
+													from={Route.fullPath}
+													to={"/host/orgs/$org/calls/$call/rounds/$round"}
+													params={(prev) => ({
+														...prev,
+														round: round.slug,
+													})}
+												/>
+											)}
+										>
+											View Details
+										</Button>
+									</div>
+								</Card>
+							)}
+						</For>
+					</div>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }

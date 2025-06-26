@@ -1,9 +1,8 @@
-import type { JSX, ValidComponent } from "solid-js";
-import { splitProps } from "solid-js";
-
 import type { PolymorphicProps } from "@kobalte/core/polymorphic";
 import * as SelectPrimitive from "@kobalte/core/select";
 import { cva } from "class-variance-authority";
+import type { JSX, ValidComponent } from "solid-js";
+import { splitProps } from "solid-js";
 
 import { cn } from "~/lib/utils";
 
@@ -105,6 +104,7 @@ const SelectItem = <T extends ValidComponent = "li">(
 					stroke-linejoin="round"
 					class="size-4"
 				>
+					<title>Check</title>
 					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 					<path d="M5 12l5 5l10 -10" />
 				</svg>
