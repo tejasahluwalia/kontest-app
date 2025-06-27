@@ -23,9 +23,9 @@ import { Route as hostHostOrgsOrgMembersRouteImport } from './routes/(host)/host
 import { Route as hostHostOrgsOrgCallsRouteImport } from './routes/(host)/host.orgs.$org.calls'
 import { Route as hostHostOrgsOrgCallsIndexRouteImport } from './routes/(host)/host.orgs.$org.calls.index'
 import { Route as hostHostOrgsOrgCallsCallRouteImport } from './routes/(host)/host.orgs.$org.calls.$call'
-import { Route as hostHostOrgsOrgCallsCallRoundsRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.rounds'
 import { Route as hostHostOrgsOrgCallsCallEntriesRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.entries'
 import { Route as hostHostOrgsOrgCallsCallDashboardRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.dashboard'
+import { Route as hostHostOrgsOrgCallsCallRoundsIndexRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.rounds.index'
 import { Route as hostHostOrgsOrgCallsCallRoundsRoundRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.rounds.$round'
 import { Route as hostHostOrgsOrgCallsCallRoundsRoundConfigureRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.rounds.$round.configure'
 
@@ -91,12 +91,6 @@ const hostHostOrgsOrgCallsCallRoute =
     path: '/$call',
     getParentRoute: () => hostHostOrgsOrgCallsRoute,
   } as any)
-const hostHostOrgsOrgCallsCallRoundsRoute =
-  hostHostOrgsOrgCallsCallRoundsRouteImport.update({
-    id: '/rounds',
-    path: '/rounds',
-    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
-  } as any)
 const hostHostOrgsOrgCallsCallEntriesRoute =
   hostHostOrgsOrgCallsCallEntriesRouteImport.update({
     id: '/entries',
@@ -109,11 +103,17 @@ const hostHostOrgsOrgCallsCallDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
   } as any)
+const hostHostOrgsOrgCallsCallRoundsIndexRoute =
+  hostHostOrgsOrgCallsCallRoundsIndexRouteImport.update({
+    id: '/rounds/',
+    path: '/rounds/',
+    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
+  } as any)
 const hostHostOrgsOrgCallsCallRoundsRoundRoute =
   hostHostOrgsOrgCallsCallRoundsRoundRouteImport.update({
-    id: '/$round',
-    path: '/$round',
-    getParentRoute: () => hostHostOrgsOrgCallsCallRoundsRoute,
+    id: '/rounds/$round',
+    path: '/rounds/$round',
+    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
   } as any)
 const hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute =
   hostHostOrgsOrgCallsCallRoundsRoundConfigureRouteImport.update({
@@ -137,8 +137,8 @@ export interface FileRoutesByFullPath {
   '/host/orgs/$org/calls/': typeof hostHostOrgsOrgCallsIndexRoute
   '/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
   '/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
-  '/host/orgs/$org/calls/$call/rounds': typeof hostHostOrgsOrgCallsCallRoundsRouteWithChildren
   '/host/orgs/$org/calls/$call/rounds/$round': typeof hostHostOrgsOrgCallsCallRoundsRoundRouteWithChildren
+  '/host/orgs/$org/calls/$call/rounds': typeof hostHostOrgsOrgCallsCallRoundsIndexRoute
   '/host/orgs/$org/calls/$call/rounds/$round/configure': typeof hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute
 }
 export interface FileRoutesByTo {
@@ -153,8 +153,8 @@ export interface FileRoutesByTo {
   '/host/orgs/$org/calls': typeof hostHostOrgsOrgCallsIndexRoute
   '/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
   '/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
-  '/host/orgs/$org/calls/$call/rounds': typeof hostHostOrgsOrgCallsCallRoundsRouteWithChildren
   '/host/orgs/$org/calls/$call/rounds/$round': typeof hostHostOrgsOrgCallsCallRoundsRoundRouteWithChildren
+  '/host/orgs/$org/calls/$call/rounds': typeof hostHostOrgsOrgCallsCallRoundsIndexRoute
   '/host/orgs/$org/calls/$call/rounds/$round/configure': typeof hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute
 }
 export interface FileRoutesById {
@@ -173,8 +173,8 @@ export interface FileRoutesById {
   '/(host)/host/orgs/$org/calls/': typeof hostHostOrgsOrgCallsIndexRoute
   '/(host)/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
   '/(host)/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
-  '/(host)/host/orgs/$org/calls/$call/rounds': typeof hostHostOrgsOrgCallsCallRoundsRouteWithChildren
   '/(host)/host/orgs/$org/calls/$call/rounds/$round': typeof hostHostOrgsOrgCallsCallRoundsRoundRouteWithChildren
+  '/(host)/host/orgs/$org/calls/$call/rounds/': typeof hostHostOrgsOrgCallsCallRoundsIndexRoute
   '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure': typeof hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute
 }
 export interface FileRouteTypes {
@@ -194,8 +194,8 @@ export interface FileRouteTypes {
     | '/host/orgs/$org/calls/'
     | '/host/orgs/$org/calls/$call/dashboard'
     | '/host/orgs/$org/calls/$call/entries'
-    | '/host/orgs/$org/calls/$call/rounds'
     | '/host/orgs/$org/calls/$call/rounds/$round'
+    | '/host/orgs/$org/calls/$call/rounds'
     | '/host/orgs/$org/calls/$call/rounds/$round/configure'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -210,8 +210,8 @@ export interface FileRouteTypes {
     | '/host/orgs/$org/calls'
     | '/host/orgs/$org/calls/$call/dashboard'
     | '/host/orgs/$org/calls/$call/entries'
-    | '/host/orgs/$org/calls/$call/rounds'
     | '/host/orgs/$org/calls/$call/rounds/$round'
+    | '/host/orgs/$org/calls/$call/rounds'
     | '/host/orgs/$org/calls/$call/rounds/$round/configure'
   id:
     | '__root__'
@@ -229,8 +229,8 @@ export interface FileRouteTypes {
     | '/(host)/host/orgs/$org/calls/'
     | '/(host)/host/orgs/$org/calls/$call/dashboard'
     | '/(host)/host/orgs/$org/calls/$call/entries'
-    | '/(host)/host/orgs/$org/calls/$call/rounds'
     | '/(host)/host/orgs/$org/calls/$call/rounds/$round'
+    | '/(host)/host/orgs/$org/calls/$call/rounds/'
     | '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure'
   fileRoutesById: FileRoutesById
 }
@@ -340,19 +340,19 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof hostHostOrgsOrgCallsCallEntriesRouteImport
       parentRoute: typeof hostHostOrgsOrgCallsCallRoute
     }
-    '/(host)/host/orgs/$org/calls/$call/rounds': {
-      id: '/(host)/host/orgs/$org/calls/$call/rounds'
-      path: '/rounds'
-      fullPath: '/host/orgs/$org/calls/$call/rounds'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsCallRoundsRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
-    }
     '/(host)/host/orgs/$org/calls/$call/rounds/$round': {
       id: '/(host)/host/orgs/$org/calls/$call/rounds/$round'
-      path: '/$round'
+      path: '/rounds/$round'
       fullPath: '/host/orgs/$org/calls/$call/rounds/$round'
       preLoaderRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsCallRoundsRoute
+      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
+    }
+    '/(host)/host/orgs/$org/calls/$call/rounds/': {
+      id: '/(host)/host/orgs/$org/calls/$call/rounds/'
+      path: '/rounds'
+      fullPath: '/host/orgs/$org/calls/$call/rounds'
+      preLoaderRoute: typeof hostHostOrgsOrgCallsCallRoundsIndexRouteImport
+      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
     }
     '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure': {
       id: '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure'
@@ -490,15 +490,6 @@ declare module './routes/(host)/host.orgs.$org.calls.$call.entries' {
     FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls.$call.rounds' {
-  const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/$call/rounds',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds']['fullPath']
-  >
-}
 declare module './routes/(host)/host.orgs.$org.calls.$call.rounds.$round' {
   const createFileRoute: CreateFileRoute<
     '/(host)/host/orgs/$org/calls/$call/rounds/$round',
@@ -506,6 +497,15 @@ declare module './routes/(host)/host.orgs.$org.calls.$call.rounds.$round' {
     FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round']['id'],
     FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round']['path'],
     FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round']['fullPath']
+  >
+}
+declare module './routes/(host)/host.orgs.$org.calls.$call.rounds.index' {
+  const createFileRoute: CreateFileRoute<
+    '/(host)/host/orgs/$org/calls/$call/rounds/',
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/']['parentRoute'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/']['id'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/']['path'],
+    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/']['fullPath']
   >
 }
 declare module './routes/(host)/host.orgs.$org.calls.$call.rounds.$round.configure' {
@@ -533,25 +533,11 @@ const hostHostOrgsOrgCallsCallRoundsRoundRouteWithChildren =
     hostHostOrgsOrgCallsCallRoundsRoundRouteChildren,
   )
 
-interface hostHostOrgsOrgCallsCallRoundsRouteChildren {
-  hostHostOrgsOrgCallsCallRoundsRoundRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundRouteWithChildren
-}
-
-const hostHostOrgsOrgCallsCallRoundsRouteChildren: hostHostOrgsOrgCallsCallRoundsRouteChildren =
-  {
-    hostHostOrgsOrgCallsCallRoundsRoundRoute:
-      hostHostOrgsOrgCallsCallRoundsRoundRouteWithChildren,
-  }
-
-const hostHostOrgsOrgCallsCallRoundsRouteWithChildren =
-  hostHostOrgsOrgCallsCallRoundsRoute._addFileChildren(
-    hostHostOrgsOrgCallsCallRoundsRouteChildren,
-  )
-
 interface hostHostOrgsOrgCallsCallRouteChildren {
   hostHostOrgsOrgCallsCallDashboardRoute: typeof hostHostOrgsOrgCallsCallDashboardRoute
   hostHostOrgsOrgCallsCallEntriesRoute: typeof hostHostOrgsOrgCallsCallEntriesRoute
-  hostHostOrgsOrgCallsCallRoundsRoute: typeof hostHostOrgsOrgCallsCallRoundsRouteWithChildren
+  hostHostOrgsOrgCallsCallRoundsRoundRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundRouteWithChildren
+  hostHostOrgsOrgCallsCallRoundsIndexRoute: typeof hostHostOrgsOrgCallsCallRoundsIndexRoute
 }
 
 const hostHostOrgsOrgCallsCallRouteChildren: hostHostOrgsOrgCallsCallRouteChildren =
@@ -559,8 +545,10 @@ const hostHostOrgsOrgCallsCallRouteChildren: hostHostOrgsOrgCallsCallRouteChildr
     hostHostOrgsOrgCallsCallDashboardRoute:
       hostHostOrgsOrgCallsCallDashboardRoute,
     hostHostOrgsOrgCallsCallEntriesRoute: hostHostOrgsOrgCallsCallEntriesRoute,
-    hostHostOrgsOrgCallsCallRoundsRoute:
-      hostHostOrgsOrgCallsCallRoundsRouteWithChildren,
+    hostHostOrgsOrgCallsCallRoundsRoundRoute:
+      hostHostOrgsOrgCallsCallRoundsRoundRouteWithChildren,
+    hostHostOrgsOrgCallsCallRoundsIndexRoute:
+      hostHostOrgsOrgCallsCallRoundsIndexRoute,
   }
 
 const hostHostOrgsOrgCallsCallRouteWithChildren =

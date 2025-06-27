@@ -1,6 +1,24 @@
+import { Badge } from "@client/components/ui/badge";
+import type { ButtonProps } from "@client/components/ui/button";
+import { Button } from "@client/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@client/components/ui/card";
+import { Separator } from "@client/components/ui/separator";
 import RoundContext from "@client/context/round";
 import server from "@client/lib/server-api";
-import { notFound, Outlet } from "@tanstack/solid-router";
+import type { ButtonRootOptions } from "@kobalte/core/button";
+import type { PolymorphicCallbackProps } from "@kobalte/core/polymorphic";
+import {
+	Link,
+	type LinkComponentProps,
+	notFound,
+	Outlet,
+} from "@tanstack/solid-router";
 
 export const Route = createFileRoute({
 	component: RouteComponent,
@@ -51,62 +69,94 @@ function RouteComponent() {
 	return (
 		<RoundContext.Provider value={round}>
 			<div class="space-y-6">
-				<div class="bg-white p-6 rounded-lg border">
-					<div class="flex items-center justify-between mb-4">
-						<div>
-							<h1 class="text-2xl font-bold">{round.name}</h1>
-							<p class="text-gray-600">Slug: {round.slug}</p>
+				<Card>
+					<CardHeader>
+						<div class="flex items-center justify-between">
+							<div>
+								<CardTitle>{round.name}</CardTitle>
+								<CardDescription class="flex items-center gap-2 mt-1">
+									<Badge variant="outline">{round.slug}</Badge>
+								</CardDescription>
+							</div>
+							<Button
+								as={(
+									props: PolymorphicCallbackProps<
+										LinkComponentProps,
+										ButtonProps,
+										ButtonRootOptions
+									>,
+								) => (
+									<Link
+										from={Route.fullPath}
+										to={"/host/orgs/$org/calls/$call/rounds/$round/configure"}
+										{...props}
+									/>
+								)}
+							>
+								Configure Round
+							</Button>
 						</div>
-						<a
-							href={`/host/orgs/${org().slug}/calls/${call().slug}/rounds/${round.slug}/configure`}
-							class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-						>
-							Configure Round
-						</a>
-					</div>
+					</CardHeader>
+					<CardContent>
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div class="space-y-4">
+								<h3 class="font-semibold">Round Information</h3>
+								<Separator />
+								<div class="space-y-2">
+									{round.startDate && (
+										<p class="text-sm">
+											<span class="font-medium text-foreground">
+												Start Date:
+											</span>{" "}
+											<span class="text-muted-foreground">
+												{new Date(round.startDate).toLocaleString()}
+											</span>
+										</p>
+									)}
+									{round.endDate && (
+										<p class="text-sm">
+											<span class="font-medium text-foreground">End Date:</span>{" "}
+											<span class="text-muted-foreground">
+												{new Date(round.endDate).toLocaleString()}
+											</span>
+										</p>
+									)}
+									<p class="text-sm">
+										<span class="font-medium text-foreground">Created:</span>{" "}
+										<span class="text-muted-foreground">
+											{new Date(round.createdAt).toLocaleString()}
+										</span>
+									</p>
+								</div>
+							</div>
 
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-						<div>
-							<h3 class="font-semibold text-gray-900 mb-2">
-								Round Information
-							</h3>
-							<div class="space-y-2">
-								{round.startDate && (
-									<p class="text-sm text-gray-600">
-										<span class="font-medium">Start Date:</span>{" "}
-										{new Date(round.startDate).toLocaleString()}
+							<div class="space-y-4">
+								<h3 class="font-semibold">Form Configuration</h3>
+								<Separator />
+								<div class="space-y-2">
+									<p class="text-sm">
+										<span class="font-medium text-foreground">
+											Form Schema:
+										</span>{" "}
+										<Badge variant={round.formSchema ? "success" : "warning"}>
+											{round.formSchema ? "Configured" : "Not configured"}
+										</Badge>
 									</p>
-								)}
-								{round.endDate && (
-									<p class="text-sm text-gray-600">
-										<span class="font-medium">End Date:</span>{" "}
-										{new Date(round.endDate).toLocaleString()}
+									<p class="text-sm">
+										<span class="font-medium text-foreground">
+											Judging Schema:
+										</span>{" "}
+										<Badge
+											variant={round.judgingSchema ? "success" : "warning"}
+										>
+											{round.judgingSchema ? "Configured" : "Not configured"}
+										</Badge>
 									</p>
-								)}
-								<p class="text-sm text-gray-600">
-									<span class="font-medium">Created:</span>{" "}
-									{new Date(round.createdAt).toLocaleString()}
-								</p>
+								</div>
 							</div>
 						</div>
-
-						<div>
-							<h3 class="font-semibold text-gray-900 mb-2">
-								Form Configuration
-							</h3>
-							<div class="space-y-2">
-								<p class="text-sm text-gray-600">
-									<span class="font-medium">Form Schema:</span>{" "}
-									{round.formSchema ? "Configured" : "Not configured"}
-								</p>
-								<p class="text-sm text-gray-600">
-									<span class="font-medium">Judging Schema:</span>{" "}
-									{round.judgingSchema ? "Configured" : "Not configured"}
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
+					</CardContent>
+				</Card>
 
 				<Outlet />
 			</div>
