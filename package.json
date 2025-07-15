@@ -6,16 +6,16 @@
 		"dev": "bun scripts/run dev",
 		"build": "bun scripts/run build",
 		"lint": "bun scripts/run lint",
-		"db-up": "docker compose -f packages/docker/docker-compose.yml up -d",
-		"db-down": "docker compose -f packages/docker/docker-compose.yml down"
+		"db-up": "docker compose -f packages/database/docker/docker-compose.yml up -d",
+		"db-down": "docker compose -f packages/database/docker/docker-compose.yml down"
 	},
 	"workspaces": [
 		"apps/*",
 		"packages/*"
 	],
 	"devDependencies": {
-		"@biomejs/biome": "2.0.6",
-		"@types/bun": "^1.2.17",
+		"@biomejs/biome": "2.1.1",
+		"@types/bun": "^1.2.18",
 		"concurrently": "^9.2.0",
 		"tsx": "^4.20.3"
 	}

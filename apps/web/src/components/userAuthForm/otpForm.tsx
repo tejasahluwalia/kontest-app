@@ -1,52 +1,66 @@
+import { createForm } from "@tanstack/solid-form";
+import { useNavigate } from "@tanstack/solid-router";
+import { createSignal } from "solid-js";
+import { z } from "zod";
 import { IconBrandGithub, IconLoader } from "~/components/icons";
 import { Button } from "~/components/ui/button";
-import {
-	TextField,
-	TextFieldInput,
-	TextFieldLabel,
-} from "~/components/ui/text-field";
-import { createForm } from "@tanstack/solid-form";
-import { authClient } from "~/lib/auth-client";
 import {
 	OTPField,
 	OTPFieldGroup,
 	OTPFieldInput,
 	OTPFieldSeparator,
 	OTPFieldSlot,
+	REGEXP_ONLY_DIGITS,
 } from "~/components/ui/otp-field";
-import { REGEXP_ONLY_DIGITS } from "~/components/ui/otp-field";
-import { z } from "zod";
-import { createSignal } from "solid-js";
-import { useNavigate } from "@tanstack/solid-router";
+import {
+	TextField,
+	TextFieldInput,
+	TextFieldLabel,
+} from "~/components/ui/text-field";
+import { authClient } from "~/lib/auth-client";
+import server from "~/lib/server-api";
 
 export default function OtpAuthForm() {
 	const [stage, setStage] = createSignal<"email" | "otp">("email");
 	const [email, setEmail] = createSignal<string>("");
+	const [name, setName] = createSignal<string>("");
 
 	return (
 		<div>
 			{stage() === "email" && (
-				<EmailForm email={email()} setEmail={setEmail} setStage={setStage} />
+				<EmailForm
+					name={name()}
+					setName={setName}
+					email={email()}
+					setEmail={setEmail}
+					setStage={setStage}
+				/>
 			)}
-			{stage() === "otp" && <OtpForm email={email()} />}
+			{stage() === "otp" && <OtpForm name={name()} email={email()} />}
 		</div>
 	);
 }
 
 function EmailForm({
+	name,
+	setName,
 	email,
 	setEmail,
 	setStage,
 }: {
+	name: string;
+	setName: (name: string) => void;
 	email: string;
 	setEmail: (email: string) => void;
 	setStage: (stage: "email" | "otp") => void;
 }) {
 	const form = createForm(() => ({
 		defaultValues: {
+			name: name,
 			email: email,
 		},
 		onSubmit: async (data) => {
+			setName(data.value.name);
 			setEmail(data.value.email);
 			const { data: res, error } =
 				await authClient.emailOtp.sendVerificationOtp(
@@ -73,6 +87,24 @@ function EmailForm({
 			}}
 		>
 			<div class="grid gap-4">
+				<form.Field
+					name="name"
+					validators={{
+						onChange: z.string(),
+					}}
+				>
+					{(field) => (
+						<TextField class="gap-1">
+							<TextFieldLabel class="sr-only">Name</TextFieldLabel>
+							<TextFieldInput
+								name={field().name}
+								value={field().state.value}
+								onBlur={field().handleBlur}
+								onInput={(e) => field().handleChange(e.currentTarget.value)}
+							/>
+						</TextField>
+					)}
+				</form.Field>
 				<form.Field
 					name="email"
 					validators={{
@@ -113,12 +145,13 @@ function EmailForm({
 	);
 }
 
-export function OtpForm({ email }: { email: string }) {
+export function OtpForm({ email, name }: { email: string; name: string }) {
 	const navigate = useNavigate({
 		from: "/login",
 	});
 	const form = createForm(() => ({
 		defaultValues: {
+			name: name,
 			email: email,
 			otp: "",
 		},
@@ -129,7 +162,11 @@ export function OtpForm({ email }: { email: string }) {
 					otp: data.value.otp,
 				},
 				{
-					onSuccess: () => {
+					onSuccess: async () => {
+						await server.api.user.me.patch({
+							email,
+							name,
+						});
 						navigate({ to: "/host" });
 					},
 					// TODO: handle error

@@ -3,18 +3,18 @@
  * @see https://elysiajs.com/recipe/drizzle.html#utility
  */
 
-import { Kind, type TObject } from "@sinclair/typebox";
+import { Kind, type TObject, type TProperties } from "@sinclair/typebox";
+import type { Table } from "drizzle-orm";
 import {
+	type BuildSchema,
 	createInsertSchema,
 	createSelectSchema,
-	type BuildSchema,
+	createUpdateSchema,
 } from "drizzle-typebox";
-
-import type { Table } from "drizzle-orm";
 
 type Spread<
 	T extends TObject | Table,
-	Mode extends "select" | "insert" | undefined,
+	Mode extends "select" | "insert" | "update" | undefined,
 > = T extends TObject<infer Fields>
 	? {
 			[K in keyof Fields]: Fields[K];
@@ -24,7 +24,9 @@ type Spread<
 			? BuildSchema<"select", T["_"]["columns"], undefined>["properties"]
 			: Mode extends "insert"
 				? BuildSchema<"insert", T["_"]["columns"], undefined>["properties"]
-				: {}
+				: Mode extends "update"
+					? BuildSchema<"update", T["_"]["columns"], undefined>["properties"]
+					: {}
 		: {};
 
 /**
@@ -32,17 +34,18 @@ type Spread<
  */
 export const spread = <
 	T extends TObject | Table,
-	Mode extends "select" | "insert" | undefined,
+	Mode extends "select" | "insert" | "update" | undefined,
 >(
 	schema: T,
 	mode?: Mode,
 ): Spread<T, Mode> => {
 	const newSchema: Record<string, unknown> = {};
-	let table;
+	let table: TObject<TProperties>;
 
 	switch (mode) {
 		case "insert":
 		case "select":
+		case "update":
 			if (Kind in schema) {
 				table = schema;
 				break;
@@ -51,7 +54,9 @@ export const spread = <
 			table =
 				mode === "insert"
 					? createInsertSchema(schema)
-					: createSelectSchema(schema);
+					: mode === "select"
+						? createSelectSchema(schema)
+						: createUpdateSchema(schema);
 
 			break;
 
@@ -75,7 +80,7 @@ export const spread = <
  */
 export const spreads = <
 	T extends Record<string, TObject | Table>,
-	Mode extends "select" | "insert" | undefined,
+	Mode extends "select" | "insert" | "update" | undefined,
 >(
 	models: T,
 	mode?: Mode,

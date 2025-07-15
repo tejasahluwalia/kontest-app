@@ -12,27 +12,38 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/solid-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as UserRouteRouteImport } from './routes/user/route'
+import { Route as HostRouteRouteImport } from './routes/host/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as hostHostRouteImport } from './routes/(host)/host'
-import { Route as hostHostIndexRouteImport } from './routes/(host)/host.index'
-import { Route as hostHostOrgsIndexRouteImport } from './routes/(host)/host.orgs.index'
-import { Route as hostHostOrgsNewRouteImport } from './routes/(host)/host.orgs.new'
-import { Route as hostHostOrgsOrgRouteImport } from './routes/(host)/host.orgs.$org'
-import { Route as hostHostOrgsOrgIndexRouteImport } from './routes/(host)/host.orgs.$org.index'
-import { Route as hostHostOrgsOrgMembersRouteImport } from './routes/(host)/host.orgs.$org.members'
-import { Route as hostHostOrgsOrgCallsRouteImport } from './routes/(host)/host.orgs.$org.calls'
-import { Route as hostHostOrgsOrgCallsIndexRouteImport } from './routes/(host)/host.orgs.$org.calls.index'
-import { Route as hostHostOrgsOrgCallsCallRouteImport } from './routes/(host)/host.orgs.$org.calls.$call'
-import { Route as hostHostOrgsOrgCallsCallEntriesRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.entries'
-import { Route as hostHostOrgsOrgCallsCallDashboardRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.dashboard'
-import { Route as hostHostOrgsOrgCallsCallRoundsIndexRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.rounds.index'
-import { Route as hostHostOrgsOrgCallsCallRoundsRoundJudgingRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.rounds.$round.judging'
-import { Route as hostHostOrgsOrgCallsCallRoundsRoundDashboardRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.rounds.$round.dashboard'
-import { Route as hostHostOrgsOrgCallsCallRoundsRoundConfigureRouteImport } from './routes/(host)/host.orgs.$org.calls.$call.rounds.$round.configure'
+import { Route as UserProfileRouteImport } from './routes/user/profile'
+import { Route as HostOrgsRouteRouteImport } from './routes/host/orgs/route'
+import { Route as HostOrgsNewRouteImport } from './routes/host/orgs/new'
+import { Route as HostOrgsOrgSlugRouteRouteImport } from './routes/host/orgs/$orgSlug/route'
+import { Route as HostOrgsOrgSlugMembersRouteImport } from './routes/host/orgs/$orgSlug/members'
+import { Route as HostOrgsOrgSlugCallsRouteRouteImport } from './routes/host/orgs/$orgSlug/calls/route'
+import { Route as HostOrgsOrgSlugCallsIndexRouteImport } from './routes/host/orgs/$orgSlug/calls/index'
+import { Route as HostOrgsOrgSlugCallsCallSlugRouteRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/route'
+import { Route as HostOrgsOrgSlugCallsCallSlugTeamRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/team'
+import { Route as HostOrgsOrgSlugCallsCallSlugEntriesRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/entries'
+import { Route as HostOrgsOrgSlugCallsCallSlugDashboardRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/dashboard'
+import { Route as HostOrgsOrgSlugCallsCallSlugRoundsIndexRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/index'
+import { Route as HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/route'
+import { Route as HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
+import { Route as HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UserRouteRoute = UserRouteRouteImport.update({
+  id: '/user',
+  path: '/user',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HostRouteRoute = HostRouteRouteImport.update({
+  id: '/host',
+  path: '/host',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -40,217 +51,225 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const hostHostRoute = hostHostRouteImport.update({
-  id: '/(host)/host',
-  path: '/host',
-  getParentRoute: () => rootRouteImport,
+const UserProfileRoute = UserProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => UserRouteRoute,
 } as any)
-const hostHostIndexRoute = hostHostIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => hostHostRoute,
+const HostOrgsRouteRoute = HostOrgsRouteRouteImport.update({
+  id: '/orgs',
+  path: '/orgs',
+  getParentRoute: () => HostRouteRoute,
 } as any)
-const hostHostOrgsIndexRoute = hostHostOrgsIndexRouteImport.update({
-  id: '/orgs/',
-  path: '/orgs/',
-  getParentRoute: () => hostHostRoute,
+const HostOrgsNewRoute = HostOrgsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => HostOrgsRouteRoute,
 } as any)
-const hostHostOrgsNewRoute = hostHostOrgsNewRouteImport.update({
-  id: '/orgs/new',
-  path: '/orgs/new',
-  getParentRoute: () => hostHostRoute,
+const HostOrgsOrgSlugRouteRoute = HostOrgsOrgSlugRouteRouteImport.update({
+  id: '/$orgSlug',
+  path: '/$orgSlug',
+  getParentRoute: () => HostOrgsRouteRoute,
 } as any)
-const hostHostOrgsOrgRoute = hostHostOrgsOrgRouteImport.update({
-  id: '/orgs/$org',
-  path: '/orgs/$org',
-  getParentRoute: () => hostHostRoute,
-} as any)
-const hostHostOrgsOrgIndexRoute = hostHostOrgsOrgIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => hostHostOrgsOrgRoute,
-} as any)
-const hostHostOrgsOrgMembersRoute = hostHostOrgsOrgMembersRouteImport.update({
+const HostOrgsOrgSlugMembersRoute = HostOrgsOrgSlugMembersRouteImport.update({
   id: '/members',
   path: '/members',
-  getParentRoute: () => hostHostOrgsOrgRoute,
+  getParentRoute: () => HostOrgsOrgSlugRouteRoute,
 } as any)
-const hostHostOrgsOrgCallsRoute = hostHostOrgsOrgCallsRouteImport.update({
-  id: '/calls',
-  path: '/calls',
-  getParentRoute: () => hostHostOrgsOrgRoute,
-} as any)
-const hostHostOrgsOrgCallsIndexRoute =
-  hostHostOrgsOrgCallsIndexRouteImport.update({
+const HostOrgsOrgSlugCallsRouteRoute =
+  HostOrgsOrgSlugCallsRouteRouteImport.update({
+    id: '/calls',
+    path: '/calls',
+    getParentRoute: () => HostOrgsOrgSlugRouteRoute,
+  } as any)
+const HostOrgsOrgSlugCallsIndexRoute =
+  HostOrgsOrgSlugCallsIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => hostHostOrgsOrgCallsRoute,
+    getParentRoute: () => HostOrgsOrgSlugCallsRouteRoute,
   } as any)
-const hostHostOrgsOrgCallsCallRoute =
-  hostHostOrgsOrgCallsCallRouteImport.update({
-    id: '/$call',
-    path: '/$call',
-    getParentRoute: () => hostHostOrgsOrgCallsRoute,
+const HostOrgsOrgSlugCallsCallSlugRouteRoute =
+  HostOrgsOrgSlugCallsCallSlugRouteRouteImport.update({
+    id: '/$callSlug',
+    path: '/$callSlug',
+    getParentRoute: () => HostOrgsOrgSlugCallsRouteRoute,
   } as any)
-const hostHostOrgsOrgCallsCallEntriesRoute =
-  hostHostOrgsOrgCallsCallEntriesRouteImport.update({
+const HostOrgsOrgSlugCallsCallSlugTeamRoute =
+  HostOrgsOrgSlugCallsCallSlugTeamRouteImport.update({
+    id: '/team',
+    path: '/team',
+    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
+  } as any)
+const HostOrgsOrgSlugCallsCallSlugEntriesRoute =
+  HostOrgsOrgSlugCallsCallSlugEntriesRouteImport.update({
     id: '/entries',
     path: '/entries',
-    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
+    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
   } as any)
-const hostHostOrgsOrgCallsCallDashboardRoute =
-  hostHostOrgsOrgCallsCallDashboardRouteImport.update({
+const HostOrgsOrgSlugCallsCallSlugDashboardRoute =
+  HostOrgsOrgSlugCallsCallSlugDashboardRouteImport.update({
     id: '/dashboard',
     path: '/dashboard',
-    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
+    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
   } as any)
-const hostHostOrgsOrgCallsCallRoundsIndexRoute =
-  hostHostOrgsOrgCallsCallRoundsIndexRouteImport.update({
+const HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute =
+  HostOrgsOrgSlugCallsCallSlugRoundsIndexRouteImport.update({
     id: '/rounds/',
     path: '/rounds/',
-    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
+    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
   } as any)
-const hostHostOrgsOrgCallsCallRoundsRoundJudgingRoute =
-  hostHostOrgsOrgCallsCallRoundsRoundJudgingRouteImport.update({
-    id: '/rounds/$round/judging',
-    path: '/rounds/$round/judging',
-    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
+const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute =
+  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteImport.update({
+    id: '/rounds/$roundSlug',
+    path: '/rounds/$roundSlug',
+    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
   } as any)
-const hostHostOrgsOrgCallsCallRoundsRoundDashboardRoute =
-  hostHostOrgsOrgCallsCallRoundsRoundDashboardRouteImport.update({
-    id: '/rounds/$round/dashboard',
-    path: '/rounds/$round/dashboard',
-    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
+const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute =
+  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport.update({
+    id: '/judging',
+    path: '/judging',
+    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute,
   } as any)
-const hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute =
-  hostHostOrgsOrgCallsCallRoundsRoundConfigureRouteImport.update({
-    id: '/rounds/$round/configure',
-    path: '/rounds/$round/configure',
-    getParentRoute: () => hostHostOrgsOrgCallsCallRoute,
+const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute =
+  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRouteImport.update({
+    id: '/configure',
+    path: '/configure',
+    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/host': typeof HostRouteRouteWithChildren
+  '/user': typeof UserRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/host': typeof hostHostRouteWithChildren
-  '/host/': typeof hostHostIndexRoute
-  '/host/orgs/$org': typeof hostHostOrgsOrgRouteWithChildren
-  '/host/orgs/new': typeof hostHostOrgsNewRoute
-  '/host/orgs': typeof hostHostOrgsIndexRoute
-  '/host/orgs/$org/calls': typeof hostHostOrgsOrgCallsRouteWithChildren
-  '/host/orgs/$org/members': typeof hostHostOrgsOrgMembersRoute
-  '/host/orgs/$org/': typeof hostHostOrgsOrgIndexRoute
-  '/host/orgs/$org/calls/$call': typeof hostHostOrgsOrgCallsCallRouteWithChildren
-  '/host/orgs/$org/calls/': typeof hostHostOrgsOrgCallsIndexRoute
-  '/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
-  '/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
-  '/host/orgs/$org/calls/$call/rounds': typeof hostHostOrgsOrgCallsCallRoundsIndexRoute
-  '/host/orgs/$org/calls/$call/rounds/$round/configure': typeof hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute
-  '/host/orgs/$org/calls/$call/rounds/$round/dashboard': typeof hostHostOrgsOrgCallsCallRoundsRoundDashboardRoute
-  '/host/orgs/$org/calls/$call/rounds/$round/judging': typeof hostHostOrgsOrgCallsCallRoundsRoundJudgingRoute
+  '/host/orgs': typeof HostOrgsRouteRouteWithChildren
+  '/user/profile': typeof UserProfileRoute
+  '/host/orgs/$orgSlug': typeof HostOrgsOrgSlugRouteRouteWithChildren
+  '/host/orgs/new': typeof HostOrgsNewRoute
+  '/host/orgs/$orgSlug/calls': typeof HostOrgsOrgSlugCallsRouteRouteWithChildren
+  '/host/orgs/$orgSlug/members': typeof HostOrgsOrgSlugMembersRoute
+  '/host/orgs/$orgSlug/calls/$callSlug': typeof HostOrgsOrgSlugCallsCallSlugRouteRouteWithChildren
+  '/host/orgs/$orgSlug/calls/': typeof HostOrgsOrgSlugCallsIndexRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/dashboard': typeof HostOrgsOrgSlugCallsCallSlugDashboardRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/entries': typeof HostOrgsOrgSlugCallsCallSlugEntriesRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/team': typeof HostOrgsOrgSlugCallsCallSlugTeamRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteWithChildren
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds': typeof HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/host': typeof HostRouteRouteWithChildren
+  '/user': typeof UserRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/host': typeof hostHostIndexRoute
-  '/host/orgs/new': typeof hostHostOrgsNewRoute
-  '/host/orgs': typeof hostHostOrgsIndexRoute
-  '/host/orgs/$org/members': typeof hostHostOrgsOrgMembersRoute
-  '/host/orgs/$org': typeof hostHostOrgsOrgIndexRoute
-  '/host/orgs/$org/calls/$call': typeof hostHostOrgsOrgCallsCallRouteWithChildren
-  '/host/orgs/$org/calls': typeof hostHostOrgsOrgCallsIndexRoute
-  '/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
-  '/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
-  '/host/orgs/$org/calls/$call/rounds': typeof hostHostOrgsOrgCallsCallRoundsIndexRoute
-  '/host/orgs/$org/calls/$call/rounds/$round/configure': typeof hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute
-  '/host/orgs/$org/calls/$call/rounds/$round/dashboard': typeof hostHostOrgsOrgCallsCallRoundsRoundDashboardRoute
-  '/host/orgs/$org/calls/$call/rounds/$round/judging': typeof hostHostOrgsOrgCallsCallRoundsRoundJudgingRoute
+  '/host/orgs': typeof HostOrgsRouteRouteWithChildren
+  '/user/profile': typeof UserProfileRoute
+  '/host/orgs/$orgSlug': typeof HostOrgsOrgSlugRouteRouteWithChildren
+  '/host/orgs/new': typeof HostOrgsNewRoute
+  '/host/orgs/$orgSlug/members': typeof HostOrgsOrgSlugMembersRoute
+  '/host/orgs/$orgSlug/calls/$callSlug': typeof HostOrgsOrgSlugCallsCallSlugRouteRouteWithChildren
+  '/host/orgs/$orgSlug/calls': typeof HostOrgsOrgSlugCallsIndexRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/dashboard': typeof HostOrgsOrgSlugCallsCallSlugDashboardRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/entries': typeof HostOrgsOrgSlugCallsCallSlugEntriesRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/team': typeof HostOrgsOrgSlugCallsCallSlugTeamRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteWithChildren
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds': typeof HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/host': typeof HostRouteRouteWithChildren
+  '/user': typeof UserRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/(host)/host': typeof hostHostRouteWithChildren
-  '/(host)/host/': typeof hostHostIndexRoute
-  '/(host)/host/orgs/$org': typeof hostHostOrgsOrgRouteWithChildren
-  '/(host)/host/orgs/new': typeof hostHostOrgsNewRoute
-  '/(host)/host/orgs/': typeof hostHostOrgsIndexRoute
-  '/(host)/host/orgs/$org/calls': typeof hostHostOrgsOrgCallsRouteWithChildren
-  '/(host)/host/orgs/$org/members': typeof hostHostOrgsOrgMembersRoute
-  '/(host)/host/orgs/$org/': typeof hostHostOrgsOrgIndexRoute
-  '/(host)/host/orgs/$org/calls/$call': typeof hostHostOrgsOrgCallsCallRouteWithChildren
-  '/(host)/host/orgs/$org/calls/': typeof hostHostOrgsOrgCallsIndexRoute
-  '/(host)/host/orgs/$org/calls/$call/dashboard': typeof hostHostOrgsOrgCallsCallDashboardRoute
-  '/(host)/host/orgs/$org/calls/$call/entries': typeof hostHostOrgsOrgCallsCallEntriesRoute
-  '/(host)/host/orgs/$org/calls/$call/rounds/': typeof hostHostOrgsOrgCallsCallRoundsIndexRoute
-  '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure': typeof hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute
-  '/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard': typeof hostHostOrgsOrgCallsCallRoundsRoundDashboardRoute
-  '/(host)/host/orgs/$org/calls/$call/rounds/$round/judging': typeof hostHostOrgsOrgCallsCallRoundsRoundJudgingRoute
+  '/host/orgs': typeof HostOrgsRouteRouteWithChildren
+  '/user/profile': typeof UserProfileRoute
+  '/host/orgs/$orgSlug': typeof HostOrgsOrgSlugRouteRouteWithChildren
+  '/host/orgs/new': typeof HostOrgsNewRoute
+  '/host/orgs/$orgSlug/calls': typeof HostOrgsOrgSlugCallsRouteRouteWithChildren
+  '/host/orgs/$orgSlug/members': typeof HostOrgsOrgSlugMembersRoute
+  '/host/orgs/$orgSlug/calls/$callSlug': typeof HostOrgsOrgSlugCallsCallSlugRouteRouteWithChildren
+  '/host/orgs/$orgSlug/calls/': typeof HostOrgsOrgSlugCallsIndexRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/dashboard': typeof HostOrgsOrgSlugCallsCallSlugDashboardRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/entries': typeof HostOrgsOrgSlugCallsCallSlugEntriesRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/team': typeof HostOrgsOrgSlugCallsCallSlugTeamRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteWithChildren
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/': typeof HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute
+  '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging': typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/login'
     | '/host'
-    | '/host/'
-    | '/host/orgs/$org'
-    | '/host/orgs/new'
+    | '/user'
+    | '/login'
     | '/host/orgs'
-    | '/host/orgs/$org/calls'
-    | '/host/orgs/$org/members'
-    | '/host/orgs/$org/'
-    | '/host/orgs/$org/calls/$call'
-    | '/host/orgs/$org/calls/'
-    | '/host/orgs/$org/calls/$call/dashboard'
-    | '/host/orgs/$org/calls/$call/entries'
-    | '/host/orgs/$org/calls/$call/rounds'
-    | '/host/orgs/$org/calls/$call/rounds/$round/configure'
-    | '/host/orgs/$org/calls/$call/rounds/$round/dashboard'
-    | '/host/orgs/$org/calls/$call/rounds/$round/judging'
+    | '/user/profile'
+    | '/host/orgs/$orgSlug'
+    | '/host/orgs/new'
+    | '/host/orgs/$orgSlug/calls'
+    | '/host/orgs/$orgSlug/members'
+    | '/host/orgs/$orgSlug/calls/$callSlug'
+    | '/host/orgs/$orgSlug/calls/'
+    | '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
+    | '/host/orgs/$orgSlug/calls/$callSlug/entries'
+    | '/host/orgs/$orgSlug/calls/$callSlug/team'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/login'
     | '/host'
-    | '/host/orgs/new'
+    | '/user'
+    | '/login'
     | '/host/orgs'
-    | '/host/orgs/$org/members'
-    | '/host/orgs/$org'
-    | '/host/orgs/$org/calls/$call'
-    | '/host/orgs/$org/calls'
-    | '/host/orgs/$org/calls/$call/dashboard'
-    | '/host/orgs/$org/calls/$call/entries'
-    | '/host/orgs/$org/calls/$call/rounds'
-    | '/host/orgs/$org/calls/$call/rounds/$round/configure'
-    | '/host/orgs/$org/calls/$call/rounds/$round/dashboard'
-    | '/host/orgs/$org/calls/$call/rounds/$round/judging'
+    | '/user/profile'
+    | '/host/orgs/$orgSlug'
+    | '/host/orgs/new'
+    | '/host/orgs/$orgSlug/members'
+    | '/host/orgs/$orgSlug/calls/$callSlug'
+    | '/host/orgs/$orgSlug/calls'
+    | '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
+    | '/host/orgs/$orgSlug/calls/$callSlug/entries'
+    | '/host/orgs/$orgSlug/calls/$callSlug/team'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
   id:
     | '__root__'
     | '/'
+    | '/host'
+    | '/user'
     | '/login'
-    | '/(host)/host'
-    | '/(host)/host/'
-    | '/(host)/host/orgs/$org'
-    | '/(host)/host/orgs/new'
-    | '/(host)/host/orgs/'
-    | '/(host)/host/orgs/$org/calls'
-    | '/(host)/host/orgs/$org/members'
-    | '/(host)/host/orgs/$org/'
-    | '/(host)/host/orgs/$org/calls/$call'
-    | '/(host)/host/orgs/$org/calls/'
-    | '/(host)/host/orgs/$org/calls/$call/dashboard'
-    | '/(host)/host/orgs/$org/calls/$call/entries'
-    | '/(host)/host/orgs/$org/calls/$call/rounds/'
-    | '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure'
-    | '/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard'
-    | '/(host)/host/orgs/$org/calls/$call/rounds/$round/judging'
+    | '/host/orgs'
+    | '/user/profile'
+    | '/host/orgs/$orgSlug'
+    | '/host/orgs/new'
+    | '/host/orgs/$orgSlug/calls'
+    | '/host/orgs/$orgSlug/members'
+    | '/host/orgs/$orgSlug/calls/$callSlug'
+    | '/host/orgs/$orgSlug/calls/'
+    | '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
+    | '/host/orgs/$orgSlug/calls/$callSlug/entries'
+    | '/host/orgs/$orgSlug/calls/$callSlug/team'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
+    | '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HostRouteRoute: typeof HostRouteRouteWithChildren
+  UserRouteRoute: typeof UserRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
-  hostHostRoute: typeof hostHostRouteWithChildren
 }
 
 declare module '@tanstack/solid-router' {
@@ -262,6 +281,20 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/host': {
+      id: '/host'
+      path: '/host'
+      fullPath: '/host'
+      preLoaderRoute: typeof HostRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user': {
+      id: '/user'
+      path: '/user'
+      fullPath: '/user'
+      preLoaderRoute: typeof UserRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -269,117 +302,110 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(host)/host': {
-      id: '/(host)/host'
-      path: '/host'
-      fullPath: '/host'
-      preLoaderRoute: typeof hostHostRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(host)/host/': {
-      id: '/(host)/host/'
-      path: '/'
-      fullPath: '/host/'
-      preLoaderRoute: typeof hostHostIndexRouteImport
-      parentRoute: typeof hostHostRoute
-    }
-    '/(host)/host/orgs/$org': {
-      id: '/(host)/host/orgs/$org'
-      path: '/orgs/$org'
-      fullPath: '/host/orgs/$org'
-      preLoaderRoute: typeof hostHostOrgsOrgRouteImport
-      parentRoute: typeof hostHostRoute
-    }
-    '/(host)/host/orgs/new': {
-      id: '/(host)/host/orgs/new'
-      path: '/orgs/new'
-      fullPath: '/host/orgs/new'
-      preLoaderRoute: typeof hostHostOrgsNewRouteImport
-      parentRoute: typeof hostHostRoute
-    }
-    '/(host)/host/orgs/': {
-      id: '/(host)/host/orgs/'
+    '/host/orgs': {
+      id: '/host/orgs'
       path: '/orgs'
       fullPath: '/host/orgs'
-      preLoaderRoute: typeof hostHostOrgsIndexRouteImport
-      parentRoute: typeof hostHostRoute
+      preLoaderRoute: typeof HostOrgsRouteRouteImport
+      parentRoute: typeof HostRouteRoute
     }
-    '/(host)/host/orgs/$org/calls': {
-      id: '/(host)/host/orgs/$org/calls'
+    '/user/profile': {
+      id: '/user/profile'
+      path: '/profile'
+      fullPath: '/user/profile'
+      preLoaderRoute: typeof UserProfileRouteImport
+      parentRoute: typeof UserRouteRoute
+    }
+    '/host/orgs/$orgSlug': {
+      id: '/host/orgs/$orgSlug'
+      path: '/$orgSlug'
+      fullPath: '/host/orgs/$orgSlug'
+      preLoaderRoute: typeof HostOrgsOrgSlugRouteRouteImport
+      parentRoute: typeof HostOrgsRouteRoute
+    }
+    '/host/orgs/new': {
+      id: '/host/orgs/new'
+      path: '/new'
+      fullPath: '/host/orgs/new'
+      preLoaderRoute: typeof HostOrgsNewRouteImport
+      parentRoute: typeof HostOrgsRouteRoute
+    }
+    '/host/orgs/$orgSlug/calls': {
+      id: '/host/orgs/$orgSlug/calls'
       path: '/calls'
-      fullPath: '/host/orgs/$org/calls'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsRouteImport
-      parentRoute: typeof hostHostOrgsOrgRoute
+      fullPath: '/host/orgs/$orgSlug/calls'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsRouteRouteImport
+      parentRoute: typeof HostOrgsOrgSlugRouteRoute
     }
-    '/(host)/host/orgs/$org/members': {
-      id: '/(host)/host/orgs/$org/members'
+    '/host/orgs/$orgSlug/members': {
+      id: '/host/orgs/$orgSlug/members'
       path: '/members'
-      fullPath: '/host/orgs/$org/members'
-      preLoaderRoute: typeof hostHostOrgsOrgMembersRouteImport
-      parentRoute: typeof hostHostOrgsOrgRoute
+      fullPath: '/host/orgs/$orgSlug/members'
+      preLoaderRoute: typeof HostOrgsOrgSlugMembersRouteImport
+      parentRoute: typeof HostOrgsOrgSlugRouteRoute
     }
-    '/(host)/host/orgs/$org/': {
-      id: '/(host)/host/orgs/$org/'
+    '/host/orgs/$orgSlug/calls/$callSlug': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug'
+      path: '/$callSlug'
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsRouteRoute
+    }
+    '/host/orgs/$orgSlug/calls/': {
+      id: '/host/orgs/$orgSlug/calls/'
       path: '/'
-      fullPath: '/host/orgs/$org/'
-      preLoaderRoute: typeof hostHostOrgsOrgIndexRouteImport
-      parentRoute: typeof hostHostOrgsOrgRoute
+      fullPath: '/host/orgs/$orgSlug/calls/'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsIndexRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsRouteRoute
     }
-    '/(host)/host/orgs/$org/calls/$call': {
-      id: '/(host)/host/orgs/$org/calls/$call'
-      path: '/$call'
-      fullPath: '/host/orgs/$org/calls/$call'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsCallRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsRoute
-    }
-    '/(host)/host/orgs/$org/calls/': {
-      id: '/(host)/host/orgs/$org/calls/'
-      path: '/'
-      fullPath: '/host/orgs/$org/calls/'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsIndexRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsRoute
-    }
-    '/(host)/host/orgs/$org/calls/$call/dashboard': {
-      id: '/(host)/host/orgs/$org/calls/$call/dashboard'
+    '/host/orgs/$orgSlug/calls/$callSlug/dashboard': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
       path: '/dashboard'
-      fullPath: '/host/orgs/$org/calls/$call/dashboard'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsCallDashboardRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugDashboardRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
     }
-    '/(host)/host/orgs/$org/calls/$call/entries': {
-      id: '/(host)/host/orgs/$org/calls/$call/entries'
+    '/host/orgs/$orgSlug/calls/$callSlug/entries': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/entries'
       path: '/entries'
-      fullPath: '/host/orgs/$org/calls/$call/entries'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsCallEntriesRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/entries'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugEntriesRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
     }
-    '/(host)/host/orgs/$org/calls/$call/rounds/': {
-      id: '/(host)/host/orgs/$org/calls/$call/rounds/'
+    '/host/orgs/$orgSlug/calls/$callSlug/team': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/team'
+      path: '/team'
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/team'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugTeamRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
+    }
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug'
+      path: '/rounds/$roundSlug'
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
+    }
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/rounds/'
       path: '/rounds'
-      fullPath: '/host/orgs/$org/calls/$call/rounds'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsCallRoundsIndexRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/rounds'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsIndexRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
     }
-    '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure': {
-      id: '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure'
-      path: '/rounds/$round/configure'
-      fullPath: '/host/orgs/$org/calls/$call/rounds/$round/configure'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundConfigureRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
+      path: '/configure'
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute
     }
-    '/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard': {
-      id: '/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard'
-      path: '/rounds/$round/dashboard'
-      fullPath: '/host/orgs/$org/calls/$call/rounds/$round/dashboard'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundDashboardRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
-    }
-    '/(host)/host/orgs/$org/calls/$call/rounds/$round/judging': {
-      id: '/(host)/host/orgs/$org/calls/$call/rounds/$round/judging'
-      path: '/rounds/$round/judging'
-      fullPath: '/host/orgs/$org/calls/$call/rounds/$round/judging'
-      preLoaderRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundJudgingRouteImport
-      parentRoute: typeof hostHostOrgsOrgCallsCallRoute
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
+      path: '/judging'
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute
     }
   }
 }
@@ -393,6 +419,24 @@ declare module './routes/index' {
     FileRoutesByPath['/']['fullPath']
   >
 }
+declare module './routes/host/route' {
+  const createFileRoute: CreateFileRoute<
+    '/host',
+    FileRoutesByPath['/host']['parentRoute'],
+    FileRoutesByPath['/host']['id'],
+    FileRoutesByPath['/host']['path'],
+    FileRoutesByPath['/host']['fullPath']
+  >
+}
+declare module './routes/user/route' {
+  const createFileRoute: CreateFileRoute<
+    '/user',
+    FileRoutesByPath['/user']['parentRoute'],
+    FileRoutesByPath['/user']['id'],
+    FileRoutesByPath['/user']['path'],
+    FileRoutesByPath['/user']['fullPath']
+  >
+}
 declare module './routes/login' {
   const createFileRoute: CreateFileRoute<
     '/login',
@@ -402,231 +446,260 @@ declare module './routes/login' {
     FileRoutesByPath['/login']['fullPath']
   >
 }
-declare module './routes/(host)/host' {
+declare module './routes/host/orgs/route' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host',
-    FileRoutesByPath['/(host)/host']['parentRoute'],
-    FileRoutesByPath['/(host)/host']['id'],
-    FileRoutesByPath['/(host)/host']['path'],
-    FileRoutesByPath['/(host)/host']['fullPath']
+    '/host/orgs',
+    FileRoutesByPath['/host/orgs']['parentRoute'],
+    FileRoutesByPath['/host/orgs']['id'],
+    FileRoutesByPath['/host/orgs']['path'],
+    FileRoutesByPath['/host/orgs']['fullPath']
   >
 }
-declare module './routes/(host)/host.index' {
+declare module './routes/user/profile' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/',
-    FileRoutesByPath['/(host)/host/']['parentRoute'],
-    FileRoutesByPath['/(host)/host/']['id'],
-    FileRoutesByPath['/(host)/host/']['path'],
-    FileRoutesByPath['/(host)/host/']['fullPath']
+    '/user/profile',
+    FileRoutesByPath['/user/profile']['parentRoute'],
+    FileRoutesByPath['/user/profile']['id'],
+    FileRoutesByPath['/user/profile']['path'],
+    FileRoutesByPath['/user/profile']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org' {
+declare module './routes/host/orgs/$orgSlug/route' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org',
-    FileRoutesByPath['/(host)/host/orgs/$org']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org']['fullPath']
+    '/host/orgs/$orgSlug',
+    FileRoutesByPath['/host/orgs/$orgSlug']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.new' {
+declare module './routes/host/orgs/new' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/new',
-    FileRoutesByPath['/(host)/host/orgs/new']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/new']['id'],
-    FileRoutesByPath['/(host)/host/orgs/new']['path'],
-    FileRoutesByPath['/(host)/host/orgs/new']['fullPath']
+    '/host/orgs/new',
+    FileRoutesByPath['/host/orgs/new']['parentRoute'],
+    FileRoutesByPath['/host/orgs/new']['id'],
+    FileRoutesByPath['/host/orgs/new']['path'],
+    FileRoutesByPath['/host/orgs/new']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.index' {
+declare module './routes/host/orgs/$orgSlug/calls/route' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/',
-    FileRoutesByPath['/(host)/host/orgs/']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/']['id'],
-    FileRoutesByPath['/(host)/host/orgs/']['path'],
-    FileRoutesByPath['/(host)/host/orgs/']['fullPath']
+    '/host/orgs/$orgSlug/calls',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls' {
+declare module './routes/host/orgs/$orgSlug/members' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls']['fullPath']
+    '/host/orgs/$orgSlug/members',
+    FileRoutesByPath['/host/orgs/$orgSlug/members']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/members']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/members']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/members']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.members' {
+declare module './routes/host/orgs/$orgSlug/calls/$callSlug/route' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/members',
-    FileRoutesByPath['/(host)/host/orgs/$org/members']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/members']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/members']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/members']['fullPath']
+    '/host/orgs/$orgSlug/calls/$callSlug',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.index' {
+declare module './routes/host/orgs/$orgSlug/calls/index' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/',
-    FileRoutesByPath['/(host)/host/orgs/$org/']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/']['fullPath']
+    '/host/orgs/$orgSlug/calls/',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls.$call' {
+declare module './routes/host/orgs/$orgSlug/calls/$callSlug/dashboard' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/$call',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call']['fullPath']
+    '/host/orgs/$orgSlug/calls/$callSlug/dashboard',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/dashboard']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/dashboard']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/dashboard']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/dashboard']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls.index' {
+declare module './routes/host/orgs/$orgSlug/calls/$callSlug/entries' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/']['fullPath']
+    '/host/orgs/$orgSlug/calls/$callSlug/entries',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/entries']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/entries']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/entries']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/entries']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls.$call.dashboard' {
+declare module './routes/host/orgs/$orgSlug/calls/$callSlug/team' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/$call/dashboard',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/dashboard']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/dashboard']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/dashboard']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/dashboard']['fullPath']
+    '/host/orgs/$orgSlug/calls/$callSlug/team',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/team']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/team']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/team']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/team']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls.$call.entries' {
+declare module './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/route' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/$call/entries',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/entries']['fullPath']
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls.$call.rounds.index' {
+declare module './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/index' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/$call/rounds/',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/']['fullPath']
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls.$call.rounds.$round.configure' {
+declare module './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/$call/rounds/$round/configure',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/configure']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/configure']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/configure']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/configure']['fullPath']
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure']['fullPath']
   >
 }
-declare module './routes/(host)/host.orgs.$org.calls.$call.rounds.$round.dashboard' {
+declare module './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging' {
   const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/dashboard']['fullPath']
-  >
-}
-declare module './routes/(host)/host.orgs.$org.calls.$call.rounds.$round.judging' {
-  const createFileRoute: CreateFileRoute<
-    '/(host)/host/orgs/$org/calls/$call/rounds/$round/judging',
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/judging']['parentRoute'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/judging']['id'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/judging']['path'],
-    FileRoutesByPath['/(host)/host/orgs/$org/calls/$call/rounds/$round/judging']['fullPath']
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging',
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging']['parentRoute'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging']['id'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging']['path'],
+    FileRoutesByPath['/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging']['fullPath']
   >
 }
 
-interface hostHostOrgsOrgCallsCallRouteChildren {
-  hostHostOrgsOrgCallsCallDashboardRoute: typeof hostHostOrgsOrgCallsCallDashboardRoute
-  hostHostOrgsOrgCallsCallEntriesRoute: typeof hostHostOrgsOrgCallsCallEntriesRoute
-  hostHostOrgsOrgCallsCallRoundsIndexRoute: typeof hostHostOrgsOrgCallsCallRoundsIndexRoute
-  hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute
-  hostHostOrgsOrgCallsCallRoundsRoundDashboardRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundDashboardRoute
-  hostHostOrgsOrgCallsCallRoundsRoundJudgingRoute: typeof hostHostOrgsOrgCallsCallRoundsRoundJudgingRoute
+interface HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteChildren {
+  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute
+  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute
 }
 
-const hostHostOrgsOrgCallsCallRouteChildren: hostHostOrgsOrgCallsCallRouteChildren =
+const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteChildren: HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteChildren =
   {
-    hostHostOrgsOrgCallsCallDashboardRoute:
-      hostHostOrgsOrgCallsCallDashboardRoute,
-    hostHostOrgsOrgCallsCallEntriesRoute: hostHostOrgsOrgCallsCallEntriesRoute,
-    hostHostOrgsOrgCallsCallRoundsIndexRoute:
-      hostHostOrgsOrgCallsCallRoundsIndexRoute,
-    hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute:
-      hostHostOrgsOrgCallsCallRoundsRoundConfigureRoute,
-    hostHostOrgsOrgCallsCallRoundsRoundDashboardRoute:
-      hostHostOrgsOrgCallsCallRoundsRoundDashboardRoute,
-    hostHostOrgsOrgCallsCallRoundsRoundJudgingRoute:
-      hostHostOrgsOrgCallsCallRoundsRoundJudgingRoute,
+    HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute:
+      HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute,
+    HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute:
+      HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute,
   }
 
-const hostHostOrgsOrgCallsCallRouteWithChildren =
-  hostHostOrgsOrgCallsCallRoute._addFileChildren(
-    hostHostOrgsOrgCallsCallRouteChildren,
+const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteWithChildren =
+  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute._addFileChildren(
+    HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteChildren,
   )
 
-interface hostHostOrgsOrgCallsRouteChildren {
-  hostHostOrgsOrgCallsCallRoute: typeof hostHostOrgsOrgCallsCallRouteWithChildren
-  hostHostOrgsOrgCallsIndexRoute: typeof hostHostOrgsOrgCallsIndexRoute
+interface HostOrgsOrgSlugCallsCallSlugRouteRouteChildren {
+  HostOrgsOrgSlugCallsCallSlugDashboardRoute: typeof HostOrgsOrgSlugCallsCallSlugDashboardRoute
+  HostOrgsOrgSlugCallsCallSlugEntriesRoute: typeof HostOrgsOrgSlugCallsCallSlugEntriesRoute
+  HostOrgsOrgSlugCallsCallSlugTeamRoute: typeof HostOrgsOrgSlugCallsCallSlugTeamRoute
+  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteWithChildren
+  HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute
 }
 
-const hostHostOrgsOrgCallsRouteChildren: hostHostOrgsOrgCallsRouteChildren = {
-  hostHostOrgsOrgCallsCallRoute: hostHostOrgsOrgCallsCallRouteWithChildren,
-  hostHostOrgsOrgCallsIndexRoute: hostHostOrgsOrgCallsIndexRoute,
+const HostOrgsOrgSlugCallsCallSlugRouteRouteChildren: HostOrgsOrgSlugCallsCallSlugRouteRouteChildren =
+  {
+    HostOrgsOrgSlugCallsCallSlugDashboardRoute:
+      HostOrgsOrgSlugCallsCallSlugDashboardRoute,
+    HostOrgsOrgSlugCallsCallSlugEntriesRoute:
+      HostOrgsOrgSlugCallsCallSlugEntriesRoute,
+    HostOrgsOrgSlugCallsCallSlugTeamRoute:
+      HostOrgsOrgSlugCallsCallSlugTeamRoute,
+    HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute:
+      HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteWithChildren,
+    HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute:
+      HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute,
+  }
+
+const HostOrgsOrgSlugCallsCallSlugRouteRouteWithChildren =
+  HostOrgsOrgSlugCallsCallSlugRouteRoute._addFileChildren(
+    HostOrgsOrgSlugCallsCallSlugRouteRouteChildren,
+  )
+
+interface HostOrgsOrgSlugCallsRouteRouteChildren {
+  HostOrgsOrgSlugCallsCallSlugRouteRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRouteWithChildren
+  HostOrgsOrgSlugCallsIndexRoute: typeof HostOrgsOrgSlugCallsIndexRoute
 }
 
-const hostHostOrgsOrgCallsRouteWithChildren =
-  hostHostOrgsOrgCallsRoute._addFileChildren(hostHostOrgsOrgCallsRouteChildren)
+const HostOrgsOrgSlugCallsRouteRouteChildren: HostOrgsOrgSlugCallsRouteRouteChildren =
+  {
+    HostOrgsOrgSlugCallsCallSlugRouteRoute:
+      HostOrgsOrgSlugCallsCallSlugRouteRouteWithChildren,
+    HostOrgsOrgSlugCallsIndexRoute: HostOrgsOrgSlugCallsIndexRoute,
+  }
 
-interface hostHostOrgsOrgRouteChildren {
-  hostHostOrgsOrgCallsRoute: typeof hostHostOrgsOrgCallsRouteWithChildren
-  hostHostOrgsOrgMembersRoute: typeof hostHostOrgsOrgMembersRoute
-  hostHostOrgsOrgIndexRoute: typeof hostHostOrgsOrgIndexRoute
+const HostOrgsOrgSlugCallsRouteRouteWithChildren =
+  HostOrgsOrgSlugCallsRouteRoute._addFileChildren(
+    HostOrgsOrgSlugCallsRouteRouteChildren,
+  )
+
+interface HostOrgsOrgSlugRouteRouteChildren {
+  HostOrgsOrgSlugCallsRouteRoute: typeof HostOrgsOrgSlugCallsRouteRouteWithChildren
+  HostOrgsOrgSlugMembersRoute: typeof HostOrgsOrgSlugMembersRoute
 }
 
-const hostHostOrgsOrgRouteChildren: hostHostOrgsOrgRouteChildren = {
-  hostHostOrgsOrgCallsRoute: hostHostOrgsOrgCallsRouteWithChildren,
-  hostHostOrgsOrgMembersRoute: hostHostOrgsOrgMembersRoute,
-  hostHostOrgsOrgIndexRoute: hostHostOrgsOrgIndexRoute,
+const HostOrgsOrgSlugRouteRouteChildren: HostOrgsOrgSlugRouteRouteChildren = {
+  HostOrgsOrgSlugCallsRouteRoute: HostOrgsOrgSlugCallsRouteRouteWithChildren,
+  HostOrgsOrgSlugMembersRoute: HostOrgsOrgSlugMembersRoute,
 }
 
-const hostHostOrgsOrgRouteWithChildren = hostHostOrgsOrgRoute._addFileChildren(
-  hostHostOrgsOrgRouteChildren,
+const HostOrgsOrgSlugRouteRouteWithChildren =
+  HostOrgsOrgSlugRouteRoute._addFileChildren(HostOrgsOrgSlugRouteRouteChildren)
+
+interface HostOrgsRouteRouteChildren {
+  HostOrgsOrgSlugRouteRoute: typeof HostOrgsOrgSlugRouteRouteWithChildren
+  HostOrgsNewRoute: typeof HostOrgsNewRoute
+}
+
+const HostOrgsRouteRouteChildren: HostOrgsRouteRouteChildren = {
+  HostOrgsOrgSlugRouteRoute: HostOrgsOrgSlugRouteRouteWithChildren,
+  HostOrgsNewRoute: HostOrgsNewRoute,
+}
+
+const HostOrgsRouteRouteWithChildren = HostOrgsRouteRoute._addFileChildren(
+  HostOrgsRouteRouteChildren,
 )
 
-interface hostHostRouteChildren {
-  hostHostIndexRoute: typeof hostHostIndexRoute
-  hostHostOrgsOrgRoute: typeof hostHostOrgsOrgRouteWithChildren
-  hostHostOrgsNewRoute: typeof hostHostOrgsNewRoute
-  hostHostOrgsIndexRoute: typeof hostHostOrgsIndexRoute
+interface HostRouteRouteChildren {
+  HostOrgsRouteRoute: typeof HostOrgsRouteRouteWithChildren
 }
 
-const hostHostRouteChildren: hostHostRouteChildren = {
-  hostHostIndexRoute: hostHostIndexRoute,
-  hostHostOrgsOrgRoute: hostHostOrgsOrgRouteWithChildren,
-  hostHostOrgsNewRoute: hostHostOrgsNewRoute,
-  hostHostOrgsIndexRoute: hostHostOrgsIndexRoute,
+const HostRouteRouteChildren: HostRouteRouteChildren = {
+  HostOrgsRouteRoute: HostOrgsRouteRouteWithChildren,
 }
 
-const hostHostRouteWithChildren = hostHostRoute._addFileChildren(
-  hostHostRouteChildren,
+const HostRouteRouteWithChildren = HostRouteRoute._addFileChildren(
+  HostRouteRouteChildren,
+)
+
+interface UserRouteRouteChildren {
+  UserProfileRoute: typeof UserProfileRoute
+}
+
+const UserRouteRouteChildren: UserRouteRouteChildren = {
+  UserProfileRoute: UserProfileRoute,
+}
+
+const UserRouteRouteWithChildren = UserRouteRoute._addFileChildren(
+  UserRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HostRouteRoute: HostRouteRouteWithChildren,
+  UserRouteRoute: UserRouteRouteWithChildren,
   LoginRoute: LoginRoute,
-  hostHostRoute: hostHostRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

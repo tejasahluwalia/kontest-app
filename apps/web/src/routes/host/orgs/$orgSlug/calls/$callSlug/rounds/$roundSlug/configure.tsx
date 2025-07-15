@@ -1,8 +1,8 @@
-import RoundContext from "~/context/round";
 import { notFound } from "@tanstack/solid-router";
-import { useContext } from "solid-js";
+import { Show, useContext } from "solid-js";
 import { FormBuilder } from "~/components/form-builder";
 import type { FormSchema } from "~/components/form-builder/primitives/form";
+import RoundContext from "~/context/round";
 
 export const Route = createFileRoute({
 	component: RouteComponent,
@@ -20,5 +20,9 @@ function RouteComponent() {
 
 	const initialSchema = round.formSchema as FormSchema;
 
-	return <FormBuilder initialSchema={initialSchema} />;
+	return (
+		<Show when={initialSchema}>
+			<FormBuilder initialSchema={initialSchema} />
+		</Show>
+	);
 }

@@ -1,5 +1,11 @@
-A submissions acceptance, management and judging platform for things like open calls, grants, invites for applications, etc. 
+# Unnamed project
+A submissions acceptance, management and judging platform for open calls, grants, contests, etc.
 
-# Tech stack
-- SolidJS w/ Tanstack Router Frontend (/client)
-- Bun server running ElysiaJS (/server)
+## Monorepo workspaces
+- SolidJS w/ Tanstack Router Frontend (apps/web)
+- Bun server running ElysiaJS (apps/api)
+- Postgres with drizzle-orm (packages/database)
+
+## Contributing guidelines
+-
+-

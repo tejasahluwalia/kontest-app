@@ -1,6 +1,3 @@
-import { notFound } from "@tanstack/solid-router";
-import server from "~/lib/server-api";
-
 export const Route = createFileRoute({
 	component: RouteComponent,
 });

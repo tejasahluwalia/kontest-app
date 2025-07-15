@@ -1,6 +1,10 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { emailOTP } from "better-auth/plugins";
+import {
+	createAuthMiddleware,
+	customSession,
+	emailOTP,
+} from "better-auth/plugins";
 import * as schema from "database/schema";
 import { db } from "./db";
 
@@ -14,7 +18,7 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		emailOTP({
-			async sendVerificationOTP(data, request) {
+			async sendVerificationOTP(data) {
 				console.log(data.otp);
 			},
 		}),
@@ -24,4 +28,23 @@ export const auth = betterAuth({
 		"http://localhost:5173",
 		"http://localhost:4173",
 	],
+	databaseHooks: {
+		user: {
+			create: {
+				after: async (user) => {
+					// Add created user to invited orgs
+					const memberInvites = await db.query.memberInvite.findMany({
+						where: (mi, { eq }) => eq(mi.email, user.email),
+					});
+					for (const invite of memberInvites) {
+						await db.insert(schema.member).values({
+							orgId: invite.orgId,
+							userId: user.id,
+							role: invite.role,
+						});
+					}
+				},
+			},
+		},
+	},
 });

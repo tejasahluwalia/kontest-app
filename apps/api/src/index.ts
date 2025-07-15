@@ -5,6 +5,7 @@ import { hostPlugin } from "./plugins/host";
 import { jurorPlugin } from "./plugins/juror";
 import { publicPlugin } from "./plugins/public";
 import { setup } from "./plugins/setup";
+import { userPlugin } from "./plugins/user";
 
 const app = new Elysia()
 	.use(
@@ -14,7 +15,7 @@ const app = new Elysia()
 				"http://localhost:4173",
 				"http://192.168.1.15:5173",
 			],
-			methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+			methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],
 		}),
@@ -23,6 +24,7 @@ const app = new Elysia()
 	.group("/api", (api) =>
 		api
 			.use(publicPlugin)
+			.use(userPlugin)
 			.use(hostPlugin)
 			.use(jurorPlugin)
 			.all("/auth/*", betterAuthView),

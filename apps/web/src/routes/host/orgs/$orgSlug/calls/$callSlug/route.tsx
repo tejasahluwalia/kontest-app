@@ -1,12 +1,17 @@
+import { notFound, Outlet } from "@tanstack/solid-router";
 import CallContext from "~/context/call";
 import server from "~/lib/server-api";
-import { notFound, Outlet } from "@tanstack/solid-router";
 
 export const Route = createFileRoute({
 	component: RouteComponent,
-	beforeLoad: async ({ params, context: { org } }) => {
+	beforeLoad: async ({
+		params,
+		context: {
+			member: { org },
+		},
+	}) => {
 		const { calls } = org;
-		const callId = calls.find((call) => call.slug === params.call)?.id;
+		const callId = calls.find((call) => call.slug === params.callSlug)?.id;
 		if (!callId) throw notFound({ data: { message: "Call not found" } });
 		const { data, error, status } = await server.api.host
 			.orgs({ orgId: org.id })

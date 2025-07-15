@@ -1,4 +1,4 @@
-import { Dialog as DialogPrimitive } from "@kobalte/core/dialog";
+import { default as DialogPrimitive } from "@corvu/dialog";
 import type { ComponentProps, ValidComponent } from "solid-js";
 import { mergeProps, Show, splitProps } from "solid-js";
 import { cx } from "~/lib/utils";
@@ -21,12 +21,12 @@ export const DialogTrigger = <T extends ValidComponent = "button">(
 };
 
 export type DialogCloseButtonProps<T extends ValidComponent = "button"> =
-	ComponentProps<typeof DialogPrimitive.CloseButton<T>>;
+	ComponentProps<typeof DialogPrimitive.Close<T>>;
 
 export const DialogCloseButton = <T extends ValidComponent = "button">(
 	props: DialogCloseButtonProps<T>,
 ) => {
-	return <DialogPrimitive.CloseButton data-slot="dialog-close" {...props} />;
+	return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 };
 
 export type DialogContentProps<T extends ValidComponent = "div"> =
@@ -65,7 +65,7 @@ export const DialogContent = <T extends ValidComponent = "div">(
 			>
 				{local.children}
 				<Show when={local.showCloseButton}>
-					<DialogPrimitive.CloseButton
+					<DialogPrimitive.Close
 						aria-label="Close"
 						class="rounded-xs focus-visible:ring-ring absolute right-4 top-4 opacity-70 transition-[opacity,box-shadow] duration-200 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
 					>
@@ -80,7 +80,7 @@ export const DialogContent = <T extends ValidComponent = "div">(
 								d="M18 6L6 18M6 6l12 12"
 							/>
 						</svg>
-					</DialogPrimitive.CloseButton>
+					</DialogPrimitive.Close>
 				</Show>
 			</DialogPrimitive.Content>
 		</>
@@ -119,7 +119,7 @@ export const DialogFooter = (props: DialogFooterProps) => {
 };
 
 export type DialogTitleProps<T extends ValidComponent = "h2"> = ComponentProps<
-	typeof DialogPrimitive.Title<T>
+	typeof DialogPrimitive.Label<T>
 >;
 
 export const DialogTitle = <T extends ValidComponent = "h2">(
@@ -128,7 +128,7 @@ export const DialogTitle = <T extends ValidComponent = "h2">(
 	const [local, rest] = splitProps(props as DialogTitleProps, ["class"]);
 
 	return (
-		<DialogPrimitive.Title
+		<DialogPrimitive.Label
 			data-slot="dialog-title"
 			class={cx("text-lg font-semibold leading-none", local.class)}
 			{...rest}

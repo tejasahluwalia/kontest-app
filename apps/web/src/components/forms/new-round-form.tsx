@@ -1,5 +1,6 @@
-import server from "~/lib/server-api";
 import type * as schema from "database/schema";
+import server from "~/lib/server-api";
+import { createDefaultFormSchema } from "../form-builder/primitives/form";
 import EntityForm from "./entity-form";
 
 interface NewRoundFormProps {
@@ -20,6 +21,7 @@ export default function NewRoundForm(props: NewRoundFormProps) {
 			.rounds.post({
 				name,
 				slug,
+				formSchema: createDefaultFormSchema(),
 			});
 		if (error) {
 			throw error.value;

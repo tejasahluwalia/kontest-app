@@ -1,4 +1,8 @@
-import { createInsertSchema, createSelectSchema } from "drizzle-typebox";
+import {
+	createInsertSchema,
+	createSelectSchema,
+	createUpdateSchema,
+} from "drizzle-typebox";
 import { t } from "elysia";
 
 import * as table from "./schema";
@@ -17,6 +21,7 @@ export const model = {
 			member: table.member,
 			call: table.call,
 			round: table.round,
+			callToMember: table.callToMember,
 		},
 		"insert",
 	),
@@ -31,5 +36,17 @@ export const model = {
 			round: table.round,
 		},
 		"select",
+	),
+	update: spreads(
+		{
+			user: createUpdateSchema(table.user, {
+				email: t.String({ format: "email" }),
+			}),
+			member: table.member,
+			call: table.call,
+			round: table.round,
+			callToMember: table.callToMember,
+		},
+		"update",
 	),
 } as const;

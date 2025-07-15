@@ -132,6 +132,7 @@ export default function EntityForm<T = unknown>(props: EntityFormProps<T>) {
 		if (name() && !slugManuallyEdited()) {
 			const slug = generateSlugFromName(name());
 			setSlug(slug);
+			setSlugAvailable(null);
 			debouncedCheckSlugAvailability(slug);
 		}
 	});
@@ -181,7 +182,7 @@ export default function EntityForm<T = unknown>(props: EntityFormProps<T>) {
 					<Button
 						type="submit"
 						disabled={
-							isSubmitting() || !name() || !slug() || slugAvailable() === false
+							isSubmitting() || !name() || !slug() || slugAvailable() === false || slugAvailable() === null
 						}
 					>
 						{isSubmitting() && <IconLoader class="mr-2 size-4 animate-spin" />}

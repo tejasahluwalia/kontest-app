@@ -1,6 +1,6 @@
-import type { org } from "database/schema";
+import type * as schema from "packages/database/schema";
 import { createContext } from "solid-js";
 
-const OrgContext = createContext<typeof org.$inferSelect>();
+const OrgContext = createContext();
 
 export default OrgContext;

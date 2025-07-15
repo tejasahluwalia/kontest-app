@@ -1,6 +1,3 @@
-import CallContext from "~/context/call";
-import OrgContext from "~/context/org";
-import server from "~/lib/server-api";
 import { nanoid } from "nanoid";
 import {
 	type Accessor,
@@ -16,6 +13,10 @@ import {
 	reconcile,
 	type SetStoreFunction,
 } from "solid-js/store";
+import CallContext from "~/context/call";
+import OrgContext from "~/context/org";
+import RoundContext from "~/context/round";
+import server from "~/lib/server-api";
 import { showToast } from "../ui/toast";
 import {
 	addHistoryEntry,
@@ -211,8 +212,9 @@ export const FormBuilderProvider: ParentComponent<{
 
 	const org = useContext(OrgContext);
 	const call = useContext(CallContext);
+	const round = useContext(RoundContext);
 
-	if (!call || !org) {
+	if (!call || !org || !round) {
 		throw new Error("Call or Org not found");
 	}
 
@@ -230,9 +232,9 @@ export const FormBuilderProvider: ParentComponent<{
 			const { data, error, status } = await server.api.host
 				.orgs({ orgId: org.id })
 				.calls({ callId: call.id })
+				.rounds({ roundId: round.id })
 				.put({
-					schema: formSchema,
-					orgId: org.id,
+					formSchema: formSchema,
 					slug: call.slug,
 					name: call.name,
 				});
@@ -494,7 +496,7 @@ export const FormBuilderProvider: ParentComponent<{
 						data[stepId][blockId][field.id] = {
 							label: field.label,
 							fieldType: field.fieldType,
-							value: field.defaultValue !== undefined ? field.defaultValue : "",
+							value: "",
 						};
 					}
 				});

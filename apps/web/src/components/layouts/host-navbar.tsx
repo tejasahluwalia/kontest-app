@@ -1,13 +1,3 @@
-import { Button, type ButtonProps } from "~/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { cn, useIsMobile } from "~/lib/utils";
 import type { PolymorphicCallbackProps } from "@kobalte/core";
 import type { ButtonRootOptions } from "@kobalte/core/button";
 import {
@@ -18,122 +8,179 @@ import {
 	MatchRoute,
 	useParams,
 } from "@tanstack/solid-router";
+import BuildingIcon from "lucide-solid/icons/building";
 import ChevronsUpDown from "lucide-solid/icons/chevrons-up-down";
-import Slash from "lucide-solid/icons/slash";
-import { For, Show } from "solid-js";
-
-const routeApi = getRouteApi("/(host)/host");
+import { For, Show, useContext } from "solid-js";
+import { Button, type ButtonProps } from "~/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import MemberProfilesContext from "~/context/memberProfiles";
+import { cn, useIsMobile } from "~/lib/utils";
+import {
+	BreadcrumbList,
+	Breadcrumbs,
+	BreadcrumbsItem,
+	BreadcrumbsLink,
+	BreadcrumbsSeparator,
+} from "../ui/breadcrumbs";
+import Header from "./header";
 
 export default function HostNavbar() {
-	const ctx = routeApi.useRouteContext();
-	const params = useParams({ strict: false })();
+	const memberProfiles = useContext(MemberProfilesContext);
+	if (!memberProfiles) return null;
+
+	const params = useParams({ strict: false });
+	const isMobile = useIsMobile();
+
+	const orgs = () => memberProfiles.map((memberProfile) => memberProfile.org);
 
 	const selectedOrg = () => {
-		return ctx().orgs.find((org) => org.slug === params.org);
+		return orgs().find((org) => org.slug === params().orgSlug);
 	};
 
 	const selectedCall = () => {
-		return selectedOrg()?.calls.find((call) => call.slug === params.call);
+		return selectedOrg()?.calls.find((call) => call.slug === params().callSlug);
 	};
 
 	const selectedRound = () => {
-		return selectedCall()?.rounds.find((round) => round.slug === params.round);
+		return selectedCall()?.rounds.find(
+			(round) => round.slug === params().roundSlug,
+		);
 	};
 
 	return (
 		<div class="border-b">
-			<header class="flex justify-between px-6 mb-2">
-				<div class="flex space-x-1 py-2 text-sm items-center">
+			<Header>
+				<Breadcrumbs>
 					{/* Breadcrumbs */}
-					<Show when={ctx().orgs.length > 0} fallback={<div>Create org</div>}>
-						<Show when={selectedOrg()}>
-							{(currOrg) => (
-								<>
-									<Link
-										class={cn({
-											"hidden md:block": Boolean(selectedCall()),
-										})}
-										to="/host/orgs/$org"
-										params={{ org: currOrg().slug }}
-									>
-										{currOrg().name}
-									</Link>
-									<DropdownSwitcher
-										menuLabel="My Organizations"
-										options={ctx().orgs.map((org) => ({
-											to: "/host/orgs/$org",
-											params: { org: org.slug },
-											label: org.name,
-										}))}
-									/>
-									<Show when={selectedCall()}>
-										{(currCall) => (
-											<>
-												<div class="px-2 md:px-4 text-muted-foreground/50">
-													<Slash size={20} strokeWidth={1} />
-												</div>
-												<Link
-													to="/host/orgs/$org/calls/$call"
-													params={{
-														org: currOrg().slug,
-														call: currCall().slug,
+					<BreadcrumbList>
+						<Show when={orgs().length > 0} fallback={<div>Create org</div>}>
+							<Show when={selectedOrg()}>
+								{(currOrg) => (
+									<>
+										<Show
+											when={!isMobile() || (isMobile() && !selectedRound())}
+										>
+											<BreadcrumbsItem>
+												<BreadcrumbsLink
+													activeProps={{
+														current: true,
 													}}
+													activeOptions={{
+														exact: false,
+													}}
+													to="/host/orgs/$orgSlug"
+													params={{ orgSlug: currOrg().slug }}
 												>
-													{currCall().name}
-												</Link>
+													<Show
+														when={
+															!isMobile() || (isMobile() && !selectedCall())
+														}
+														fallback={<BuildingIcon size={16} />}
+													>
+														{currOrg().name}
+													</Show>
+												</BreadcrumbsLink>
+
 												<DropdownSwitcher
-													menuLabel="Calls"
-													options={currOrg().calls.map((call) => ({
-														to: "/host/orgs/$org/calls/$call/dashboard",
-														params: { org: currOrg().slug, call: call.slug },
-														label: call.name,
+													menuLabel="My Organizations"
+													options={orgs().map((org) => ({
+														to: "/host/orgs/$orgSlug",
+														params: { orgSlug: org.slug },
+														label: org.name,
 													}))}
 												/>
-												<Show when={selectedRound()}>
-													{(currRound) => (
-														<>
-															<div class="px-2 md:px-4 text-muted-foreground/50">
-																<Slash size={20} strokeWidth={1} />
-															</div>
-															<Link
-																to="/host/orgs/$org/calls/$call/rounds/$round"
-																params={{
-																	org: currOrg().slug,
-																	call: currCall().slug,
-																	round: currRound().slug,
-																}}
-															>
-																{currRound().name}
-															</Link>
-															<DropdownSwitcher
-																menuLabel="Rounds"
-																options={currCall().rounds.map((round) => ({
-																	to: "/host/orgs/$org/calls/$call/rounds/$round",
-																	params: {
-																		org: currOrg().slug,
-																		call: currCall().slug,
-																		round: round.slug,
-																	},
-																	label: round.name,
-																}))}
-															/>
-														</>
-													)}
-												</Show>
-											</>
-										)}
-									</Show>
-								</>
-							)}
+											</BreadcrumbsItem>
+										</Show>
+										<Show when={selectedCall()}>
+											{(currCall) => (
+												<>
+													<BreadcrumbsSeparator
+														classList={{
+															"hidden md:block": !!selectedRound(),
+														}}
+													/>
+													<BreadcrumbsItem>
+														<BreadcrumbsLink
+															activeProps={{
+																current: true,
+															}}
+															activeOptions={{
+																exact: false,
+															}}
+															to="/host/orgs/$orgSlug/calls/$callSlug"
+															params={{
+																orgSlug: currOrg().slug,
+																callSlug: currCall().slug,
+															}}
+														>
+															{currCall().name}
+														</BreadcrumbsLink>
+														<DropdownSwitcher
+															menuLabel="Calls"
+															options={currOrg().calls.map((call) => ({
+																to: "/host/orgs/$orgSlug/calls/$callSlug/dashboard",
+																params: {
+																	orgSlug: currOrg().slug,
+																	callSlug: call.slug,
+																},
+																label: call.name,
+															}))}
+														/>
+													</BreadcrumbsItem>
+													<Show when={selectedRound()}>
+														{(currRound) => (
+															<>
+																<BreadcrumbsSeparator />
+																<BreadcrumbsItem>
+																	<BreadcrumbsLink
+																		activeProps={{
+																			current: true,
+																		}}
+																		activeOptions={{
+																			exact: false,
+																		}}
+																		to="/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure"
+																		params={{
+																			orgSlug: currOrg().slug,
+																			callSlug: currCall().slug,
+																			roundSlug: currRound().slug,
+																		}}
+																	>
+																		{currRound().name}
+																	</BreadcrumbsLink>
+																	<DropdownSwitcher
+																		menuLabel="Rounds"
+																		options={currCall().rounds.map((round) => ({
+																			to: "/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure",
+																			params: {
+																				orgSlug: currOrg().slug,
+																				callSlug: currCall().slug,
+																				roundSlug: round.slug,
+																			},
+																			label: round.name,
+																		}))}
+																	/>
+																</BreadcrumbsItem>
+															</>
+														)}
+													</Show>
+												</>
+											)}
+										</Show>
+									</>
+								)}
+							</Show>
 						</Show>
-					</Show>
-				</div>
-				{/* Right side menu */}
-				<div class="flex">
-					<div>Feedback</div>
-					<div>Profile</div>
-				</div>
-			</header>
+					</BreadcrumbList>
+				</Breadcrumbs>
+			</Header>
 			<Show when={selectedOrg()}>
 				{(currOrg) => (
 					<nav class="flex px-6 space-x-1">
@@ -145,14 +192,14 @@ export default function HostNavbar() {
 									links={[
 										{
 											label: "Calls",
-											from: "/host/orgs/$org",
-											to: "/host/orgs/$org/calls",
-											params: { org: currOrg().slug },
+											from: "/host/orgs/$orgSlug",
+											to: "/host/orgs/$orgSlug/calls",
+											params: { orgSlug: currOrg().slug },
 										},
 										{
 											label: "Members",
-											to: "/host/orgs/$org/members",
-											params: { org: currOrg().slug },
+											to: "/host/orgs/$orgSlug/members",
+											params: { orgSlug: currOrg().slug },
 										},
 									]}
 								/>
@@ -167,26 +214,26 @@ export default function HostNavbar() {
 											links={[
 												{
 													label: "Dashboard",
-													to: "/host/orgs/$org/calls/$call/dashboard",
+													to: "/host/orgs/$orgSlug/calls/$callSlug/dashboard",
 													params: {
-														org: currOrg().slug,
-														call: call().slug,
+														orgSlug: currOrg().slug,
+														callSlug: call().slug,
 													},
 												},
 												{
 													label: "Rounds",
-													to: "/host/orgs/$org/calls/$call/rounds",
+													to: "/host/orgs/$orgSlug/calls/$callSlug/rounds",
 													params: {
-														org: currOrg().slug,
-														call: call().slug,
+														orgSlug: currOrg().slug,
+														callSlug: call().slug,
 													},
 												},
 												{
 													label: "Team",
-													to: "/host/orgs/$org/calls/$call/team",
+													to: "/host/orgs/$orgSlug/calls/$callSlug/team",
 													params: {
-														org: currOrg().slug,
-														call: call().slug,
+														orgSlug: currOrg().slug,
+														callSlug: call().slug,
 													},
 												},
 											]}
@@ -198,21 +245,21 @@ export default function HostNavbar() {
 										<NavigationMenu
 											links={[
 												{
-													label: "Dashboard",
-													to: "/host/orgs/$org/calls/$call/rounds/$round",
+													label: "Judging",
+													to: "/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging",
 													params: {
-														org: currOrg().slug,
-														call: call().slug,
-														round: round().slug,
+														orgSlug: currOrg().slug,
+														callSlug: call().slug,
+														roundSlug: round().slug,
 													},
 												},
 												{
 													label: "Configure",
-													to: "/host/orgs/$org/calls/$call/rounds/$round/configure",
+													to: "/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure",
 													params: {
-														org: currOrg().slug,
-														call: call().slug,
-														round: round().slug,
+														orgSlug: currOrg().slug,
+														callSlug: call().slug,
+														roundSlug: round().slug,
 													},
 												},
 											]}

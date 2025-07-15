@@ -21,6 +21,12 @@ export const user = pgTable("user", {
 	updatedAt: timestamp("updated_at").notNull(),
 });
 
+export const userRelations = relations(user, ({ many }) => ({
+	memberProfiles: many(member),
+	jurorProfiles: many(juror),
+	praticipantProfiles: many(participant),
+}));
+
 export const session = pgTable("session", {
 	id: text("id").primaryKey(),
 	expiresAt: timestamp("expires_at").notNull(),
@@ -84,9 +90,11 @@ export const member = pgTable(
 	"member",
 	{
 		id: text("id")
+			.$defaultFn(() => createId())
+			.notNull().primaryKey(),
+		userId: text("user_id")
 			.notNull()
-			.references(() => user.id, { onDelete: "cascade" })
-			.primaryKey(),
+			.references(() => user.id, { onDelete: "cascade" }),
 		orgId: text("org_id")
 			.notNull()
 			.references(() => org.id, { onDelete: "cascade" }),
@@ -94,7 +102,7 @@ export const member = pgTable(
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},
-	(t) => [unique().on(t.orgId, t.id)],
+	(t) => [unique().on(t.orgId, t.userId)],
 );
 
 export const memberRelations = relations(member, ({ one }) => ({
@@ -103,7 +111,7 @@ export const memberRelations = relations(member, ({ one }) => ({
 		references: [org.id],
 	}),
 	user: one(user, {
-		fields: [member.id],
+		fields: [member.userId],
 		references: [user.id],
 	}),
 }));
@@ -202,16 +210,18 @@ export const participant = pgTable(
 	"participant",
 	{
 		id: text("id")
+			.$defaultFn(() => createId())
+			.notNull().primaryKey(),
+		userId: text("user_id")
 			.notNull()
-			.references(() => user.id, { onDelete: "cascade" })
-			.primaryKey(),
+			.references(() => user.id, { onDelete: "cascade" }),
 		callId: text("call_id")
 			.notNull()
 			.references(() => call.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},
-	(t) => [unique().on(t.callId, t.id)],
+	(t) => [unique().on(t.callId, t.userId)],
 );
 
 export const participantRelations = relations(participant, ({ one, many }) => ({
@@ -220,7 +230,7 @@ export const participantRelations = relations(participant, ({ one, many }) => ({
 		references: [call.id],
 	}),
 	user: one(user, {
-		fields: [participant.id],
+		fields: [participant.userId],
 		references: [user.id],
 	}),
 	submissions: many(submission),
@@ -230,20 +240,23 @@ export const juror = pgTable(
 	"juror",
 	{
 		id: text("id")
+			.$defaultFn(() => createId())
 			.notNull()
-			.references(() => user.id, { onDelete: "cascade" })
 			.primaryKey(),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		roundId: text("round_id")
 			.notNull()
 			.references(() => round.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 	},
-	(t) => [unique().on(t.id, t.roundId)],
+	(t) => [unique().on(t.userId, t.roundId)],
 );
 
 export const jurorRelations = relations(juror, ({ one, many }) => ({
 	user: one(user, {
-		fields: [juror.id],
+		fields: [juror.userId],
 		references: [user.id],
 	}),
 	round: one(round, {
@@ -254,7 +267,10 @@ export const jurorRelations = relations(juror, ({ one, many }) => ({
 }));
 
 export const submission = pgTable("submission", {
-	id: text("id").notNull().primaryKey(),
+	id: text("id")
+		.$defaultFn(() => createId())
+		.notNull()
+		.primaryKey(),
 	roundId: text("round_id")
 		.notNull()
 		.references(() => round.id, { onDelete: "cascade" }),
@@ -281,7 +297,10 @@ export const submissionRelations = relations(submission, ({ one, many }) => ({
 export const judgement = pgTable(
 	"judgement",
 	{
-		id: text("id").notNull().primaryKey(),
+		id: text("id")
+			.$defaultFn(() => createId())
+			.notNull()
+			.primaryKey(),
 		submissionId: text("submission_id")
 			.notNull()
 			.references(() => submission.id, { onDelete: "cascade" }),
@@ -311,7 +330,10 @@ export const inviteStatusEnum = pgEnum("invite_status", [
 ]);
 
 export const memberInvite = pgTable("member_invite", {
-	id: text("id").notNull().primaryKey(),
+	id: text("id")
+		.$defaultFn(() => createId())
+		.notNull()
+		.primaryKey(),
 	email: text("email").notNull(),
 	orgId: text("org_id")
 		.notNull()
@@ -336,7 +358,10 @@ export const memberInviteRelations = relations(memberInvite, ({ one }) => ({
 }));
 
 export const jurorInvite = pgTable("juror_invite", {
-	id: text("id").notNull().primaryKey(),
+	id: text("id")
+		.$defaultFn(() => createId())
+		.notNull()
+		.primaryKey(),
 	email: text("email").notNull(),
 	roundId: text("round_id")
 		.notNull()

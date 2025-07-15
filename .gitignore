@@ -1,6 +1,9 @@
 # dependencies (bun install)
 node_modules
 
+# tanstack router
+.tanstack
+
 # output
 out
 dist

@@ -16,8 +16,8 @@ import server from "~/lib/server-api";
 
 export const Route = createFileRoute({
 	component: RouteComponent,
-	loader: async ({ context: { org } }) => {
-		return { org };
+	loader: async ({ context: { member } }) => {
+		return { org: member.org };
 	},
 });
 
@@ -77,11 +77,11 @@ function RouteComponent() {
 								return (
 									<div>
 										<Link
-											from="/host/orgs/$org/calls"
-											to="/host/orgs/$org/calls/$call/dashboard"
+											from="/host/orgs/$orgSlug/calls"
+											to="/host/orgs/$orgSlug/calls/$callSlug/dashboard"
 											params={{
-												org: org.slug,
-												call: slug,
+												orgSlug: org.slug,
+												callSlug: slug,
 											}}
 											class="block"
 										>
@@ -96,7 +96,7 @@ function RouteComponent() {
 											size="icon"
 											onClick={() => deleteCall(id)}
 										>
-											<Trash2 class="h-4 w-4" />
+											<Trash2 size={16} />
 										</Button>
 									</div>
 								);

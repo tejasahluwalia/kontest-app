@@ -3,7 +3,5 @@ export const Route = createFileRoute({
 })
 
 function RouteComponent() {
-  return (
-    <div>Hello "/(host)/host/orgs/$org/calls/$call/rounds/$round/judging"!</div>
-  )
+  return <div>Hello "/profile"!</div>
 }

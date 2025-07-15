@@ -1,3 +1,4 @@
+import { useRouter } from "@tanstack/solid-router";
 import server from "~/lib/server-api";
 import EntityForm from "./entity-form";
 
@@ -32,11 +33,21 @@ export default function NewOrgForm() {
 		return data.isAvailable;
 	}
 
+	const router = useRouter();
+
+	async function onSuccess(data: OrgData) {
+		await router.navigate({
+			to: "/host/orgs/$orgSlug",
+			params: { orgSlug: data.slug },
+		});
+	}
+
 	return (
 		<EntityForm<OrgData>
 			entityName="Org"
 			createEntity={createOrg}
 			checkSlugAvailability={getSlugAvailability}
+			onSuccess={onSuccess}
 		/>
 	);
 }

@@ -1,7 +1,9 @@
+import NewOrgForm from "~/components/forms/new-org-form";
+
 export const Route = createFileRoute({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	return <div>Hello "/host/calls/$call/entries"!</div>;
+	return <NewOrgForm />;
 }

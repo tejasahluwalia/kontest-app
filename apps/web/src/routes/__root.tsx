@@ -1,9 +1,9 @@
-import type { authClient } from "~/lib/auth-client";
 import {
 	ColorModeProvider,
 	ColorModeScript,
 	createLocalStorageManager,
 } from "@kobalte/core";
+import type { QueryClient } from "@tanstack/solid-query";
 import {
 	createRootRouteWithContext,
 	type ErrorComponentProps,
@@ -12,9 +12,11 @@ import {
 	Scripts,
 } from "@tanstack/solid-router";
 import { Toaster } from "~/components/ui/toast";
+import type { authClient } from "~/lib/auth-client";
 
 interface RootContext {
 	auth: typeof authClient.getSession;
+	queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<RootContext>()({

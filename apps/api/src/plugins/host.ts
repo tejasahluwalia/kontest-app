@@ -12,41 +12,32 @@ export const hostPlugin = new Elysia({
 	.guard({
 		mustAuth: true,
 	})
-	.group("/orgs", (app) =>
-		app
-			.get("/", async ({ db, user }) => {
-				const memberProfiles = await db.query.member.findMany({
-					where: (member, { eq }) => eq(member.id, user.id),
+	.get("/", async ({ db, user }) => {
+		const memberProfiles = await db.query.member.findMany({
+			where: (m, { eq }) => eq(m.userId, user.id),
+			with: {
+				org: {
 					with: {
-						org: {
+						calls: {
 							with: {
-								calls: {
-									columns: { id: true, slug: true, name: true },
-									with: {
-										rounds: {
-											columns: { id: true, slug: true, name: true },
-										},
-									},
-								},
+								rounds: true,
 							},
 						},
 					},
-				});
-				const orgs = memberProfiles.map((memberProfile) => {
-					return {
-						...memberProfile.org,
-						role: memberProfile.role,
-					};
-				});
-				return orgs;
-			})
+				},
+			},
+		});
+		return memberProfiles;
+	})
+	.group("/orgs", (app) =>
+		app
 			.post(
 				"/",
 				async ({ body, user, db }) => {
 					const newOrg = await db.insert(schema.org).values(body).returning();
 					await db
 						.insert(schema.member)
-						.values({ orgId: newOrg[0].id, id: user.id, role: "admin" });
+						.values({ orgId: newOrg[0].id, userId: user.id, role: "admin" });
 					return newOrg;
 				},
 				{
@@ -65,68 +56,130 @@ export const hostPlugin = new Elysia({
 					isAvailable,
 				};
 			})
-			.group("/:orgId", (app) =>
+			.group("/:orgSlug", (app) =>
 				app
 					.resolve(async ({ params, user, db, status }) => {
+						const org = await db.query.org.findFirst({
+							where: (o, { eq }) => eq(o.slug, params.orgSlug),
+						});
+						if (!org) {
+							return status(404);
+						}
 						const member = await db.query.member.findFirst({
-							where: (member, { and, eq }) =>
-								and(eq(member.id, user.id), eq(member.orgId, params.orgId)),
-							with: {
-								org: true,
-							},
+							where: (m, { eq }) =>
+								eq(m.orgId, org.id) && eq(m.userId, user.id),
 						});
 						if (!member) {
 							return status(401);
 						}
-						return { member };
+						return { org, member };
 					})
 					.get("/", async ({ params, db, member }) => {
-						const calls = await db.query.call.findMany({
-							where: (call, { eq }) => eq(call.orgId, params.orgId),
+						const org = await db.query.org.findMany({
+							where: (o, { eq }) => eq(o.id, member.orgId),
+							with: {
+								calls: true,
+							},
 						});
-						return {
-							...member.org,
-							calls,
-						};
+						return org;
 					})
 					.group("/members", (app) =>
 						app
-							.get("/", async ({ db, params, status }) => {
+							.get("/", async ({ db, params }) => {
 								const members = await db.query.member.findMany({
-									where: (member, { eq }) => eq(member.orgId, params.orgId),
+									where: eq(schema.member.orgId, params.orgId),
 									with: {
 										user: true,
 									},
 								});
-								return status(200, members);
+								return members;
 							})
-							.post(
-								"/",
-								async ({ db, query, params, status }) => {
-									const invitedUser = await db.query.user.findFirst({
-										where: (user, { eq }) => eq(user.email, query.email),
-									});
-									if (!invitedUser) {
-										return status(404);
-									}
-									await db.insert(schema.member).values({
-										orgId: params.orgId,
-										id: invitedUser.id,
-										role: query.role,
-									});
-									return status(204);
-								},
+							.group(
+								"/:memberId",
 								{
 									beforeHandle: ({ status, member }) => {
 										if (member.role !== "admin") {
 											return status(401);
 										}
 									},
-									query: t.Object({
-										email: model.select.user.email,
-										role: model.insert.member.role,
-									}),
 								},
+								(app) =>
+									app
+										.patch(
+											"/",
+											async ({ db, body, params }) => {
+												await db
+													.update(schema.member)
+													.set(body)
+													.where(eq(schema.member.id, params.memberId));
+												return;
+											},
+											{
+												body: t.Object({
+													role: model.update.member.role,
+												}),
+											},
+										)
+										.delete("/", async ({ db, params }) => {
+											await db
+												.delete(schema.member)
+												.where(eq(schema.member.id, params.memberId));
+											return;
+										}),
+							)
+
+							.group(
+								"/invites",
+								{
+									beforeHandle: ({ status, member }) => {
+										if (member.role !== "admin") {
+											return status(401);
+										}
+									},
+								},
+								(app) =>
+									app
+										.get("/", async ({ db, params }) => {
+											const invites = db.query.memberInvite.findMany({
+												where: eq(schema.memberInvite.orgId, params.orgId),
+											});
+											return invites;
+										})
+										.post(
+											"/",
+											async ({ db, body, params, status, member }) => {
+												const userToBeAdded = await db.query.user.findFirst({
+													where: (user, { eq }) => eq(user.email, body.email),
+												});
+												if (!userToBeAdded) {
+													await db.insert(schema.memberInvite).values({
+														orgId: params.orgId,
+														email: body.email,
+														invitedBy: member.id,
+														role: body.role,
+													});
+													return status(201);
+												}
+												await db.insert(schema.member).values({
+													orgId: params.orgId,
+													userId: userToBeAdded.id,
+													role: body.role,
+												});
+												return status(204);
+											},
+											{
+												body: t.Object({
+													email: model.select.user.email,
+													role: model.insert.member.role,
+												}),
+											},
+										)
+										.delete("/:inviteId", async ({ db, params, status }) => {
+											await db
+												.delete(schema.memberInvite)
+												.where(eq(schema.memberInvite.id, params.inviteId));
+											return status(204);
+										}),
 							),
 					)
 					.group("/calls", (app) =>
@@ -169,10 +222,10 @@ export const hostPlugin = new Elysia({
 								app
 									.resolve(async ({ params, status, db, member }) => {
 										const callToMember = await db.query.callToMember.findFirst({
-											where: (ch, { eq, and }) =>
+											where: (cm, { eq, and }) =>
 												and(
-													eq(ch.callId, params.callId),
-													eq(ch.memberId, member.id),
+													eq(cm.callId, params.callId),
+													eq(cm.memberId, member.id),
 												),
 											with: {
 												call: {
@@ -215,6 +268,33 @@ export const hostPlugin = new Elysia({
 											.where(eq(schema.call.id, params.callId));
 										return status(202);
 									})
+									.group("/team", (app) =>
+										app
+											.get("/", async ({ db, params }) => {
+												const { callId } = params;
+												const team = await db.query.callToMember.findMany({
+													where: eq(schema.callToMember.callId, callId),
+													with: {
+														member: {
+															with: {
+																user: true,
+															},
+														},
+													},
+												});
+												return team;
+											})
+											.post(
+												"/",
+												async ({ db, body }) => {
+													await db.insert(schema.callToMember).values(body);
+													return;
+												},
+												{
+													body: t.Object(model.insert.callToMember),
+												},
+											),
+									)
 									.group(
 										"/rounds",
 										(
