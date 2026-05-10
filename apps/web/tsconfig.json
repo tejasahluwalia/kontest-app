@@ -1,0 +1,17 @@
+{
+	"extends": ["../../tsconfig.json"],
+	"compilerOptions": {
+		"moduleResolution": "Bundler",
+		"jsx": "preserve",
+		"jsxImportSource": "solid-js",
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"types": ["vite/client"],
+		"paths": {
+			"~/*": ["./apps/web/src/*"],
+			"@web": ["./apps/web/src"],
+			"@web/*": ["./apps/web/src/*"],
+			"@api": ["./apps/api/src"],
+			"@api/*": ["./apps/api/src/*"]
+		}
+	}
+}

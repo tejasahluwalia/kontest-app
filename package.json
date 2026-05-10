@@ -1,61 +1,22 @@
 {
-  "name": "kontest-app",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "dev:server": "bun run --watch server/src/index.ts",
-    "dev:client": "bunx --bun vite dev client",
-    "dev:db-up": "docker compose -f docker/docker-compose.yml up -d",
-    "dev:db-down": "docker compose -f docker/docker-compose.yml down",
-    "build:client": "bunx --bun vite build client",
-    "build:server": "bun build server/src/index.ts --target bun --outdir ./server/dist",
-    "start:server": "NODE_ENV=production bun server/dist/index.js",
-    "preview:client": "bunx --bun vite preview client",
-    "serve": "bun serve"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@tanstack/router-plugin": "^1.114.17",
-    "@types/bun": "latest",
-    "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.30.5",
-    "tsx": "^4.19.3",
-    "vite": "^6.2.1",
-    "vite-plugin-solid": "^2.11.6"
-  },
-  "peerDependencies": {
-    "typescript": "^5.8.2"
-  },
-  "dependencies": {
-    "@corvu/otp-field": "^0.1.4",
-    "@elysiajs/cors": "^1.2.0",
-    "@elysiajs/eden": "^1.2.0",
-    "@elysiajs/static": "^1.2.0",
-    "@kobalte/core": "^0.13.9",
-    "@paralleldrive/cuid2": "^2.2.2",
-    "@tailwindcss/vite": "^4.0.13",
-    "@tanstack/solid-form": "^1.0.5",
-    "@tanstack/solid-router": "^1.114.17",
-    "better-auth": "^1.2.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.40.0",
-    "drizzle-typebox": "^0.3.0",
-    "effect": "^3.13.10",
-    "elysia": "^1.2.25",
-    "lucide-solid": "^0.479.0",
-    "pg": "^8.14.0",
-    "solid-js": "^1.9.5",
-    "tailwind-merge": "^3.0.2",
-    "tailwindcss": "^4.0.13",
-    "tailwindcss-animate": "^1.0.7",
-    "valibot": "^1.0.0-rc.4",
-    "zod": "^3.24.2"
-  },
-  "override": {
-    "@sinclair/typebox": "0.34.27"
-  },
-  "packageManager": "pnpm@10.6.1+sha512.40ee09af407fa9fbb5fbfb8e1cb40fbb74c0af0c3e10e9224d7b53c7658528615b2c92450e74cfad91e3a2dcafe3ce4050d80bda71d757756d2ce2b66213e9a3"
+	"name": "papaya",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "bun scripts/run dev",
+		"build": "bun scripts/run build",
+		"lint": "bun scripts/run lint",
+		"db-up": "docker compose -f packages/database/docker/docker-compose.yml up -d",
+		"db-down": "docker compose -f packages/database/docker/docker-compose.yml down"
+	},
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"devDependencies": {
+		"@biomejs/biome": "2.1.1",
+		"@types/bun": "^1.2.18",
+		"concurrently": "^9.2.0",
+		"tsx": "^4.20.3"
+	}
 }

@@ -1,7 +1,11 @@
-# Kontest
+# Unnamed project
+A submissions acceptance, management and judging platform for open calls, grants, contests, etc.
 
-A platform for accepting, managing and judging submissions.
+## Monorepo workspaces
+- SolidJS w/ Tanstack Router Frontend (apps/web)
+- Bun server running ElysiaJS (apps/api)
+- Postgres with drizzle-orm (packages/database)
 
-# Tech stack
-- SolidJS w/ Tanstack Router Frontend (/client)
-- Bun server (/server)
+## Contributing guidelines
+-
+-
