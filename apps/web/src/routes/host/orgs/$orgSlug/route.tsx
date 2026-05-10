@@ -10,8 +10,11 @@ export const Route = createFileRoute({
 function RouteComponent() {
 	const { orgSlug } = Route.useParams()();
 	const memberProfiles = useContext(MemberProfilesContext);
-	if (!memberProfiles) return <span>...Loading</span>;
-	const org = memberProfiles.orgs.find((org) => org.slug === orgSlug);
+	if (!memberProfiles) return null;
+
+	const org = memberProfiles.find((mp) => mp.org.slug === orgSlug);
+	if (!org) return notFound();
+
 	return (
 		<OrgContext.Provider value={org}>
 			<Outlet />

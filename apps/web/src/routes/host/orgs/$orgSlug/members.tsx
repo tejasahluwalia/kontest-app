@@ -46,8 +46,8 @@ import {
 } from "~/components/ui/text-field";
 import server from "~/lib/server-api";
 
-const fetchMembers = async (orgId: string) => {
-	const { data, error } = await server.api.host.orgs({ orgId }).members.get();
+const fetchMembers = async (orgSlug: string) => {
+	const { data, error } = await server.api.host.orgs({ orgSlug }).members.get();
 
 	if (error)
 		switch (error.status) {
@@ -62,15 +62,15 @@ const fetchMembers = async (orgId: string) => {
 	return { members: data };
 };
 
-const fetchMembersQueryOptions = (orgId: string) =>
+const fetchMembersQueryOptions = (orgSlug: string) =>
 	queryOptions({
-		queryKey: ["members", { orgId }],
-		queryFn: () => fetchMembers(orgId),
+		queryKey: ["members", { orgSlug }],
+		queryFn: () => fetchMembers(orgSlug),
 	});
 
-const fetchInvites = async (orgId: string) => {
+const fetchInvites = async (orgSlug: string) => {
 	const { data, error } = await server.api.host
-		.orgs({ orgId })
+		.orgs({ orgSlug })
 		.members.invites.get();
 
 	if (error)
@@ -94,21 +94,18 @@ const fetchInvitesQueryOptions = (orgId: string) =>
 
 export const Route = createFileRoute({
 	component: RouteComponent,
-	loader: async ({ context: { auth, queryClient, member } }) => {
-		queryClient.ensureQueryData(fetchMembersQueryOptions(member.org.id));
-		queryClient.ensureQueryData(fetchInvitesQueryOptions(member.org.id));
-		return {
-			currUser: auth.user,
-			orgId: member.org.id,
-		};
+	loader: async ({ context: { queryClient }, params: { orgSlug } }) => {
+		queryClient.ensureQueryData(fetchMembersQueryOptions(orgSlug));
+		queryClient.ensureQueryData(fetchInvitesQueryOptions(orgSlug));
 	},
 });
 
 function RouteComponent() {
-	const { currUser, orgId } = Route.useLoaderData()();
+	const params = Route.useParams();
+	const orgSlug = () => params().orgSlug;
 	const { queryClient } = Route.useRouteContext()();
 
-	const membersQuery = useQuery(() => fetchMembersQueryOptions(orgId));
+	const membersQuery = useQuery(() => fetchMembersQueryOptions(orgSlug()));
 	const members = createMemo(() => {
 		if (membersQuery.data) {
 			return membersQuery.data.members;
@@ -117,7 +114,7 @@ function RouteComponent() {
 		}
 	});
 
-	const invitesQuery = useQuery(() => fetchInvitesQueryOptions(orgId));
+	const invitesQuery = useQuery(() => fetchInvitesQueryOptions(orgSlug()));
 	const invites = createMemo(() => {
 		if (invitesQuery.data) {
 			return invitesQuery.data.invites;
@@ -129,7 +126,7 @@ function RouteComponent() {
 	const cancelInviteMutation = useMutation(() => ({
 		mutationFn: async ({ inviteId }: { inviteId: string }) => {
 			await server.api.host
-				.orgs({ orgId })
+				.orgs({ orgSlug: orgSlug() })
 				.members.invites({ inviteId })
 				.delete();
 		},
@@ -144,9 +141,12 @@ function RouteComponent() {
 		}: {
 			memberId: typeof schema.member.$inferSelect.id;
 		}) => {
-			await server.api.host.orgs({ orgId }).members({ memberId }).delete();
+			await server.api.host
+				.orgs({ orgSlug: orgSlug() })
+				.members({ memberId })
+				.delete();
 		},
-		onSuccess: (_, { memberId }) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["members"] });
 		},
 	}));
@@ -160,7 +160,7 @@ function RouteComponent() {
 			newRole: typeof schema.member.$inferSelect.role;
 		}) => {
 			await server.api.host
-				.orgs({ orgId })
+				.orgs({ orgSlug: orgSlug() })
 				.members({ memberId })
 				.patch({ role: newRole });
 		},
