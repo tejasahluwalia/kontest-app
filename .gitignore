@@ -3,6 +3,7 @@ node_modules
 
 # tanstack router
 .tanstack
+src/client/routeTree.gen.ts
 
 # output
 out

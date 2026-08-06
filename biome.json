@@ -1,6 +1,6 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  	"vcs": {
+	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
 		"useIgnoreFile": false

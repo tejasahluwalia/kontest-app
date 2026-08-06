@@ -1,22 +1,69 @@
 {
-	"name": "papaya",
+	"name": "kontest",
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "bun scripts/run dev",
-		"build": "bun scripts/run build",
-		"lint": "bun scripts/run lint",
-		"db-up": "docker compose -f packages/database/docker/docker-compose.yml up -d",
-		"db-down": "docker compose -f packages/database/docker/docker-compose.yml down"
+		"dev": "concurrently -n routes,client,server -c magenta,cyan,green \"bun run watch-routes\" \"npx vite build --watch\" \"bun --watch src/server/index.ts\"",
+		"generate-routes": "tsr generate",
+		"watch-routes": "tsr watch",
+		"build:client": "bun run generate-routes && npx vite build",
+		"build": "bun run build:client && bun build --compile --minify-whitespace --minify-syntax --target bun --outfile server ./src/server/index.ts",
+		"start": "NODE_ENV=production bun src/server/index.ts",
+		"lint": "biome check .",
+		"db-up": "docker compose -f src/db/docker/docker-compose.yml up -d",
+		"db-down": "docker compose -f src/db/docker/docker-compose.yml down"
 	},
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
 	"devDependencies": {
-		"@biomejs/biome": "2.1.1",
-		"@types/bun": "^1.2.18",
-		"concurrently": "^9.2.0",
-		"tsx": "^4.20.3"
+		"@biomejs/biome": "2.5.6",
+		"@types/bun": "^1.3.14",
+		"@types/pg": "^8.20.4",
+		"@tanstack/router-cli": "^1.167.24",
+		"concurrently": "^9.2.4",
+		"tsx": "^4.23.9",
+		"vite": "^7.3.6",
+		"vite-plugin-solid": "3.0.0-next.21"
+	},
+	"dependencies": {
+		"@elysia/cors": "2.0.0-beta.1",
+		"@elysia/eden": "2.0.0-beta.2",
+		"@elysia/static": "2.0.0-beta.1",
+		"@corvu/dialog": "^0.2.4",
+		"@corvu/otp-field": "^0.1.4",
+		"@kobalte/core": "^0.13.12",
+		"@kobalte/tailwindcss": "^0.9.0",
+		"@paralleldrive/cuid2": "^2.3.1",
+		"@sinclair/typebox": "0.34.0",
+		"@solidjs/web": "2.0.0-beta.29",
+		"@tailwindcss/vite": "^4.3.3",
+		"@tanstack/solid-form": "^1.33.3",
+		"@tanstack/solid-query": "6.0.0-beta.7",
+		"@tanstack/solid-router": "2.0.0-beta.29",
+		"better-auth": "^1.6.26",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"cva": "^1.0.0-beta.8",
+		"dotenv": "^17.4.2",
+		"drizzle-kit": "^0.31.10",
+		"drizzle-orm": "^0.44.7",
+		"drizzle-typebox": "^0.3.3",
+		"effect": "^3.22.1",
+		"elysia": "2.0.0-beta.1",
+		"fast-decode-uri-component": "^1.0.1",
+		"lucide-solid": "^0.525.0",
+		"nanoid": "^5.1.16",
+		"pg": "^8.22.0",
+		"solid-js": "2.0.0-beta.29",
+		"tailwind-merge": "^3.6.0",
+		"tailwindcss": "^4.3.3",
+		"tailwindcss-animate": "^1.0.7",
+		"tw-animate-css": "^1.4.0",
+		"zod": "^4.4.3"
+	},
+	"trustedDependencies": [
+		"@tailwindcss/oxide",
+		"esbuild"
+	],
+	"patchedDependencies": {
+		"@elysia/static@2.0.0-beta.1": "patches/@elysia%2Fstatic@2.0.0-beta.1.patch"
 	}
 }
