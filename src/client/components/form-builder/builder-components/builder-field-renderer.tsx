@@ -3,10 +3,9 @@ import ChevronDown from "lucide-solid/icons/chevron-down";
 import EllipsisVertical from "lucide-solid/icons/ellipsis-vertical";
 import Trash from "lucide-solid/icons/trash";
 import type { Accessor, Component } from "solid-js";
-import { createEffect, createSignal, storePath } from "solid-js";
+import { createSignal, storePath } from "solid-js";
 import { Badge } from "~/components/ui/badge";
 import { Button, type ButtonProps } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
 import {
 	Collapsible,
 	CollapsibleContent,

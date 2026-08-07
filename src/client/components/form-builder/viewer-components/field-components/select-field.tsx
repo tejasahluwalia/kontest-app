@@ -1,3 +1,4 @@
+import type { StoreSetter } from "solid-js";
 import { createSignal } from "solid-js";
 import {
 	Select,
@@ -6,14 +7,17 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
-import type { SelectField } from "../../primitives/fields";
+import type { SelectField as SelectFieldType } from "../../primitives/fields";
+import type { InputFormData } from "../../primitives/form";
 import { FieldWrapper } from "./field-wrapper";
 
 interface SelectFieldProps {
-	child: SelectField;
+	child: SelectFieldType;
 	onSelect?: () => void;
 	blockId: string;
 	stepId: string;
+	formData?: InputFormData;
+	updateFormData?: StoreSetter<InputFormData>;
 }
 
 export function SelectField(props: SelectFieldProps) {

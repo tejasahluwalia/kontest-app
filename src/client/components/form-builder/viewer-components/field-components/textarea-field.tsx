@@ -1,11 +1,15 @@
+import type { StoreSetter } from "solid-js";
 import { TextField, TextFieldTextArea } from "~/components/ui/text-field";
 import type { RichTextField } from "../../primitives/fields";
+import type { InputFormData } from "../../primitives/form";
 import { FieldWrapper } from "./field-wrapper";
 
 interface TextareaFieldProps {
 	child: RichTextField;
 	blockId: string;
 	stepId: string;
+	formData?: InputFormData;
+	updateFormData?: StoreSetter<InputFormData>;
 }
 
 export function TextAreaField(props: TextareaFieldProps) {

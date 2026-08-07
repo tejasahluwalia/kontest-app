@@ -23,7 +23,7 @@ export const userPlugin = new Elysia({
 			async ({ db, user, body }) => {
 				await db
 					.update(schema.user)
-					.set(body)
+					.set(body as any)
 					.where(eq(schema.user.id, user.id));
 				return;
 			},

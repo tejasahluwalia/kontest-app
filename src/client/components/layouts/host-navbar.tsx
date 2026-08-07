@@ -1,7 +1,6 @@
 import type { PolymorphicCallbackProps } from "@opencenter-cloud/kobalte-core";
 import type { ButtonRootOptions } from "@opencenter-cloud/kobalte-core/button";
 import {
-	getRouteApi,
 	Link,
 	type LinkComponent,
 	type LinkComponentProps,
@@ -38,19 +37,22 @@ export default function HostNavbar() {
 	const params = useParams({ strict: false });
 	const isMobile = useIsMobile();
 
-	const orgs = () => memberProfiles.map((memberProfile) => memberProfile.org);
+	const orgs = () =>
+		(memberProfiles || []).map((memberProfile: any) => memberProfile.org);
 
 	const selectedOrg = () => {
-		return orgs().find((org) => org.slug === params().orgSlug);
+		return orgs().find((org: any) => org.slug === params().orgSlug);
 	};
 
 	const selectedCall = () => {
-		return selectedOrg()?.calls.find((call) => call.slug === params().callSlug);
+		return selectedOrg()?.calls.find(
+			(call: any) => call.slug === params().callSlug,
+		);
 	};
 
 	const selectedRound = () => {
 		return selectedCall()?.rounds.find(
-			(round) => round.slug === params().roundSlug,
+			(round: any) => round.slug === params().roundSlug,
 		);
 	};
 
@@ -90,7 +92,7 @@ export default function HostNavbar() {
 
 												<DropdownSwitcher
 													menuLabel="My Organizations"
-													options={orgs().map((org) => ({
+													options={orgs().map((org: any) => ({
 														to: "/host/orgs/$orgSlug",
 														params: { orgSlug: org.slug },
 														label: org.name,
@@ -102,9 +104,7 @@ export default function HostNavbar() {
 											{(currCall) => (
 												<>
 													<BreadcrumbsSeparator
-														classList={{
-															"hidden md:block": !!selectedRound(),
-														}}
+														class={selectedRound() ? "hidden md:block" : ""}
 													/>
 													<BreadcrumbsItem>
 														<BreadcrumbsLink
@@ -124,7 +124,7 @@ export default function HostNavbar() {
 														</BreadcrumbsLink>
 														<DropdownSwitcher
 															menuLabel="Calls"
-															options={currOrg().calls.map((call) => ({
+															options={currOrg().calls.map((call: any) => ({
 																to: "/host/orgs/$orgSlug/calls/$callSlug/dashboard",
 																params: {
 																	orgSlug: currOrg().slug,
@@ -157,15 +157,17 @@ export default function HostNavbar() {
 																	</BreadcrumbsLink>
 																	<DropdownSwitcher
 																		menuLabel="Rounds"
-																		options={currCall().rounds.map((round) => ({
-																			to: "/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure",
-																			params: {
-																				orgSlug: currOrg().slug,
-																				callSlug: currCall().slug,
-																				roundSlug: round.slug,
-																			},
-																			label: round.name,
-																		}))}
+																		options={currCall().rounds.map(
+																			(round: any) => ({
+																				to: "/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure",
+																				params: {
+																					orgSlug: currOrg().slug,
+																					callSlug: currCall().slug,
+																					roundSlug: round.slug,
+																				},
+																				label: round.name,
+																			}),
+																		)}
 																	/>
 																</BreadcrumbsItem>
 															</>

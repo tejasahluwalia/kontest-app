@@ -1,5 +1,5 @@
 import Trash from "lucide-solid/icons/trash";
-import { batch, type Component, Match, Show, Switch } from "solid-js";
+import { type Component, Match, Show, Switch } from "solid-js";
 import { Button } from "~/components/ui/button";
 import { useFormBuilder } from "../form-builder-context";
 import type { Child } from "../primitives/children";
@@ -23,17 +23,13 @@ const BuilderChildRenderer: Component<BuilderChildRendererProps> = ({
 	const { id } = child;
 
 	const handleOnDelete = () => {
-		batch(() => {
-			removeChildFromBlock(id, blockId, selectedStepId());
-			setSelectedChildId("");
-		});
+		removeChildFromBlock(id, blockId, selectedStepId());
+		setSelectedChildId("");
 	};
 
-	const handleOnSelect = () => {
-		batch(() => {
-			setSelectedBlockId(blockId);
-			setSelectedChildId(id);
-		});
+	const _handleOnSelect = () => {
+		setSelectedBlockId(blockId);
+		setSelectedChildId(id);
 	};
 
 	return (

@@ -1,8 +1,5 @@
 import { type Component, For, type StoreSetter } from "solid-js";
-import { Button } from "~/components/ui/button";
-import { useFormBuilder } from "../../form-builder-context";
 import type { Block } from "../../primitives/blocks";
-import { createChild } from "../../primitives/children";
 import type { InputFormData } from "../../primitives/form";
 import ChildRenderer from "./child-renderer";
 

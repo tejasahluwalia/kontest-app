@@ -8,15 +8,12 @@ export const Route = createFileRoute(
 	"/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure",
 )({
 	component: RouteComponent,
-	loader: async ({ context: { org, call } }) => {
-		return { call, org };
-	},
 });
 
 function RouteComponent() {
 	const round = useContext(RoundContext);
 
-	if (!round || !round.formSchema) {
+	if (!round?.formSchema) {
 		throw notFound();
 	}
 

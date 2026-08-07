@@ -104,7 +104,8 @@ export const Route = createFileRoute("/host/orgs/$orgSlug/members")({
 function RouteComponent() {
 	const params = Route.useParams();
 	const orgSlug = () => params().orgSlug;
-	const { queryClient } = Route.useRouteContext()();
+	const { queryClient, auth } = Route.useRouteContext()();
+	const currUser = auth.user;
 
 	const membersQuery = useQuery(() => fetchMembersQueryOptions(orgSlug()));
 	const members = createMemo(() => {
@@ -163,7 +164,7 @@ function RouteComponent() {
 			await server.api.host
 				.orgs({ orgSlug: orgSlug() })
 				.members({ memberId })
-				.patch({ role: newRole });
+				.patch({ role: newRole as any });
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["members"] });
@@ -174,7 +175,7 @@ function RouteComponent() {
 		deleteMemberMutation.mutate({ memberId });
 	}
 
-	function handleChangeMemberRole(
+	function _handleChangeMemberRole(
 		memberId: typeof schema.member.$inferSelect.id,
 		newRole: typeof schema.member.$inferSelect.role,
 	) {
@@ -195,7 +196,7 @@ function RouteComponent() {
 				<h1 class="scroll-m-20 text-2xl font-semibold tracking-tight">
 					Organization members
 				</h1>
-				<AddMemberDialog orgId={orgId} />
+				<AddMemberDialog orgSlug={orgSlug()} />
 			</div>
 			<div>
 				<Tabs>
@@ -276,7 +277,7 @@ function RouteComponent() {
 											</span>
 										</div>
 									</div>
-									<div class="flex items-center space-x-2">
+									<div class="flex space-x-2 items-center">
 										<span class="text-muted-foreground text-sm">
 											{displayRole(invite.role)}
 										</span>
@@ -284,8 +285,8 @@ function RouteComponent() {
 											<DropdownMenuTrigger<typeof Button>
 												as={(props) => (
 													<Button
-														variant="ghost"
 														{...props}
+														variant="ghost"
 														size="icon"
 														class="size-8"
 													>
@@ -316,9 +317,7 @@ function RouteComponent() {
 	);
 }
 
-function AddMemberDialog(props: {
-	orgId: typeof schema.memberInvite.$inferSelect.orgId;
-}) {
+function AddMemberDialog(props: { orgSlug: string }) {
 	const [dialogOpen, setDialogOpen] = createSignal(false);
 	const { queryClient } = Route.useRouteContext()();
 
@@ -327,8 +326,9 @@ function AddMemberDialog(props: {
 			email: typeof schema.memberInvite.$inferInsert.email;
 			role: typeof schema.memberInvite.$inferInsert.role;
 		}) =>
-			server.api.host.orgs({ orgId: props.orgId }).members.invites.post({
-				...newInvite,
+			server.api.host.orgs({ orgSlug: props.orgSlug }).members.invites.post({
+				email: newInvite.email,
+				role: newInvite.role as any,
 			}),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["invites"] });
@@ -432,12 +432,12 @@ function AddMemberDialog(props: {
 							</form.Field>
 						</div>
 						<form.Subscribe
-							selector={(state) => ({
+							selector={(state: any) => ({
 								canSubmit: state.canSubmit,
 								isSubmitting: state.isSubmitting,
 							})}
 						>
-							{(state) => {
+							{(state: any) => {
 								return (
 									<Button type="submit" disabled={!state().canSubmit}>
 										{state().isSubmitting ? "..." : "Submit"}

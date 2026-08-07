@@ -1,13 +1,17 @@
+import type { StoreSetter } from "solid-js";
 import { For } from "solid-js";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Label } from "~/components/ui/label";
-import type { CheckboxField } from "../../primitives/fields";
+import type { CheckboxField as CheckboxFieldType } from "../../primitives/fields";
+import type { InputFormData } from "../../primitives/form";
 import { FieldWrapper } from "./field-wrapper";
 
 interface CheckboxFieldProps {
-	child: CheckboxField;
+	child: CheckboxFieldType;
 	blockId: string;
 	stepId: string;
+	formData?: InputFormData;
+	updateFormData?: StoreSetter<InputFormData>;
 }
 
 export function CheckboxField(props: CheckboxFieldProps) {

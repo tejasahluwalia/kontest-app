@@ -1,6 +1,8 @@
-import type * as schema from "@db/schema";
 import { createContext } from "solid-js";
+import type { MemberProfilesContextType } from "./memberProfiles";
 
-const OrgContext = createContext();
+export type OrgContextType = MemberProfilesContextType[number]["org"];
+
+const OrgContext = createContext<OrgContextType | any>();
 
 export default OrgContext;

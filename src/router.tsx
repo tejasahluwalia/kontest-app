@@ -1,8 +1,5 @@
 import { QueryClient } from "@tanstack/solid-query";
-import {
-	createRouter,
-	ErrorComponent,
-} from "@tanstack/solid-router";
+import { createRouter, ErrorComponent } from "@tanstack/solid-router";
 import { Spinner } from "./client/components/spinner";
 import { authClient } from "./client/lib/auth-client";
 import { routeTree } from "./routeTree.gen";

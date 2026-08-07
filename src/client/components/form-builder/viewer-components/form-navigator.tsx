@@ -1,15 +1,7 @@
 import ArrowLeft from "lucide-solid/icons/arrow-left";
 import ArrowRight from "lucide-solid/icons/arrow-right";
 import CheckCircle from "lucide-solid/icons/check-circle";
-import {
-	batch,
-	type Component,
-	createMemo,
-	createSignal,
-	createStore,
-	For,
-	Show,
-} from "solid-js";
+import { type Component, createSignal, createStore, Show } from "solid-js";
 import { Button } from "~/components/ui/button";
 import { evaluateConditionalRule } from "../primitives/conditions";
 import type {
@@ -73,19 +65,15 @@ const FormNavigator: Component<FormNavigatorProps> = (props) => {
 			return;
 		}
 
-		batch(() => {
-			setPreviousSteps((prev) => [...prev, currentStep()]);
-			setCurrentStep(nextStep);
-		});
+		setPreviousSteps((prev) => [...prev, currentStep()]);
+		setCurrentStep(nextStep);
 	};
 
 	// Navigate to the previous step
 	const handlePrevious = () => {
 		if (!isFirstStep()) {
-			batch(() => {
-				setCurrentStep(previousSteps()[previousSteps().length - 1]);
-				setPreviousSteps((prev) => prev.slice(0, -1));
-			});
+			setCurrentStep(previousSteps()[previousSteps().length - 1]);
+			setPreviousSteps((prev) => prev.slice(0, -1));
 		}
 	};
 

@@ -85,9 +85,9 @@ export const hostPlugin = new Elysia({
 					})
 					.group("/members", (app) =>
 						app
-							.get("/", async ({ db, params }) => {
+							.get("/", async ({ db, org }) => {
 								const members = await db.query.member.findMany({
-									where: eq(schema.member.orgId, params.orgId),
+									where: eq(schema.member.orgId, org.id),
 									with: {
 										user: true,
 									},
@@ -109,7 +109,10 @@ export const hostPlugin = new Elysia({
 											"/",
 											{
 												body: t.Object({
-													role: model.update.member.role,
+													role: t.Union([
+														t.Literal("admin"),
+														t.Literal("member"),
+													]),
 												}),
 											},
 											async ({ db, body, params }) => {
@@ -139,9 +142,9 @@ export const hostPlugin = new Elysia({
 								},
 								(app) =>
 									app
-										.get("/", async ({ db, params }) => {
+										.get("/", async ({ db, org }) => {
 											const invites = db.query.memberInvite.findMany({
-												where: eq(schema.memberInvite.orgId, params.orgId),
+												where: eq(schema.memberInvite.orgId, org.id),
 											});
 											return invites;
 										})
@@ -150,16 +153,19 @@ export const hostPlugin = new Elysia({
 											{
 												body: t.Object({
 													email: model.select.user.email,
-													role: model.insert.member.role,
+													role: t.Union([
+														t.Literal("admin"),
+														t.Literal("member"),
+													]),
 												}),
 											},
-											async ({ db, body, params, status, member }) => {
+											async ({ db, body, status, member, org }) => {
 												const userToBeAdded = await db.query.user.findFirst({
 													where: (user, { eq }) => eq(user.email, body.email),
 												});
 												if (!userToBeAdded) {
 													await db.insert(schema.memberInvite).values({
-														orgId: params.orgId,
+														orgId: org.id,
 														email: body.email,
 														invitedBy: member.id,
 														role: body.role,
@@ -167,7 +173,7 @@ export const hostPlugin = new Elysia({
 													return status(201);
 												}
 												await db.insert(schema.member).values({
-													orgId: params.orgId,
+													orgId: org.id,
 													userId: userToBeAdded.id,
 													role: body.role,
 												});
@@ -184,13 +190,10 @@ export const hostPlugin = new Elysia({
 					)
 					.group("/calls", (app) =>
 						app
-							.get("/checkAvailability/:slug", async ({ db, params }) => {
+							.get("/checkAvailability/:slug", async ({ db, params, org }) => {
 								const existingCall = await db.query.call.findFirst({
 									where: (call, { eq, and }) =>
-										and(
-											eq(call.orgId, params.orgId),
-											eq(call.slug, params.slug),
-										),
+										and(eq(call.orgId, org.id), eq(call.slug, params.slug)),
 								});
 								const isAvailable = !existingCall;
 								return {
@@ -205,10 +208,10 @@ export const hostPlugin = new Elysia({
 										slug: model.insert.call.slug,
 									}),
 								},
-								async ({ body, db, member, params }) => {
+								async ({ body, db, member, org }) => {
 									const newCall = await db
 										.insert(schema.call)
-										.values({ ...body, orgId: params.orgId })
+										.values({ ...body, orgId: org.id })
 										.returning();
 									await db.insert(schema.callToMember).values({
 										callId: newCall[0].id,
@@ -253,7 +256,7 @@ export const hostPlugin = new Elysia({
 												.set({
 													...body,
 													updatedAt: new Date(),
-												})
+												} as any)
 												.where(eq(schema.call.id, params.callId));
 
 											return status(202);

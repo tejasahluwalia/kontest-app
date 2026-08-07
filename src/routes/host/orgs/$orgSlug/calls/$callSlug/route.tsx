@@ -4,18 +4,16 @@ import server from "~/lib/server-api";
 
 export const Route = createFileRoute("/host/orgs/$orgSlug/calls/$callSlug")({
 	component: RouteComponent,
-	beforeLoad: async ({
-		params,
-		context: {
-			member: { org },
-		},
-	}) => {
-		const { calls } = org;
-		const callId = calls.find((call) => call.slug === params.callSlug)?.id;
-		if (!callId) throw notFound({ data: { message: "Call not found" } });
+	beforeLoad: async ({ params }) => {
+		const { data: orgData } = await server.api.host
+			.orgs({ orgSlug: params.orgSlug })
+			.get();
+		const org = Array.isArray(orgData) ? orgData[0] : orgData;
+		const callItem = org?.calls?.find((c: any) => c.slug === params.callSlug);
+		if (!callItem) throw notFound({ data: { message: "Call not found" } });
 		const { data, error, status } = await server.api.host
-			.orgs({ orgId: org.id })
-			.calls({ callId: callId })
+			.orgs({ orgSlug: params.orgSlug })
+			.calls({ callId: callItem.id })
 			.get();
 		if (error) {
 			throw error.value;
@@ -23,7 +21,7 @@ export const Route = createFileRoute("/host/orgs/$orgSlug/calls/$callSlug")({
 		if (status !== 200) {
 			throw new Error(`Failed to fetch call: ${status}`);
 		}
-		return { call: data };
+		return { call: data } as any;
 	},
 	loader(ctx) {
 		return { call: ctx.context.call };
@@ -33,8 +31,8 @@ export const Route = createFileRoute("/host/orgs/$orgSlug/calls/$callSlug")({
 function RouteComponent() {
 	const { call } = Route.useLoaderData()();
 	return (
-		<CallContext.Provider value={call}>
+		<CallContext value={call}>
 			<Outlet />
-		</CallContext.Provider>
+		</CallContext>
 	);
 }

@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/solid-router";
 import Trash2 from "lucide-solid/icons/trash-2";
-import { createSignal, For, Show } from "solid-js";
+import { createSignal, For, Show, useContext } from "solid-js";
 import NewCallForm from "~/components/forms/new-call-form";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
+import { Card, CardHeader } from "~/components/ui/card";
 import {
 	Dialog,
 	DialogContent,
@@ -12,17 +12,16 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "~/components/ui/dialog";
+import OrgContext from "~/context/org";
 import server from "~/lib/server-api";
 
 export const Route = createFileRoute("/host/orgs/$orgSlug/calls/")({
 	component: RouteComponent,
-	loader: async ({ context: { member } }) => {
-		return { org: member.org };
-	},
 });
 
 function RouteComponent() {
-	const { org } = Route.useLoaderData()();
+	const org = useContext(OrgContext);
+	if (!org) return null;
 	const calls = org.calls;
 
 	const router = useRouter();
@@ -34,7 +33,7 @@ function RouteComponent() {
 	};
 
 	const deleteCall = (id: string) => {
-		server.api.host.orgs({ orgId: org.id }).calls({ callId: id }).delete();
+		server.api.host.orgs({ orgSlug: org.slug }).calls({ callId: id }).delete();
 		router.invalidate();
 	};
 
@@ -61,7 +60,7 @@ function RouteComponent() {
 											<DialogTitle>Create a new call</DialogTitle>
 										</DialogHeader>
 										<NewCallForm
-											orgId={org.id}
+											orgSlug={org.slug}
 											onSuccess={handleCreateSuccess}
 										/>
 									</DialogContent>
@@ -112,7 +111,10 @@ function RouteComponent() {
 									<DialogHeader>
 										<DialogTitle>Create a new call</DialogTitle>
 									</DialogHeader>
-									<NewCallForm orgId={org.id} onSuccess={handleCreateSuccess} />
+									<NewCallForm
+										orgSlug={org.slug}
+										onSuccess={handleCreateSuccess}
+									/>
 								</DialogContent>
 							</Dialog>
 						</Card>

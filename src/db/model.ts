@@ -12,11 +12,11 @@ export const model = {
 	insert: spreads(
 		{
 			user: createInsertSchema(table.user, {
-				email: t.String({ format: "email" }),
+				email: t.String({ format: "email" }) as any,
 			}),
 			org: createInsertSchema(table.org, {
-				name: t.String({ minLength: 2, maxLength: 100 }),
-				slug: t.String({ minLength: 2, maxLength: 100 }),
+				name: t.String({ minLength: 2, maxLength: 100 }) as any,
+				slug: t.String({ minLength: 2, maxLength: 100 }) as any,
 			}),
 			member: table.member,
 			call: table.call,
@@ -29,7 +29,7 @@ export const model = {
 		{
 			member: table.member,
 			user: createSelectSchema(table.user, {
-				email: t.String({ format: "email" }),
+				email: t.String({ format: "email" }) as any,
 			}),
 			org: table.org,
 			call: table.call,
@@ -40,7 +40,7 @@ export const model = {
 	update: spreads(
 		{
 			user: createUpdateSchema(table.user, {
-				email: t.String({ format: "email" }),
+				email: t.String({ format: "email" }) as any,
 			}),
 			member: table.member,
 			call: table.call,

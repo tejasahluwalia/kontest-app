@@ -1,6 +1,6 @@
 import { cn } from "./utils";
 
-const typography = {
+const _typography = {
 	h1: cn(
 		"scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance",
 	),

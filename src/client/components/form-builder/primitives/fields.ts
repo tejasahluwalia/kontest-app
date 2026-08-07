@@ -46,6 +46,8 @@ export interface BaseField {
 	name: string;
 	label: string;
 	description?: string;
+	helpText?: string;
+	placeholder?: string;
 	conditionalDisplay?: Condition | ConditionGroup;
 	required?: boolean;
 	validation?: FieldValidation;

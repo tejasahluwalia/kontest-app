@@ -116,7 +116,7 @@ interface FormBuilderContextType {
 	previewData: Accessor<InputFormData>;
 }
 
-const AUTOSAVE_DELAY = 3000; // 3 seconds
+const _AUTOSAVE_DELAY = 3000; // 3 seconds
 
 const FormBuilderContext = createContext<FormBuilderContextType>();
 
@@ -220,7 +220,7 @@ export const FormBuilderProvider: ParentComponent<{
 			});
 
 			const { data, error, status } = await server.api.host
-				.orgs({ orgId: org.id })
+				.orgs({ orgSlug: org.slug })
 				.calls({ callId: call.id })
 				.rounds({ roundId: round.id })
 				.put({
@@ -337,7 +337,7 @@ export const FormBuilderProvider: ParentComponent<{
 		});
 	};
 
-	const duplicateBlock = (blockId: string, stepId: string): void => {
+	const _duplicateBlock = (blockId: string, stepId: string): void => {
 		saveToHistory();
 		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
@@ -592,9 +592,9 @@ export const FormBuilderProvider: ParentComponent<{
 	};
 
 	return (
-		<FormBuilderContext.Provider value={contextValue}>
+		<FormBuilderContext value={contextValue}>
 			{props.children}
-		</FormBuilderContext.Provider>
+		</FormBuilderContext>
 	);
 };
 

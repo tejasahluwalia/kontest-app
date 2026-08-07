@@ -2,7 +2,7 @@ import { createForm } from "@tanstack/solid-form";
 import { useNavigate } from "@tanstack/solid-router";
 import { createSignal } from "solid-js";
 import { z } from "zod";
-import { IconBrandGithub, IconLoader } from "~/components/icons";
+import { IconLoader } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import {
 	OTPField,
@@ -126,12 +126,12 @@ function EmailForm({
 					)}
 				</form.Field>
 				<form.Subscribe
-					selector={(state) => ({
+					selector={(state: any) => ({
 						canSubmit: state.canSubmit,
 						isSubmitting: state.isSubmitting,
 					})}
 				>
-					{(state) => (
+					{(state: any) => (
 						<Button type="submit" disabled={state().isSubmitting}>
 							{state().isSubmitting && (
 								<IconLoader class="mr-2 size-4 animate-spin" />
@@ -156,7 +156,7 @@ export function OtpForm({ email, name }: { email: string; name: string }) {
 			otp: "",
 		},
 		onSubmit: async (data) => {
-			const { data: res, error } = await authClient.signIn.emailOtp(
+			const { data: _res, error: _error } = await authClient.signIn.emailOtp(
 				{
 					email: data.value.email,
 					otp: data.value.otp,
@@ -166,7 +166,7 @@ export function OtpForm({ email, name }: { email: string; name: string }) {
 						await server.api.user.me.patch({
 							email,
 							name,
-						});
+						} as any);
 						navigate({ to: "/host" });
 					},
 					// TODO: handle error
@@ -212,12 +212,12 @@ export function OtpForm({ email, name }: { email: string; name: string }) {
 						)}
 					</form.Field>
 					<form.Subscribe
-						selector={(state) => ({
+						selector={(state: any) => ({
 							canSubmit: state.canSubmit,
 							isSubmitting: state.isSubmitting,
 						})}
 					>
-						{(state) => (
+						{(state: any) => (
 							<Button type="submit" disabled={state().isSubmitting}>
 								{state().isSubmitting && (
 									<IconLoader class="mr-2 size-4 animate-spin" />

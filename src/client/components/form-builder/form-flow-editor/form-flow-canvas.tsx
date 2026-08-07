@@ -128,10 +128,12 @@ function StepNode(props: {
 					<div class="flex items-center">
 						<InlineEdit
 							value={label}
-							onSave={setLabel}
-							displayComponent={({ value }) => (
-								<h3 class="text-lg font-medium">{value}</h3>
-							)}
+							setValue={setLabel}
+							onSave={() =>
+								updateStepInGraph(props.node.step.id, {
+									step: { ...props.node.step, label: label() },
+								})
+							}
 						/>
 					</div>
 

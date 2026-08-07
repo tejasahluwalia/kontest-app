@@ -12,12 +12,12 @@ function RouteComponent() {
 	const memberProfiles = useContext(MemberProfilesContext);
 	if (!memberProfiles) return null;
 
-	const org = memberProfiles.find((mp) => mp.org.slug === orgSlug);
+	const org = (memberProfiles || []).find((mp: any) => mp.org.slug === orgSlug);
 	if (!org) return notFound();
 
 	return (
-		<OrgContext.Provider value={org}>
+		<OrgContext value={org}>
 			<Outlet />
-		</OrgContext.Provider>
+		</OrgContext>
 	);
 }

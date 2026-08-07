@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid";
-import type { Block } from "./blocks";
 
 export interface Step {
 	id: string;

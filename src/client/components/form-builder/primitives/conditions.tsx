@@ -4,8 +4,6 @@ import { nanoid } from "nanoid";
 import {
 	type Accessor,
 	type Component,
-	createEffect,
-	createMemo,
 	createSignal,
 	createUniqueId,
 	Errored,

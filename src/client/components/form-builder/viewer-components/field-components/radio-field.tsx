@@ -1,13 +1,17 @@
+import type { StoreSetter } from "solid-js";
 import { For } from "solid-js";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import type { RadioField } from "../../primitives/fields";
+import type { RadioField as RadioFieldType } from "../../primitives/fields";
+import type { InputFormData } from "../../primitives/form";
 import { FieldWrapper } from "./field-wrapper";
 
 interface RadioFieldProps {
-	child: RadioField;
+	child: RadioFieldType;
 	blockId: string;
 	stepId: string;
+	formData?: InputFormData;
+	updateFormData?: StoreSetter<InputFormData>;
 }
 
 export function RadioField(props: RadioFieldProps) {

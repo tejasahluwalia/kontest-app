@@ -3,17 +3,17 @@ import server from "~/lib/server-api";
 import EntityForm from "./entity-form";
 
 interface NewCallFormProps {
-	orgId: string;
+	orgSlug: string;
 	onSuccess: () => void;
 }
 
 type CallData = typeof schema.call.$inferSelect;
 
 export default function NewCallForm(props: NewCallFormProps) {
-	const { orgId, onSuccess } = props;
+	const { orgSlug, onSuccess } = props;
 
 	async function createCall(name: string, slug: string): Promise<CallData> {
-		const { data, error } = await server.api.host.orgs({ orgId }).calls.post({
+		const { data, error } = await server.api.host.orgs({ orgSlug }).calls.post({
 			name,
 			slug,
 		});
@@ -25,7 +25,7 @@ export default function NewCallForm(props: NewCallFormProps) {
 
 	async function getSlugAvailability(slug: string): Promise<boolean> {
 		const { data, error, status } = await server.api.host
-			.orgs({ orgId })
+			.orgs({ orgSlug })
 			.calls.checkAvailability({ slug })
 			.get();
 		if (error) {

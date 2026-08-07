@@ -27,7 +27,7 @@ export const publicPlugin = new Elysia({
 				},
 				async ({ db, params, user }) => {
 					const call = await db.query.call.findFirst({
-						where: (call, { eq, and }) => and(eq(call.id, params.id)),
+						where: (call, { eq, and }) => and(eq(call.id, (params as any).id)),
 						columns: {
 							id: true,
 							name: true,
@@ -52,11 +52,12 @@ export const publicPlugin = new Elysia({
 						);
 					}
 
+					const currentUser = user as any;
 					const isUserHost = await db.query.callToMember.findFirst({
 						where: (callToMember, { eq, and }) =>
 							and(
 								eq(callToMember.callId, call.id),
-								eq(callToMember.memberId, user.id),
+								eq(callToMember.memberId, currentUser.id),
 							),
 					});
 
@@ -69,7 +70,10 @@ export const publicPlugin = new Elysia({
 
 					const isUserParticipant = await db.query.participant.findFirst({
 						where: (participant, { eq, and }) =>
-							and(eq(participant.callId, call.id), eq(participant.id, user.id)),
+							and(
+								eq(participant.callId, call.id),
+								eq(participant.userId, currentUser.id),
+							),
 					});
 
 					if (

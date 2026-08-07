@@ -1,5 +1,4 @@
 import { cors } from "@elysia/cors";
-import { staticPlugin } from "@elysia/static";
 import { Elysia } from "elysia";
 import betterAuthView from "./lib/auth-view";
 import { hostPlugin } from "./plugins/host";

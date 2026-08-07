@@ -1,11 +1,7 @@
 import * as schema from "@db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import {
-	createAuthMiddleware,
-	customSession,
-	emailOTP,
-} from "better-auth/plugins";
+import { emailOTP } from "better-auth/plugins";
 import { db } from "./db";
 
 export const auth = betterAuth({

@@ -4,7 +4,7 @@ import { createDefaultFormSchema } from "../form-builder/primitives/form";
 import EntityForm from "./entity-form";
 
 interface NewRoundFormProps {
-	orgId: string;
+	orgSlug: string;
 	callId: string;
 	onSuccess: () => void;
 }
@@ -12,16 +12,17 @@ interface NewRoundFormProps {
 type RoundData = typeof schema.round.$inferSelect;
 
 export default function NewRoundForm(props: NewRoundFormProps) {
-	const { orgId, callId, onSuccess } = props;
+	const { orgSlug, callId, onSuccess } = props;
 
 	async function createRound(name: string, slug: string): Promise<RoundData> {
 		const { data, error } = await server.api.host
-			.orgs({ orgId })
+			.orgs({ orgSlug })
 			.calls({ callId })
 			.rounds.post({
 				name,
 				slug,
 				formSchema: createDefaultFormSchema(),
+				judgingSchema: {},
 			});
 		if (error) {
 			throw error.value;
@@ -31,7 +32,7 @@ export default function NewRoundForm(props: NewRoundFormProps) {
 
 	async function getSlugAvailability(slug: string): Promise<boolean> {
 		const { data, error, status } = await server.api.host
-			.orgs({ orgId })
+			.orgs({ orgSlug })
 			.calls({ callId })
 			.rounds.checkAvailability({ slug })
 			.get();

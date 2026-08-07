@@ -3,9 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import { ErrorComponent, RouterProvider } from "@tanstack/solid-router";
 import "./styles.css";
 import { createRouter } from "@tanstack/solid-router";
+import { routeTree } from "../routeTree.gen";
 import { Spinner } from "./components/spinner";
 import { authClient } from "./lib/auth-client";
-import { routeTree } from "./routeTree.gen";
 
 export const queryClient = new QueryClient();
 

@@ -1,7 +1,10 @@
-import type { call } from "@db/schema";
-import { getRouteApi } from "@tanstack/solid-router";
+import type { call, round } from "@db/schema";
 import { createContext } from "solid-js";
 
-const CallContext = createContext<typeof call.$inferSelect>();
+export type CallContextType = typeof call.$inferSelect & {
+	rounds?: (typeof round.$inferSelect)[];
+};
+
+const CallContext = createContext<CallContextType | any>();
 
 export default CallContext;

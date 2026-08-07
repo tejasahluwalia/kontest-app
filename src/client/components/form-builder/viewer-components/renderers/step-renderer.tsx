@@ -1,22 +1,12 @@
-import { createSignal, For, Show, type StoreSetter } from "solid-js";
-import { Button } from "~/components/ui/button";
+import { For, Show, type StoreSetter } from "solid-js";
 import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { TextField, TextFieldTextArea } from "~/components/ui/text-field";
-import { useFormBuilder } from "../../form-builder-context";
-import { createChildren } from "../../primitives/children";
-import type {
-	FormGraph,
-	InputFormData,
-	StepGraphNode,
-} from "../../primitives/form";
+import type { InputFormData, StepGraphNode } from "../../primitives/form";
 import BlockRenderer from "./block-renderer";
 
 interface StepRendererProps {

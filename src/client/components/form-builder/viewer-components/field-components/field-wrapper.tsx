@@ -1,6 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { ParentComponent } from "solid-js";
-import { batch, createSignal, Show } from "solid-js";
+import { Show } from "solid-js";
 import { useFormBuilder } from "../../form-builder-context";
 
 interface FieldWrapperProps {
@@ -23,20 +23,29 @@ export const FieldWrapper: ParentComponent<FieldWrapperProps> = (props) => {
 
 	const isActive = () => selectedChildId() === props.childId;
 
-	const handleClick = (e: MouseEvent) => {
-		batch(() => {
-			setSelectedStepId(props.stepId);
-			setSelectedBlockId(props.blockId);
-			setSelectedChildId(props.childId);
-		});
+	const handleClick = () => {
+		setSelectedStepId(props.stepId);
+		setSelectedBlockId(props.blockId);
+		setSelectedChildId(props.childId);
+	};
+
+	const handleKeyDown = (e: KeyboardEvent) => {
+		if (e.key === "Enter" || e.key === " ") {
+			handleClick();
+		}
 	};
 
 	return (
+		// biome-ignore lint/a11y/useFocusableInteractive: Wrapper container div is clickable
+		// biome-ignore lint/a11y/useSemanticElements: Wrapper div must contain inputs, cannot use button
 		<div
+			role="button"
+			tabindex={0}
 			class={`relative border rounded-md p-4 mb-3 transition-all ${
 				isActive() ? "border-primary shadow-sm" : "border-border"
 			}`}
 			onClick={handleClick}
+			onKeyDown={handleKeyDown}
 		>
 			<div class="flex items-start justify-between mb-2">
 				<div class="flex items-center gap-1">
@@ -63,7 +72,9 @@ export const FieldWrapper: ParentComponent<FieldWrapperProps> = (props) => {
 								stroke-width="2"
 								stroke-linecap="round"
 								stroke-linejoin="round"
+								aria-label="Drag handle"
 							>
+								<title>Drag to reorder</title>
 								<path d="M12 5v14M5 12h14" />
 							</svg>
 						</button>

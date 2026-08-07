@@ -1,6 +1,6 @@
 import CheckCircle from "lucide-solid/icons/check-circle";
 import RefreshCw from "lucide-solid/icons/refresh-cw";
-import { type Component, createMemo, createSignal, Show } from "solid-js";
+import { type Component, createSignal, Show } from "solid-js";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import {

@@ -16,16 +16,14 @@ export const Route = createFileRoute("/host")({
 
 		return {
 			auth: authData.data,
-			memberProfilesQueryOptions,
 		};
 	},
-	loader: async ({ context: { queryClient, memberProfilesQueryOptions } }) => {
+	loader: async ({ context: { queryClient } }) => {
 		await queryClient.ensureQueryData(memberProfilesQueryOptions());
 	},
 });
 
 function RouteComponent() {
-	const { memberProfilesQueryOptions } = Route.useRouteContext()();
 	const { isPending, isError, data, error } = useQuery(() =>
 		memberProfilesQueryOptions(),
 	);
@@ -34,11 +32,11 @@ function RouteComponent() {
 	if (isError) return <span>{JSON.stringify(error)}</span>;
 
 	return (
-		<MemberProfilesContext.Provider value={data}>
+		<MemberProfilesContext value={data}>
 			<HostNavbar />
 			<div class="container py-6">
 				<Outlet />
 			</div>
-		</MemberProfilesContext.Provider>
+		</MemberProfilesContext>
 	);
 }

@@ -13,10 +13,10 @@ export const Route = createFileRoute(
 	"/host/orgs/$orgSlug/calls/$callSlug/team",
 )({
 	component: RouteComponent,
-	beforeLoad: async ({ context }) => {
-		const { org, call } = context;
+	beforeLoad: async ({ params, context }) => {
+		const call = (context as any).call;
 		const { data, error } = await server.api.host
-			.orgs({ orgId: org.id })
+			.orgs({ orgSlug: params.orgSlug })
 			.calls({ callId: call.id })
 			.team.get();
 
@@ -26,7 +26,7 @@ export const Route = createFileRoute(
 		return { team: data };
 	},
 	loader: ({ context }) => {
-		return { team: context.team };
+		return { team: (context as any).team };
 	},
 });
 

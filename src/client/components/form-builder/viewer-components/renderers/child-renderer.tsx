@@ -1,11 +1,4 @@
-import {
-	batch,
-	type Component,
-	Match,
-	type StoreSetter,
-	Switch,
-} from "solid-js";
-import { useFormBuilder } from "../../form-builder-context";
+import { type Component, Match, type StoreSetter, Switch } from "solid-js";
 import type { Child } from "../../primitives/children";
 import type { InputField } from "../../primitives/fields";
 import type { InputFormData } from "../../primitives/form";

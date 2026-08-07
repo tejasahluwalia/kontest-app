@@ -23,7 +23,7 @@ export function FormBuilderCanvas() {
 					</div>
 				}
 			>
-				{(node) => <BuilderStepRenderer />}
+				{(_node) => <BuilderStepRenderer />}
 			</Show>
 		</div>
 	);

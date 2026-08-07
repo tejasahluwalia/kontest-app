@@ -1,10 +1,5 @@
 import { nanoid } from "nanoid";
-import {
-	type Block,
-	type Blocks,
-	type BlockTemplate,
-	createBlocks,
-} from "./blocks";
+import { type Blocks, type BlockTemplate, createBlocks } from "./blocks";
 import { createEdge, type Edges } from "./edges";
 import type { InputField } from "./fields";
 

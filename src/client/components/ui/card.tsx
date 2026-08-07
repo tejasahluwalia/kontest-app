@@ -1,5 +1,4 @@
 import type { ComponentProps } from "@solidjs/web";
-import type { Component } from "solid-js";
 import { omit } from "solid-js";
 
 import { cn } from "~/lib/utils";

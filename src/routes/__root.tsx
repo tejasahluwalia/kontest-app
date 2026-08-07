@@ -1,11 +1,6 @@
-import {
-	ColorModeProvider,
-	ColorModeScript,
-	createLocalStorageManager,
-} from "@opencenter-cloud/kobalte-core";
 import type { QueryClient } from "@tanstack/solid-query";
 import {
-    ClientOnly,
+	ClientOnly,
 	createRootRouteWithContext,
 	type ErrorComponentProps,
 	HeadContent,
@@ -39,8 +34,8 @@ function Root() {
 			<HeadContent />
 			{/*<ColorModeScript storageType={storageManager.type} />*/}
 			{/*<ColorModeProvider storageManager={storageManager}>*/}
-				<Outlet />
-				<Toaster />
+			<Outlet />
+			<Toaster />
 			{/*</ColorModeProvider>*/}
 			<Scripts />
 			{/* <TanStackRouterDevtools /> */}

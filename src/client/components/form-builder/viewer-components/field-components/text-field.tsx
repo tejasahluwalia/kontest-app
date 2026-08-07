@@ -3,12 +3,12 @@ import {
 	TextFieldInput,
 	TextField as TextFieldWrapper,
 } from "~/components/ui/text-field";
-import type { TextField } from "../../primitives/fields";
+import type { TextField as TextFieldType } from "../../primitives/fields";
 import type { InputFormData } from "../../primitives/form";
 import { FieldWrapper } from "./field-wrapper";
 
 interface TextFieldProps {
-	child: TextField;
+	child: TextFieldType;
 	blockId: string;
 	stepId: string;
 	updateFormData: StoreSetter<InputFormData>;

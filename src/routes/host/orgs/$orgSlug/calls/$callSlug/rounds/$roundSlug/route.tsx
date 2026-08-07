@@ -6,13 +6,16 @@ export const Route = createFileRoute(
 	"/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug",
 )({
 	component: RouteComponent,
-	beforeLoad: async ({ params, context: { org, call } }) => {
-		const round = call.rounds.find((round) => round.slug === params.round);
+	beforeLoad: async ({ params, context }) => {
+		const call = (context as any).call;
+		const round = call?.rounds?.find(
+			(round: any) => round.slug === params.roundSlug,
+		);
 		if (!round) {
 			throw notFound();
 		}
 		const { data, error } = await server.api.host
-			.orgs({ orgId: org.id })
+			.orgs({ orgSlug: params.orgSlug })
 			.calls({ callId: call.id })
 			.rounds({ roundId: round.id })
 			.get();
@@ -21,7 +24,7 @@ export const Route = createFileRoute(
 		}
 		return {
 			round: data,
-		};
+		} as any;
 	},
 	loader(ctx) {
 		return { round: ctx.context.round };
@@ -31,8 +34,8 @@ export const Route = createFileRoute(
 function RouteComponent() {
 	const { round } = Route.useLoaderData()();
 	return (
-		<RoundContext.Provider value={round}>
+		<RoundContext value={round}>
 			<Outlet />
-		</RoundContext.Provider>
+		</RoundContext>
 	);
 }

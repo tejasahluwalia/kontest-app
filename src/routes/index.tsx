@@ -96,6 +96,7 @@ function Index() {
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								class="text-primary"
+								aria-label="Collection icon"
 							>
 								<path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
 							</svg>
@@ -124,6 +125,7 @@ function Index() {
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								class="text-primary"
+								aria-label="Management icon"
 							>
 								<rect width="18" height="18" x="3" y="3" rx="2"></rect>
 								<path d="M9 9h6"></path>
@@ -154,6 +156,7 @@ function Index() {
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								class="text-primary"
+								aria-label="Judging icon"
 							>
 								<path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"></path>
 								<path d="m9 12 2 2 4-4"></path>
@@ -190,6 +193,7 @@ function Index() {
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										class="text-primary"
+										aria-label="Check icon"
 									>
 										<path d="m5 12 5 5L20 7"></path>
 									</svg>
@@ -217,6 +221,7 @@ function Index() {
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										class="text-primary"
+										aria-label="Check icon"
 									>
 										<path d="m5 12 5 5L20 7"></path>
 									</svg>
@@ -244,6 +249,7 @@ function Index() {
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										class="text-primary"
+										aria-label="Check icon"
 									>
 										<path d="m5 12 5 5L20 7"></path>
 									</svg>
@@ -310,19 +316,19 @@ function Index() {
 						</p>
 						<div class="flex gap-6">
 							<a
-								href="#"
+								href="/privacy"
 								class="text-sm text-muted-foreground hover:text-foreground"
 							>
 								Privacy
 							</a>
 							<a
-								href="#"
+								href="/terms"
 								class="text-sm text-muted-foreground hover:text-foreground"
 							>
 								Terms
 							</a>
 							<a
-								href="#"
+								href="/contact"
 								class="text-sm text-muted-foreground hover:text-foreground"
 							>
 								Contact

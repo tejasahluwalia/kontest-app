@@ -70,6 +70,7 @@ export const SelectTrigger = <T extends ValidComponent = "button">(
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 24 24"
 						role="graphics-symbol"
+						aria-label="Expand"
 						{...props}
 					>
 						<path
@@ -137,6 +138,7 @@ export const SelectItem = <T extends ValidComponent = "li">(
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 24 24"
 						role="graphics-symbol"
+						aria-label="Selected"
 						{...props}
 					>
 						<path

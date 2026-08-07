@@ -1,10 +1,10 @@
 import { createContext } from "solid-js";
 import type { fetchMemberProfiles } from "~/lib/queries";
 
-type MemberProfilesContextType = Awaited<
+export type MemberProfilesContextType = Awaited<
 	ReturnType<typeof fetchMemberProfiles>
 >;
 
-const MemberProfilesContext = createContext<MemberProfilesContextType>();
+const MemberProfilesContext = createContext<MemberProfilesContextType | any>();
 
 export default MemberProfilesContext;

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/solid-router";
-import { createSignal, For } from "solid-js";
+import { createSignal, For, Show, useContext } from "solid-js";
 import NewRoundForm from "~/components/forms/new-round-form";
 import { Button } from "~/components/ui/button";
 import { Card, CardHeader } from "~/components/ui/card";
@@ -11,31 +11,29 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "~/components/ui/dialog";
+import CallContext from "~/context/call";
+import OrgContext from "~/context/org";
 
 export const Route = createFileRoute(
 	"/host/orgs/$orgSlug/calls/$callSlug/rounds/",
 )({
 	component: RouteComponent,
-	loader(ctx) {
-		return { rounds: ctx.context.call.rounds };
-	},
 });
 
 function RouteComponent() {
-	const { rounds } = Route.useLoaderData()();
-	const routeContext = Route.useRouteContext();
-	const call = () => routeContext().call;
-	const org = () => routeContext().org;
+	const call = useContext(CallContext);
+	const org = useContext(OrgContext);
+	const rounds = () => call?.rounds || [];
 
 	return (
 		<div class="space-y-6">
 			<div>
-				<h1 class="text-2xl font-bold">Rounds for {call().name}</h1>
+				<h1 class="text-2xl font-bold">Rounds for {call?.name}</h1>
 			</div>
 
 			<div class="grid">
 				<For
-					each={rounds}
+					each={rounds()}
 					fallback={
 						<div class="text-muted-foreground py-8">No rounds created yet.</div>
 					}
@@ -43,8 +41,8 @@ function RouteComponent() {
 					{(round) => (
 						<Link
 							to="/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure"
-							from="/host/orgs/$orgSlug/calls/$callSlug/rounds"
-							params={(prev) => ({ ...prev, round: round.slug })}
+							from="/host/orgs/$orgSlug/calls/$callSlug/rounds/"
+							params={(prev: any) => ({ ...prev, roundSlug: round.slug })}
 						>
 							<Card class="p-4">
 								<CardHeader>
@@ -55,12 +53,14 @@ function RouteComponent() {
 					)}
 				</For>
 			</div>
-			<NewCallDialog orgId={org().id} callId={call().id} />
+			<Show when={org && call}>
+				<NewCallDialog orgSlug={org!.slug} callId={call!.id} />
+			</Show>
 		</div>
 	);
 }
 
-function NewCallDialog(props: { orgId: string; callId: string }) {
+function NewCallDialog(props: { orgSlug: string; callId: string }) {
 	const [dialogOpen, setDialogOpen] = createSignal(false);
 	const router = useRouter();
 
@@ -80,7 +80,7 @@ function NewCallDialog(props: { orgId: string; callId: string }) {
 					</DialogHeader>
 					<NewRoundForm
 						callId={props.callId}
-						orgId={props.orgId}
+						orgSlug={props.orgSlug}
 						onSuccess={handleCreateSuccess}
 					/>
 				</DialogContent>
