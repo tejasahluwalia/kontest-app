@@ -1,5 +1,4 @@
-import { createSignal } from "solid-js";
-import type { SetStoreFunction } from "~/compat/solid-store";
+import { createSignal, type StoreSetter, storePath } from "solid-js";
 import {
 	TextFieldInput,
 	TextField as TextFieldWrapper,
@@ -12,7 +11,7 @@ interface TextFieldProps {
 	child: TextField;
 	blockId: string;
 	stepId: string;
-	updateFormData: SetStoreFunction<InputFormData>;
+	updateFormData: StoreSetter<InputFormData>;
 	formData: InputFormData;
 }
 
@@ -25,11 +24,13 @@ export function TextField(props: TextFieldProps) {
 
 	const handleSave = () => {
 		if (props.updateFormData) {
-			props.updateFormData(props.stepId, props.blockId, props.child.id, {
-				label: props.child.label,
-				value: value(),
-				fieldType: props.child.fieldType,
-			});
+			props.updateFormData(
+				storePath(props.stepId, props.blockId, props.child.id, {
+					label: props.child.label,
+					value: value(),
+					fieldType: props.child.fieldType,
+				}),
+			);
 		}
 	};
 

@@ -6,10 +6,10 @@ import {
 	type Component,
 	createMemo,
 	createSignal,
+	createStore,
 	For,
 	Show,
 } from "solid-js";
-import { createStore } from "~/compat/solid-store";
 import { Button } from "~/components/ui/button";
 import { evaluateConditionalRule } from "../primitives/conditions";
 import type {

@@ -1,4 +1,10 @@
-import { type Component, createSignal, Errored, For } from "solid-js";
+import {
+	type Component,
+	createSignal,
+	Errored,
+	For,
+	storePath,
+} from "solid-js";
 import { InlineEdit } from "~/components/ui/inline-edit";
 import { useFormBuilder } from "../form-builder-context";
 import BuilderBlockRenderer from "./builder-block-renderer";
@@ -10,10 +16,9 @@ const BuilderStepRenderer: Component = () => {
 
 	function handleLabelChange() {
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === selectedStepId(),
-			"step",
-			{ label: label() },
+			storePath("graph", (node) => node.step.id === selectedStepId(), "step", {
+				label: label(),
+			}),
 		);
 		saveForm();
 	}

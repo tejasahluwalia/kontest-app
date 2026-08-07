@@ -1,5 +1,4 @@
-import { type Component, For } from "solid-js";
-import type { SetStoreFunction } from "~/compat/solid-store";
+import { type Component, For, type StoreSetter } from "solid-js";
 import { Button } from "~/components/ui/button";
 import { useFormBuilder } from "../../form-builder-context";
 import type { Block } from "../../primitives/blocks";
@@ -11,7 +10,7 @@ interface BlockRendererProps {
 	block: Block;
 	stepId: string;
 	formData: InputFormData;
-	updateFormData: SetStoreFunction<InputFormData>;
+	updateFormData: StoreSetter<InputFormData>;
 }
 
 const BlockRenderer: Component<BlockRendererProps> = ({

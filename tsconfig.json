@@ -1,13 +1,13 @@
 {
 	"compilerOptions": {
 		"strict": true,
+		"strictNullChecks": true,
 		"target": "ES2022",
 		"module": "ESNext",
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"jsx": "preserve",
 		"jsxImportSource": "@solidjs/web",
-		"baseUrl": ".",
 		"moduleResolution": "Bundler",
 		"types": ["bun-types", "vite/client"],
 		"paths": {

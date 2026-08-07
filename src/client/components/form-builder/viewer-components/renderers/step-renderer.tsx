@@ -1,5 +1,4 @@
-import { createSignal, For, Show } from "solid-js";
-import type { SetStoreFunction } from "~/compat/solid-store";
+import { createSignal, For, Show, type StoreSetter } from "solid-js";
 import { Button } from "~/components/ui/button";
 import {
 	Card,
@@ -23,7 +22,7 @@ import BlockRenderer from "./block-renderer";
 interface StepRendererProps {
 	node: StepGraphNode;
 	formData: InputFormData;
-	updateFormData: SetStoreFunction<InputFormData>;
+	updateFormData: StoreSetter<InputFormData>;
 }
 
 export default function StepRenderer(props: StepRendererProps) {

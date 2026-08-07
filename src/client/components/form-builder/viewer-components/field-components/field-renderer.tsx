@@ -1,5 +1,4 @@
-import { Match, Switch } from "solid-js";
-import type { SetStoreFunction } from "~/compat/solid-store";
+import { Match, type StoreSetter, Switch } from "solid-js";
 import type {
 	CheckboxField as CheckboxFieldType,
 	InputField,
@@ -20,7 +19,7 @@ interface FieldRendererProps {
 	blockId: string;
 	stepId: string;
 	formData: InputFormData;
-	updateFormData: SetStoreFunction<InputFormData>;
+	updateFormData: StoreSetter<InputFormData>;
 }
 
 export function FieldRenderer(props: FieldRendererProps) {

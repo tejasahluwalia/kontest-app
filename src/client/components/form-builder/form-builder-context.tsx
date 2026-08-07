@@ -4,15 +4,13 @@ import {
 	createContext,
 	createMemo,
 	createSignal,
+	createStore,
 	type ParentComponent,
+	reconcile,
+	type StoreSetter,
+	storePath,
 	useContext,
 } from "solid-js";
-import {
-	createStore,
-	produce,
-	reconcile,
-	type SetStoreFunction,
-} from "~/compat/solid-store";
 import CallContext from "~/context/call";
 import OrgContext from "~/context/org";
 import RoundContext from "~/context/round";
@@ -39,7 +37,7 @@ import { createInitialUIState } from "./state/ui-state";
 interface FormBuilderContextType {
 	// Form data access
 	formSchema: FormSchema;
-	setFormSchema: SetStoreFunction<FormSchema>;
+	setFormSchema: StoreSetter<FormSchema>;
 	uiState: FormBuilderUIState;
 	history: FormBuilderHistory;
 
@@ -161,13 +159,11 @@ export const FormBuilderProvider: ParentComponent<{
 
 	// History tracking and management
 	const saveToHistory = () => {
-		setHistory(
-			produce((draft) => {
-				const updatedHistory = addHistoryEntry(draft, formSchema);
-				draft.past = updatedHistory.past;
-				draft.future = [];
-			}),
-		);
+		setHistory((draft) => {
+			const updatedHistory = addHistoryEntry(draft, formSchema);
+			draft.past = updatedHistory.past;
+			draft.future = [];
+		});
 	};
 
 	// History operations
@@ -178,12 +174,10 @@ export const FormBuilderProvider: ParentComponent<{
 		const lastState = newPast.pop();
 
 		if (lastState) {
-			setHistory(
-				produce((draft) => {
-					draft.past = newPast;
-					draft.future = [formSchema, ...draft.future];
-				}),
-			);
+			setHistory((draft) => {
+				draft.past = newPast;
+				draft.future = [formSchema, ...draft.future];
+			});
 
 			setFormSchema(reconcile(lastState));
 		}
@@ -196,12 +190,10 @@ export const FormBuilderProvider: ParentComponent<{
 		const nextState = newFuture.shift();
 
 		if (nextState) {
-			setHistory(
-				produce((draft) => {
-					draft.past = [...draft.past, formSchema];
-					draft.future = newFuture;
-				}),
-			);
+			setHistory((draft) => {
+				draft.past = [...draft.past, formSchema];
+				draft.future = newFuture;
+			});
 
 			setFormSchema(reconcile(nextState));
 		}
@@ -220,14 +212,12 @@ export const FormBuilderProvider: ParentComponent<{
 
 	const saveForm = async () => {
 		try {
-			setUIState("isSaving", true);
+			setUIState(storePath("isSaving", true));
 
 			// Update the version and timestamps
-			setFormSchema(
-				produce((draft) => {
-					draft.version += 1;
-				}),
-			);
+			setFormSchema((draft) => {
+				draft.version += 1;
+			});
 
 			const { data, error, status } = await server.api.host
 				.orgs({ orgId: org.id })
@@ -255,21 +245,21 @@ export const FormBuilderProvider: ParentComponent<{
 			});
 
 			// Set last saved timestamp
-			setUIState("lastSaved", new Date().toISOString());
+			setUIState(storePath("lastSaved", new Date().toISOString()));
 
 			return true;
 		} catch (error) {
 			console.error("Error saving form:", error);
 			return false;
 		} finally {
-			setUIState("isSaving", false);
+			setUIState(storePath("isSaving", false));
 		}
 	};
 
 	// Step operations
 	const addStepToGraph = (stepGraphNode: StepGraphNode) => {
 		saveToHistory();
-		setFormSchema("graph", formSchema.graph.length, stepGraphNode);
+		setFormSchema(storePath("graph", formSchema.graph.length, stepGraphNode));
 	};
 
 	const removeStepFromGraph = (stepId: string): void => {
@@ -277,8 +267,10 @@ export const FormBuilderProvider: ParentComponent<{
 		const step = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!step) throw new Error("Step not found");
 		setFormSchema(
-			"graph",
-			formSchema.graph.filter((node) => node.step.id !== stepId),
+			storePath(
+				"graph",
+				formSchema.graph.filter((node) => node.step.id !== stepId),
+			),
 		);
 	};
 
@@ -290,7 +282,9 @@ export const FormBuilderProvider: ParentComponent<{
 		const step = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!step) throw new Error("Step not found");
 		const newStep = { ...step, ...data };
-		setFormSchema("graph", (node) => node.step.id === stepId, newStep);
+		setFormSchema(
+			storePath("graph", (node) => node.step.id === stepId, newStep),
+		);
 	};
 
 	// Block operations
@@ -299,21 +293,25 @@ export const FormBuilderProvider: ParentComponent<{
 		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"blocks",
-			node.blocks.length,
-			block,
+			storePath(
+				"graph",
+				(node) => node.step.id === stepId,
+				"blocks",
+				node.blocks.length,
+				block,
+			),
 		);
 	};
 
 	const removeBlockFromStep = (blockId: string): void => {
 		saveToHistory();
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === selectedStepId(),
-			"blocks",
-			(blocks) => blocks.filter((block) => block.id !== blockId),
+			storePath(
+				"graph",
+				(node) => node.step.id === selectedStepId(),
+				"blocks",
+				(blocks) => blocks.filter((block) => block.id !== blockId),
+			),
 		);
 		saveForm();
 	};
@@ -331,12 +329,12 @@ export const FormBuilderProvider: ParentComponent<{
 		const newBlocks = node.blocks.map((block) =>
 			block.id === blockId ? { ...block, ...data } : block,
 		);
-		setFormSchema(
-			"graph",
-			(node) => node.step.id === (stepId ?? selectedStepId()),
-			"blocks",
-			reconcile(newBlocks),
-		);
+		setFormSchema((draft) => {
+			const draftNode = draft.graph.find(
+				(node) => node.step.id === (stepId ?? selectedStepId()),
+			);
+			if (draftNode) reconcile(newBlocks)(draftNode.blocks);
+		});
 	};
 
 	const duplicateBlock = (blockId: string, stepId: string): void => {
@@ -346,12 +344,10 @@ export const FormBuilderProvider: ParentComponent<{
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
 		const newBlocks = appendBlock(node.blocks, { ...block, id: nanoid() });
-		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"blocks",
-			reconcile(newBlocks),
-		);
+		setFormSchema((draft) => {
+			const draftNode = draft.graph.find((node) => node.step.id === stepId);
+			if (draftNode) reconcile(newBlocks)(draftNode.blocks);
+		});
 	};
 
 	const addChildToBlock = (
@@ -365,13 +361,15 @@ export const FormBuilderProvider: ParentComponent<{
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"blocks",
-			(b) => b.id === blockId,
-			"children",
-			block.children.length,
-			child,
+			storePath(
+				"graph",
+				(node) => node.step.id === stepId,
+				"blocks",
+				(b) => b.id === blockId,
+				"children",
+				block.children.length,
+				child,
+			),
 		);
 	};
 
@@ -386,14 +384,12 @@ export const FormBuilderProvider: ParentComponent<{
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
 		const newChildren = block.children.filter((child) => child.id !== childId);
-		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"blocks",
-			(b) => b.id === blockId,
-			"children",
-			reconcile(newChildren),
-		);
+		setFormSchema((draft) => {
+			const draftBlock = draft.graph
+				.find((node) => node.step.id === stepId)
+				?.blocks.find((block) => block.id === blockId);
+			if (draftBlock) reconcile(newChildren)(draftBlock.children);
+		});
 	};
 
 	const updateChildInBlock = (
@@ -408,13 +404,15 @@ export const FormBuilderProvider: ParentComponent<{
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"blocks",
-			(b) => b.id === blockId,
-			"children",
-			(c) => c.id === childId,
-			data,
+			storePath(
+				"graph",
+				(node) => node.step.id === stepId,
+				"blocks",
+				(b) => b.id === blockId,
+				"children",
+				(c) => c.id === childId,
+				data,
+			),
 		);
 	};
 
@@ -424,11 +422,9 @@ export const FormBuilderProvider: ParentComponent<{
 	) => {
 		saveToHistory();
 
-		setFormSchema(
-			produce((draft) => {
-				Object.assign(draft, data);
-			}),
-		);
+		setFormSchema((draft) => {
+			Object.assign(draft, data);
+		});
 	};
 
 	const addEdgeToStep = (edge: ConditionalRule, stepId: string) => {
@@ -436,11 +432,13 @@ export const FormBuilderProvider: ParentComponent<{
 		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"edges",
-			node.edges.length,
-			edge,
+			storePath(
+				"graph",
+				(node) => node.step.id === stepId,
+				"edges",
+				node.edges.length,
+				edge,
+			),
 		);
 	};
 
@@ -449,12 +447,10 @@ export const FormBuilderProvider: ParentComponent<{
 		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		const newEdges = node.edges.filter((edge) => edge.id !== edgeId);
-		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"edges",
-			reconcile(newEdges),
-		);
+		setFormSchema((draft) => {
+			const draftNode = draft.graph.find((node) => node.step.id === stepId);
+			if (draftNode) reconcile(newEdges)(draftNode.edges);
+		});
 	};
 
 	const updateEdgeInStep = (
@@ -466,11 +462,13 @@ export const FormBuilderProvider: ParentComponent<{
 		const node = formSchema.graph.find((node) => node.step.id === stepId);
 		if (!node) throw new Error("Step not found");
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === stepId,
-			"edges",
-			(e) => e.id === edgeId,
-			data,
+			storePath(
+				"graph",
+				(node) => node.step.id === stepId,
+				"edges",
+				(e) => e.id === edgeId,
+				data,
+			),
 		);
 	};
 
@@ -508,30 +506,24 @@ export const FormBuilderProvider: ParentComponent<{
 
 	// Preview operations
 	const startPreview = () => {
-		setUIState(
-			produce((draft) => {
-				draft.preview.active = true;
-				draft.preview.formData = initialFormInputData();
-				draft.preview.validationErrors = {};
-				draft.preview.submitting = false;
-			}),
-		);
+		setUIState((draft) => {
+			draft.preview.active = true;
+			draft.preview.formData = initialFormInputData();
+			draft.preview.validationErrors = {};
+			draft.preview.submitting = false;
+		});
 	};
 
 	const stopPreview = () => {
-		setUIState(
-			produce((draft) => {
-				draft.preview.active = false;
-			}),
-		);
+		setUIState((draft) => {
+			draft.preview.active = false;
+		});
 	};
 
 	const updatePreviewData = (data: InputFormData) => {
-		setUIState(
-			produce((draft) => {
-				draft.preview.formData = data;
-			}),
-		);
+		setUIState((draft) => {
+			draft.preview.formData = data;
+		});
 	};
 
 	const isPreviewMode = () => uiState.preview.active;

@@ -1,5 +1,5 @@
 import Trash from "lucide-solid/icons/trash";
-import { type Component, createSignal, For } from "solid-js";
+import { type Component, createSignal, For, storePath } from "solid-js";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { InlineEdit } from "~/components/ui/inline-edit";
@@ -17,21 +17,25 @@ const BuilderBlockRenderer: Component<{ block: Block }> = ({ block }) => {
 
 	function handleRemoveBlock() {
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === selectedStepId(),
-			"blocks",
-			(blocks) => blocks.filter((b) => b.id !== id),
+			storePath(
+				"graph",
+				(node) => node.step.id === selectedStepId(),
+				"blocks",
+				(blocks) => blocks.filter((b) => b.id !== id),
+			),
 		);
 		saveForm();
 	}
 
 	function handleUpdateLabel() {
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === selectedStepId(),
-			"blocks",
-			(block) => block.id === id,
-			{ label: label() },
+			storePath(
+				"graph",
+				(node) => node.step.id === selectedStepId(),
+				"blocks",
+				(block) => block.id === id,
+				{ label: label() },
+			),
 		);
 		saveForm();
 	}

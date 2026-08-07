@@ -8,14 +8,10 @@ import { publicPlugin } from "./plugins/public";
 import { setup } from "./plugins/setup";
 import { userPlugin } from "./plugins/user";
 
-const app = new Elysia()
+export const app = new Elysia()
 	.use(
 		cors({
-			origin: [
-				"http://localhost:5173",
-				"http://localhost:4173",
-				"http://192.168.1.15:5173",
-			],
+			origin: true,
 			methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],
@@ -29,19 +25,6 @@ const app = new Elysia()
 			.use(hostPlugin)
 			.use(jurorPlugin)
 			.all("/auth/*", betterAuthView),
-	)
-	.use(
-		staticPlugin({
-			assets: "dist",
-			prefix: "/",
-			alwaysStatic: true,
-			indexHTML: true,
-		}),
-	)
-	.listen(3000);
-
-console.log(
-	`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
-);
+	);
 
 export type App = typeof app;

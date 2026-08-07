@@ -5,6 +5,7 @@ import {
 } from "@opencenter-cloud/kobalte-core";
 import type { QueryClient } from "@tanstack/solid-query";
 import {
+    ClientOnly,
 	createRootRouteWithContext,
 	type ErrorComponentProps,
 	HeadContent,
@@ -32,18 +33,18 @@ export const Route = createRootRouteWithContext<RootContext>()({
 });
 
 function Root() {
-	const storageManager = createLocalStorageManager("vite-ui-theme");
+	// const storageManager = createLocalStorageManager("vite-ui-theme");
 	return (
-		<>
+		<ClientOnly>
 			<HeadContent />
-			<ColorModeScript storageType={storageManager.type} />
-			<ColorModeProvider storageManager={storageManager}>
+			{/*<ColorModeScript storageType={storageManager.type} />*/}
+			{/*<ColorModeProvider storageManager={storageManager}>*/}
 				<Outlet />
 				<Toaster />
-			</ColorModeProvider>
+			{/*</ColorModeProvider>*/}
 			<Scripts />
 			{/* <TanStackRouterDevtools /> */}
-		</>
+		</ClientOnly>
 	);
 }
 

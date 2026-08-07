@@ -3,7 +3,7 @@ import ChevronDown from "lucide-solid/icons/chevron-down";
 import EllipsisVertical from "lucide-solid/icons/ellipsis-vertical";
 import Trash from "lucide-solid/icons/trash";
 import type { Accessor, Component } from "solid-js";
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, storePath } from "solid-js";
 import { Badge } from "~/components/ui/badge";
 import { Button, type ButtonProps } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
@@ -48,13 +48,15 @@ export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({
 
 	function handleUpdateLabel() {
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === selectedStepId(),
-			"blocks",
-			(block) => block.id === blockId,
-			"children",
-			(child) => child.id === field().id,
-			{ label: label() },
+			storePath(
+				"graph",
+				(node) => node.step.id === selectedStepId(),
+				"blocks",
+				(block) => block.id === blockId,
+				"children",
+				(child) => child.id === field().id,
+				{ label: label() },
+			),
 		);
 		saveForm();
 	}
@@ -66,13 +68,15 @@ export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({
 	function handleChangeIsRequired(isChecked: boolean) {
 		setIsRequired(isChecked);
 		setFormSchema(
-			"graph",
-			(node) => node.step.id === selectedStepId(),
-			"blocks",
-			(block) => block.id === blockId,
-			"children",
-			(child) => child.id === field().id,
-			{ required: isChecked },
+			storePath(
+				"graph",
+				(node) => node.step.id === selectedStepId(),
+				"blocks",
+				(block) => block.id === blockId,
+				"children",
+				(child) => child.id === field().id,
+				{ required: isChecked },
+			),
 		);
 		saveForm();
 	}

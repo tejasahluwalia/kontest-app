@@ -1,5 +1,10 @@
-import { batch, type Component, Match, Switch } from "solid-js";
-import type { SetStoreFunction } from "~/compat/solid-store";
+import {
+	batch,
+	type Component,
+	Match,
+	type StoreSetter,
+	Switch,
+} from "solid-js";
 import { useFormBuilder } from "../../form-builder-context";
 import type { Child } from "../../primitives/children";
 import type { InputField } from "../../primitives/fields";
@@ -11,7 +16,7 @@ interface ChildRendererProps {
 	blockId: string;
 	stepId: string;
 	formData: InputFormData;
-	updateFormData: SetStoreFunction<InputFormData>;
+	updateFormData: StoreSetter<InputFormData>;
 }
 
 const ChildRenderer: Component<ChildRendererProps> = (props) => {
