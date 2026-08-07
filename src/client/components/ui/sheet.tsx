@@ -1,5 +1,5 @@
-import * as SheetPrimitive from "@kobalte/core/dialog";
-import type { PolymorphicProps } from "@kobalte/core/polymorphic";
+import * as SheetPrimitive from "@opencenter-cloud/kobalte-core/dialog";
+import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
 import type { ComponentProps, JSX, ValidComponent } from "@solidjs/web";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { Component } from "solid-js";

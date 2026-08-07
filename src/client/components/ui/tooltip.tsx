@@ -1,5 +1,5 @@
-import type { PolymorphicProps } from "@kobalte/core/polymorphic";
-import * as TooltipPrimitive from "@kobalte/core/tooltip";
+import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
+import * as TooltipPrimitive from "@opencenter-cloud/kobalte-core/tooltip";
 import type { ValidComponent } from "@solidjs/web";
 import { type Component, omit } from "solid-js";
 

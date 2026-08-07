@@ -1,5 +1,5 @@
-import type { PolymorphicProps } from "@kobalte/core/polymorphic";
-import * as SeparatorPrimitive from "@kobalte/core/separator";
+import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
+import * as SeparatorPrimitive from "@opencenter-cloud/kobalte-core/separator";
 import type { ValidComponent } from "@solidjs/web";
 import { omit } from "solid-js";
 

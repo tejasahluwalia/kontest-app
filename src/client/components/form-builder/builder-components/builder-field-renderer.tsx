@@ -1,4 +1,4 @@
-import type { PolymorphicProps } from "@kobalte/core";
+import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core";
 import ChevronDown from "lucide-solid/icons/chevron-down";
 import EllipsisVertical from "lucide-solid/icons/ellipsis-vertical";
 import Trash from "lucide-solid/icons/trash";

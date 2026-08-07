@@ -2,7 +2,7 @@ import {
 	ColorModeProvider,
 	ColorModeScript,
 	createLocalStorageManager,
-} from "@kobalte/core";
+} from "@opencenter-cloud/kobalte-core";
 import type { QueryClient } from "@tanstack/solid-query";
 import {
 	createRootRouteWithContext,

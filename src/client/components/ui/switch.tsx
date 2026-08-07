@@ -1,5 +1,5 @@
-import type { PolymorphicProps } from "@kobalte/core";
-import * as SwitchPrimitive from "@kobalte/core/switch";
+import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core";
+import * as SwitchPrimitive from "@opencenter-cloud/kobalte-core/switch";
 import type { JSX, ValidComponent } from "@solidjs/web";
 import { omit } from "solid-js";
 

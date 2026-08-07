@@ -1,13 +1,13 @@
 import { cn } from "@client/lib/utils";
-import type { PolymorphicProps } from "@kobalte/core/polymorphic";
+import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
 import type {
 	TabsContentProps,
 	TabsIndicatorProps,
 	TabsListProps,
 	TabsRootProps,
 	TabsTriggerProps,
-} from "@kobalte/core/tabs";
-import { Tabs as TabsPrimitive } from "@kobalte/core/tabs";
+} from "@opencenter-cloud/kobalte-core/tabs";
+import { Tabs as TabsPrimitive } from "@opencenter-cloud/kobalte-core/tabs";
 import type { ValidComponent } from "@solidjs/web";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";

@@ -1,5 +1,5 @@
-import type { DynamicProps, RootProps } from "@corvu/otp-field";
-import OtpField from "@corvu/otp-field";
+import type { DynamicProps, RootProps } from "@corvu-next/otp-field";
+import OtpField from "@corvu-next/otp-field";
 import type { ComponentProps, ValidComponent } from "@solidjs/web";
 import type { Component } from "solid-js";
 import { omit, Show } from "solid-js";

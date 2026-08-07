@@ -1,5 +1,5 @@
-import type { PolymorphicProps } from "@kobalte/core/polymorphic";
-import * as ToastPrimitive from "@kobalte/core/toast";
+import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
+import * as ToastPrimitive from "@opencenter-cloud/kobalte-core/toast";
 import type { JSX, ValidComponent } from "@solidjs/web";
 import { Portal } from "@solidjs/web";
 import type { VariantProps } from "class-variance-authority";

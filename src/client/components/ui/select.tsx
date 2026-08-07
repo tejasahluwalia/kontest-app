@@ -1,6 +1,6 @@
 import { cx } from "@client/lib/utils";
-import { Select as SelectPrimitive } from "@kobalte/core/select";
-import type { ComponentProps, ValidComponent } from "@solidjs/web";
+import { Select as SelectPrimitive } from "@opencenter-cloud/kobalte-core/select";
+import type { ComponentProps, JSX, ValidComponent } from "@solidjs/web";
 import type { VoidProps } from "solid-js";
 import { merge, omit } from "solid-js";
 
@@ -113,7 +113,7 @@ export const SelectContent = <T extends ValidComponent = "div">(
 
 export type SelectItemProps<T extends ValidComponent = "li"> = ComponentProps<
 	typeof SelectPrimitive.Item<T>
->;
+> & { children?: JSX.Element };
 
 export const SelectItem = <T extends ValidComponent = "li">(
 	props: SelectItemProps<T>,

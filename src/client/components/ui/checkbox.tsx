@@ -1,5 +1,5 @@
-import * as CheckboxPrimitive from "@kobalte/core/checkbox";
-import type { PolymorphicProps } from "@kobalte/core/polymorphic";
+import * as CheckboxPrimitive from "@opencenter-cloud/kobalte-core/checkbox";
+import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
 import type { ValidComponent } from "@solidjs/web";
 import { Match, omit, Switch } from "solid-js";
 

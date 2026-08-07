@@ -1,4 +1,4 @@
-import { default as DialogPrimitive } from "@corvu/dialog";
+import { default as DialogPrimitive } from "@corvu-next/dialog";
 import type { ComponentProps, ValidComponent } from "@solidjs/web";
 import { merge, omit, Show } from "solid-js";
 import { cx } from "~/lib/utils";

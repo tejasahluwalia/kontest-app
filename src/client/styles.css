@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@plugin '@kobalte/tailwindcss';
+@plugin '@opencenter-cloud/kobalte-tailwindcss';
 
 @custom-variant dark (&:is([data-kb-theme="dark"] *));
 

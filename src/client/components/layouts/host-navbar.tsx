@@ -1,5 +1,5 @@
-import type { PolymorphicCallbackProps } from "@kobalte/core";
-import type { ButtonRootOptions } from "@kobalte/core/button";
+import type { PolymorphicCallbackProps } from "@opencenter-cloud/kobalte-core";
+import type { ButtonRootOptions } from "@opencenter-cloud/kobalte-core/button";
 import {
 	getRouteApi,
 	Link,

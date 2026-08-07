@@ -24,13 +24,13 @@
 		"vite-plugin-solid": "3.0.0-next.21"
 	},
 	"dependencies": {
+		"@corvu-next/dialog": "0.1.5",
+		"@corvu-next/otp-field": "0.1.5",
 		"@elysia/cors": "2.0.0-beta.1",
 		"@elysia/eden": "2.0.0-beta.2",
 		"@elysia/static": "2.0.0-beta.1",
-		"@corvu/dialog": "^0.2.4",
-		"@corvu/otp-field": "^0.1.4",
-		"@kobalte/core": "^0.13.12",
-		"@kobalte/tailwindcss": "^0.9.0",
+		"@opencenter-cloud/kobalte-core": "0.1.6",
+		"@opencenter-cloud/kobalte-tailwindcss": "0.1.0",
 		"@paralleldrive/cuid2": "^2.3.1",
 		"@sinclair/typebox": "0.34.0",
 		"@solidjs/web": "2.0.0-beta.29",
