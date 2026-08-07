@@ -1,7 +1,7 @@
 import * as schema from "@db/schema";
 import { drizzle } from "drizzle-orm/node-postgres";
 
-const DATABASE_URL = Bun.env.DATABASE_URL;
+const DATABASE_URL = process.env.DATABASE_URL;
 
 if (!DATABASE_URL) throw Error("DATABASE_URL missing");
 

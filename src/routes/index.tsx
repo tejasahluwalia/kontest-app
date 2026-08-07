@@ -7,27 +7,12 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-	const [isVisible, setIsVisible] = createSignal(false);
-
-	onSettled(() => {
-		setIsVisible(true);
-	});
-
-	const fadeIn = (delay: number) => {
-		return {
-			opacity: isVisible() ? 1 : 0,
-			transform: isVisible() ? "translateY(0)" : "translateY(20px)",
-			transition: "opacity 0.8s ease, transform 0.8s ease",
-			"transition-delay": `${delay}ms`,
-		};
-	};
-
-	return (
+		return (
 		<div class="min-h-screen bg-gradient-to-b from-background to-background/90">
 			{/* Hero Section */}
 			<section class="container mx-auto px-4 pt-16 md:pt-24 lg:pt-32">
 				<div class="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-					<div style={fadeIn(0)}>
+					<div>
 						<h1 class="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl mb-6">
 							Streamline Your Submission Management
 						</h1>
@@ -43,7 +28,7 @@ function Index() {
 							</Button>
 						</div>
 					</div>
-					<div class="relative" style={fadeIn(200)}>
+					<div class="relative">
 						<div class="rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 p-1">
 							<div class="rounded-lg bg-card p-6 shadow-lg">
 								<div class="space-y-4">
@@ -68,7 +53,7 @@ function Index() {
 
 			{/* Features Section */}
 			<section class="container mx-auto px-4 py-24">
-				<div style={fadeIn(400)} class="text-center mb-16">
+				<div class="text-center mb-16">
 					<h2 class="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
 						Everything You Need in One Place
 					</h2>
@@ -82,7 +67,6 @@ function Index() {
 					{/* Feature 1 */}
 					<div
 						class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md"
-						style={fadeIn(600)}
 					>
 						<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
 							<svg
@@ -111,7 +95,6 @@ function Index() {
 					{/* Feature 2 */}
 					<div
 						class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md"
-						style={fadeIn(800)}
 					>
 						<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
 							<svg
@@ -142,7 +125,6 @@ function Index() {
 					{/* Feature 3 */}
 					<div
 						class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md"
-						style={fadeIn(1000)}
 					>
 						<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
 							<svg
@@ -175,7 +157,7 @@ function Index() {
 			<section class="container mx-auto px-4 py-24 relative">
 				<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-3xl"></div>
 				<div class="relative z-10 grid gap-12 lg:grid-cols-2 items-center">
-					<div style={fadeIn(1200)}>
+					<div>
 						<h2 class="text-3xl font-bold tracking-tight sm:text-4xl mb-6">
 							Why Choose Kontest.app?
 						</h2>
@@ -264,7 +246,7 @@ function Index() {
 							</li>
 						</ul>
 					</div>
-					<div class="relative" style={fadeIn(1400)}>
+					<div class="relative">
 						<div class="rounded-xl bg-card p-8 shadow-lg border">
 							<blockquote>
 								<p class="text-lg font-medium italic mb-6">
@@ -290,7 +272,6 @@ function Index() {
 			{/* CTA Section */}
 			<section
 				class="container mx-auto px-4 py-24 text-center"
-				style={fadeIn(1600)}
 			>
 				<h2 class="text-3xl font-bold tracking-tight sm:text-4xl mb-6">
 					Ready to Transform Your Submission Process?

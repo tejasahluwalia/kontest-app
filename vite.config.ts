@@ -5,9 +5,11 @@ import { defineConfig } from "vite";
 import viteSolid from "vite-plugin-solid";
 
 export default defineConfig({
-	plugins: [tanstackStart(), viteSolid({ ssr: false }), tailwindcss()],
+	plugins: [tanstackStart(), viteSolid({ ssr: true }), tailwindcss()],
 	resolve: {
 		alias: [
+			{ find: "solid-js/web", replacement: "@solidjs/web" },
+			{ find: "solid-js/store", replacement: "solid-js" },
 			{ find: "~", replacement: resolve(__dirname, "./src/client") },
 			{ find: "@client", replacement: resolve(__dirname, "./src/client") },
 			{ find: "@server", replacement: resolve(__dirname, "./src/server") },

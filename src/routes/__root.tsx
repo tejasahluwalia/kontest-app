@@ -1,6 +1,6 @@
+import { ColorModeProvider, ColorModeScript, createLocalStorageManager } from "@opencenter-cloud/kobalte-core";
 import type { QueryClient } from "@tanstack/solid-query";
 import {
-	ClientOnly,
 	createRootRouteWithContext,
 	type ErrorComponentProps,
 	HeadContent,
@@ -9,6 +9,7 @@ import {
 } from "@tanstack/solid-router";
 import { Toaster } from "~/components/ui/toast";
 import type { authClient } from "~/lib/auth-client";
+import "~/styles.css";
 
 interface RootContext {
 	auth: typeof authClient.getSession;
@@ -18,28 +19,33 @@ interface RootContext {
 export const Route = createRootRouteWithContext<RootContext>()({
 	head: () => ({
 		meta: [
-			{
-				title: "OpenCall",
-			},
+			{ charSet: "utf-8" },
+			{ name: "viewport", content: "width=device-width, initial-scale=1" },
+			{ title: "Kontest" },
+		],
+		links: [
 		],
 	}),
-	component: Root,
+	shellComponent: RootDocument,
 	errorComponent: ErrorComponent,
 });
 
-function Root() {
-	// const storageManager = createLocalStorageManager("vite-ui-theme");
+function RootDocument() {
+	const storageManager = createLocalStorageManager("vite-ui-theme");
 	return (
-		<ClientOnly>
-			<HeadContent />
-			{/*<ColorModeScript storageType={storageManager.type} />*/}
-			{/*<ColorModeProvider storageManager={storageManager}>*/}
-			<Outlet />
-			<Toaster />
-			{/*</ColorModeProvider>*/}
-			<Scripts />
-			{/* <TanStackRouterDevtools /> */}
-		</ClientOnly>
+		<html lang="en">
+			<head>
+				<HeadContent />
+				<ColorModeScript storageType={storageManager.type} />
+			</head>
+			<body>
+				<ColorModeProvider storageManager={storageManager}>
+						<Outlet />
+					<Toaster />
+				</ColorModeProvider>
+				<Scripts />
+			</body>
+		</html>
 	);
 }
 
