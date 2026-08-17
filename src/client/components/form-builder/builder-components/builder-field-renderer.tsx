@@ -1,9 +1,11 @@
-import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core";
-import ChevronDown from "lucide-solid/icons/chevron-down";
-import EllipsisVertical from "lucide-solid/icons/ellipsis-vertical";
-import Trash from "lucide-solid/icons/trash";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
 import type { Accessor, Component } from "solid-js";
 import { createSignal, storePath } from "solid-js";
+import {
+	IconChevronDown,
+	IconDotsVertical,
+	IconTrash,
+} from "~/components/icons";
 import { Badge } from "~/components/ui/badge";
 import { Button, type ButtonProps } from "~/components/ui/button";
 import {
@@ -107,7 +109,7 @@ export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({
 									props: PolymorphicProps<"button", ButtonProps<"button">>,
 								) => <Button size="icon" variant="ghost" {...props} />}
 							>
-								<EllipsisVertical />
+								<IconDotsVertical />
 							</DropdownMenuTrigger>
 							<DropdownMenuContent class="w-48">
 								<DropdownMenuItem
@@ -117,7 +119,7 @@ export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({
 									<DropdownMenuItemLabel>
 										<span>Delete</span>
 									</DropdownMenuItemLabel>
-									<Trash size={18} />
+									<IconTrash />
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
@@ -126,7 +128,7 @@ export const BuilderFieldRenderer: Component<BuilderFieldRendererProps> = ({
 								props: PolymorphicProps<"button", ButtonProps<"button">>,
 							) => <Button size="icon" variant="ghost" {...props} />}
 						>
-							<ChevronDown
+							<IconChevronDown
 								class={cn("transition-transform duration-300", {
 									"rotate-180": isOpen(),
 								})}

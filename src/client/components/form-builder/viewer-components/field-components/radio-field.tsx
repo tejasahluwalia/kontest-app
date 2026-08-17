@@ -26,12 +26,15 @@ export function RadioField(props: RadioFieldProps) {
 		>
 			<RadioGroup disabled>
 				<For each={props.child.options || []}>
-					{(option) => (
-						<div class="flex items-center space-x-2">
-							<RadioGroupItem value={option.value} id={option.id} />
-							<Label for={option.id}>{option.label}</Label>
-						</div>
-					)}
+					{(option) => {
+						const optionId = `opt_${option.id}`;
+						return (
+							<div class="flex items-center space-x-2">
+								<RadioGroupItem value={option.value} id={optionId} />
+								<Label for={optionId}>{option.label}</Label>
+							</div>
+						);
+					}}
 				</For>
 			</RadioGroup>
 		</FieldWrapper>

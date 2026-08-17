@@ -1,5 +1,5 @@
-import * as ImagePrimitive from "@opencenter-cloud/kobalte-core/image";
-import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
+import * as ImagePrimitive from "@kobalte/core/image";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
 import type { ValidComponent } from "@solidjs/web";
 import { omit } from "solid-js";
 

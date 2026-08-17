@@ -1,5 +1,5 @@
-import type { PolymorphicCallbackProps } from "@opencenter-cloud/kobalte-core";
-import type { ButtonRootOptions } from "@opencenter-cloud/kobalte-core/button";
+import type { ButtonRootOptions } from "@kobalte/core/button";
+import type { PolymorphicCallbackProps } from "@kobalte/core/polymorphic";
 import {
 	Link,
 	type LinkComponent,
@@ -7,9 +7,8 @@ import {
 	MatchRoute,
 	useParams,
 } from "@tanstack/solid-router";
-import BuildingIcon from "lucide-solid/icons/building";
-import ChevronsUpDown from "lucide-solid/icons/chevrons-up-down";
 import { For, Show, useContext } from "solid-js";
+import { IconBuilding, IconSelector } from "~/components/icons";
 import { Button, type ButtonProps } from "~/components/ui/button";
 import {
 	DropdownMenu,
@@ -84,7 +83,7 @@ export default function HostNavbar() {
 														when={
 															!isMobile() || (isMobile() && !selectedCall())
 														}
-														fallback={<BuildingIcon size={16} />}
+														fallback={<IconBuilding class="size-4" />}
 													>
 														{currOrg().name}
 													</Show>
@@ -328,7 +327,7 @@ function DropdownSwitcher(props: {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger class="hover:bg-accent dark:hover:bg-accent/50 text-muted-foreground/50 px-1 py-2">
-				<ChevronsUpDown size={16} />
+				<IconSelector class="size-4" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
 				<Show when={menuLabel}>

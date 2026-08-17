@@ -1,10 +1,10 @@
 import type * as schema from "@db/schema";
-import { createForm } from "@tanstack/solid-form";
+import { createForm, Field, Form, type SubmitHandler } from "@formisch/solid";
 import { queryOptions, useMutation, useQuery } from "@tanstack/solid-query";
 import { createFileRoute } from "@tanstack/solid-router";
-import EllipsisIcon from "lucide-solid/icons/ellipsis";
 import { createMemo, createSignal } from "solid-js";
-import z from "zod";
+import * as v from "valibot";
+import { IconDots } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import {
@@ -234,7 +234,7 @@ function RouteComponent() {
 																size="icon"
 																class="size-8"
 															>
-																<EllipsisIcon size={18} />
+																<IconDots class="size-4" />
 															</Button>
 														)}
 													/>
@@ -290,7 +290,7 @@ function RouteComponent() {
 														size="icon"
 														class="size-8"
 													>
-														<EllipsisIcon size={18} />
+														<IconDots class="size-4" />
 													</Button>
 												)}
 											/>
@@ -317,6 +317,15 @@ function RouteComponent() {
 	);
 }
 
+const AddMemberSchema = v.object({
+	email: v.pipe(
+		v.string(),
+		v.nonEmpty("Please enter an email address"),
+		v.email("Please enter a valid email address"),
+	),
+	role: v.optional(v.picklist(["admin", "member"]), "member"),
+});
+
 function AddMemberDialog(props: { orgSlug: string }) {
 	const [dialogOpen, setDialogOpen] = createSignal(false);
 	const { queryClient } = Route.useRouteContext()();
@@ -336,19 +345,23 @@ function AddMemberDialog(props: { orgSlug: string }) {
 	}));
 	const createInvite = createInviteMutation.mutate;
 
-	const form = createForm(() => ({
-		defaultValues: {
+	const form = createForm({
+		schema: AddMemberSchema,
+		initialInput: {
 			email: "",
-			role: "member" as "member" | "admin" | null,
+			role: "member",
 		},
-		onSubmit: async ({ value }) => {
-			createInvite({
-				email: value.email,
-				role: value.role || "member",
-			});
-			setDialogOpen(false);
-		},
-	}));
+	});
+
+	const handleSubmit: SubmitHandler<typeof AddMemberSchema> = async (
+		output,
+	) => {
+		createInvite({
+			email: output.email,
+			role: output.role ?? "member",
+		});
+		setDialogOpen(false);
+	};
 
 	return (
 		<Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
@@ -360,55 +373,38 @@ function AddMemberDialog(props: { orgSlug: string }) {
 					<DialogHeader>
 						<DialogTitle>Add a new member to your organization</DialogTitle>
 					</DialogHeader>
-					<form
-						onSubmit={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							form.handleSubmit();
-						}}
-					>
+					<Form of={form} onSubmit={handleSubmit}>
 						<div class="grid gap-4 my-4">
-							<form.Field
-								name="email"
-								validators={{
-									onChange: z.string().email(),
-								}}
-							>
+							<Field of={form} path={["email"]}>
 								{(field) => (
 									<div>
 										<TextField
-											id={field().name}
-											name={field().name}
-											required
-											validationState={
-												field().state.meta.isValid ? "valid" : "invalid"
-											}
-											onChange={(e) => field().handleChange(e)}
-											onBlur={field().handleBlur}
-											value={field().state.value}
+											validationState={field.errors ? "invalid" : "valid"}
+											value={field.input ?? ""}
 										>
 											<TextFieldLabel>Email</TextFieldLabel>
-											<TextFieldInput />
+											<TextFieldInput
+												{...field.props}
+												type="email"
+												value={field.input ?? ""}
+											/>
 											<TextFieldErrorMessage>
-												{field()
-													.state.meta.errors.map((e) => e?.message)
-													.join(", ")}
+												{field.errors?.[0]}
 											</TextFieldErrorMessage>
 										</TextField>
 									</div>
 								)}
-							</form.Field>
+							</Field>
 
-							<form.Field name="role">
+							<Field of={form} path={["role"]}>
 								{(field) => (
-									<Select
+									<Select<"admin" | "member">
+										name={field.props.name}
 										options={["admin", "member"]}
-										value={field().state.value}
-										onChange={field().handleChange}
-										defaultValue={"member" as const}
+										value={field.input ?? "member"}
+										onChange={(val) => field.onInput(val ?? "member")}
 										disallowEmptySelection={false}
-										name="role"
-										onBlur={field().handleBlur}
+										validationState={field.errors ? "invalid" : "valid"}
 										itemComponent={(props) => (
 											<SelectItem item={props.item}>
 												{props.item.rawValue}
@@ -421,31 +417,18 @@ function AddMemberDialog(props: { orgSlug: string }) {
 												{(state) => state.selectedOption()}
 											</SelectValue>
 										</SelectTrigger>
-										<SelectErrorMessage>
-											{field().state.meta.errors}
-										</SelectErrorMessage>
+										<SelectErrorMessage>{field.errors?.[0]}</SelectErrorMessage>
 										<SelectPortal>
 											<SelectContent />
 										</SelectPortal>
 									</Select>
 								)}
-							</form.Field>
+							</Field>
 						</div>
-						<form.Subscribe
-							selector={(state: any) => ({
-								canSubmit: state.canSubmit,
-								isSubmitting: state.isSubmitting,
-							})}
-						>
-							{(state: any) => {
-								return (
-									<Button type="submit" disabled={!state().canSubmit}>
-										{state().isSubmitting ? "..." : "Submit"}
-									</Button>
-								);
-							}}
-						</form.Subscribe>
-					</form>
+						<Button type="submit" disabled={form.isSubmitting}>
+							{form.isSubmitting ? "..." : "Submit"}
+						</Button>
+					</Form>
 				</DialogContent>
 			</DialogPortal>
 		</Dialog>

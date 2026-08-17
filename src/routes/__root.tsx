@@ -1,4 +1,8 @@
-import { ColorModeProvider, ColorModeScript, createLocalStorageManager } from "@opencenter-cloud/kobalte-core";
+import {
+	ColorModeProvider,
+	ColorModeScript,
+	createLocalStorageManager,
+} from "@kobalte/core/color-mode";
 import type { QueryClient } from "@tanstack/solid-query";
 import {
 	createRootRouteWithContext,
@@ -23,8 +27,7 @@ export const Route = createRootRouteWithContext<RootContext>()({
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
 			{ title: "Kontest" },
 		],
-		links: [
-		],
+		links: [],
 	}),
 	shellComponent: RootDocument,
 	errorComponent: ErrorComponent,
@@ -40,7 +43,7 @@ function RootDocument() {
 			</head>
 			<body>
 				<ColorModeProvider storageManager={storageManager}>
-						<Outlet />
+					<Outlet />
 					<Toaster />
 				</ColorModeProvider>
 				<Scripts />

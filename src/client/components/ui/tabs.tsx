@@ -1,16 +1,14 @@
-import { cn } from "@client/lib/utils";
-import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
+import { cn, cva, type VariantProps } from "@client/lib/utils";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
 import type {
 	TabsContentProps,
 	TabsIndicatorProps,
 	TabsListProps,
 	TabsRootProps,
 	TabsTriggerProps,
-} from "@opencenter-cloud/kobalte-core/tabs";
-import { Tabs as TabsPrimitive } from "@opencenter-cloud/kobalte-core/tabs";
+} from "@kobalte/core/tabs";
+import { Tabs as TabsPrimitive } from "@kobalte/core/tabs";
 import type { ValidComponent } from "@solidjs/web";
-import type { VariantProps } from "class-variance-authority";
-import { cva } from "class-variance-authority";
 import type { VoidProps } from "solid-js";
 import { omit } from "solid-js";
 
@@ -93,22 +91,20 @@ export const TabsTrigger = <T extends ValidComponent = "button">(
 	);
 };
 
-const tabsIndicatorVariants = cva(
-	"absolute transition-all duration-200 outline-none",
-	{
-		variants: {
-			variant: {
-				block:
-					"data-[orientation=horizontal]:bottom-1 data-[orientation=horizontal]:left-0 data-[orientation=vertical]:right-1 data-[orientation=vertical]:top-0 data-[orientation=horizontal]:h-[calc(100%-0.5rem)] data-[orientation=vertical]:w-[calc(100%-0.5rem)] bg-background shadow rounded-md peer-focus-visible:ring-[1.5px] peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background peer-focus-visible:outline-none",
-				underline:
-					"data-[orientation=horizontal]:-bottom-[1px] data-[orientation=horizontal]:left-0 data-[orientation=vertical]:-right-[1px] data-[orientation=vertical]:top-0 data-[orientation=horizontal]:h-[2px] data-[orientation=vertical]:w-[2px] bg-primary",
-			},
-		},
-		defaultVariants: {
-			variant: "block",
+const tabsIndicatorVariants = cva({
+	base: "absolute transition-all duration-200 outline-none",
+	variants: {
+		variant: {
+			block:
+				"data-[orientation=horizontal]:bottom-1 data-[orientation=horizontal]:left-0 data-[orientation=vertical]:right-1 data-[orientation=vertical]:top-0 data-[orientation=horizontal]:h-[calc(100%-0.5rem)] data-[orientation=vertical]:w-[calc(100%-0.5rem)] bg-background shadow rounded-md peer-focus-visible:ring-[1.5px] peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background peer-focus-visible:outline-none",
+			underline:
+				"data-[orientation=horizontal]:-bottom-[1px] data-[orientation=horizontal]:left-0 data-[orientation=vertical]:-right-[1px] data-[orientation=vertical]:top-0 data-[orientation=horizontal]:h-[2px] data-[orientation=vertical]:w-[2px] bg-primary",
 		},
 	},
-);
+	defaultVariants: {
+		variant: "block",
+	},
+});
 
 type tabsIndicatorProps<T extends ValidComponent = "div"> = VoidProps<
 	TabsIndicatorProps<T> &

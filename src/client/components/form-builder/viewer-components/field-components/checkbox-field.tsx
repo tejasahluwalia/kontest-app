@@ -26,12 +26,15 @@ export function CheckboxField(props: CheckboxFieldProps) {
 		>
 			<div class="space-y-2">
 				<For each={props.child.options || []}>
-					{(option) => (
-						<div class="flex items-center space-x-2">
-							<Checkbox id={option.id} disabled />
-							<Label for={option.id}>{option.label}</Label>
-						</div>
-					)}
+					{(option) => {
+						const optionId = `opt_${option.id}`;
+						return (
+							<div class="flex items-center space-x-2">
+								<Checkbox id={optionId} disabled />
+								<Label for={optionId}>{option.label}</Label>
+							</div>
+						);
+					}}
 				</For>
 			</div>
 		</FieldWrapper>

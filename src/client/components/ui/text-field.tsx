@@ -1,5 +1,5 @@
 import { cx } from "@client/lib/utils";
-import { TextField as TextFieldPrimitive } from "@opencenter-cloud/kobalte-core/text-field";
+import { TextField as TextFieldPrimitive } from "@kobalte/core/text-field";
 import type { ComponentProps, ValidComponent } from "@solidjs/web";
 import { omit } from "solid-js";
 import { Label } from "./label";

@@ -1,5 +1,5 @@
-import * as DropdownMenuPrimitive from "@opencenter-cloud/kobalte-core/dropdown-menu";
-import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
+import * as DropdownMenuPrimitive from "@kobalte/core/dropdown-menu";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
 import type { ComponentProps, JSX, ValidComponent } from "@solidjs/web";
 import type { Component } from "solid-js";
 import { omit } from "solid-js";

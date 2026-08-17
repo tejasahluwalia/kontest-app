@@ -1,33 +1,29 @@
-import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
-import * as ToastPrimitive from "@opencenter-cloud/kobalte-core/toast";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
+import * as ToastPrimitive from "@kobalte/core/toast";
 import type { JSX, ValidComponent } from "@solidjs/web";
 import { Portal } from "@solidjs/web";
-import type { VariantProps } from "class-variance-authority";
-import { cva } from "class-variance-authority";
 import { Match, omit, Switch } from "solid-js";
 
-import { cn } from "~/lib/utils";
+import { cn, cva, type VariantProps } from "~/lib/utils";
 
-const toastVariants = cva(
-	"group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--kb-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--kb-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[opened]:animate-in data-[closed]:animate-out data-[swipe=end]:animate-out data-[closed]:fade-out-80 data-[closed]:slide-out-to-right-full data-[opened]:slide-in-from-top-full data-[opened]:sm:slide-in-from-bottom-full",
-	{
-		variants: {
-			variant: {
-				default: "border bg-background text-foreground",
-				destructive:
-					"destructive group border-destructive bg-destructive text-destructive-foreground",
-				success:
-					"success border-success-foreground bg-success text-success-foreground",
-				warning:
-					"warning border-warning-foreground bg-warning text-warning-foreground",
-				error: "error border-error-foreground bg-error text-error-foreground",
-			},
-		},
-		defaultVariants: {
-			variant: "default",
+const toastVariants = cva({
+	base: "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--kb-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--kb-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[opened]:animate-in data-[closed]:animate-out data-[swipe=end]:animate-out data-[closed]:fade-out-80 data-[closed]:slide-out-to-right-full data-[opened]:slide-in-from-top-full data-[opened]:sm:slide-in-from-bottom-full",
+	variants: {
+		variant: {
+			default: "border bg-background text-foreground",
+			destructive:
+				"destructive group border-destructive bg-destructive text-destructive-foreground",
+			success:
+				"success border-success-foreground bg-success text-success-foreground",
+			warning:
+				"warning border-warning-foreground bg-warning text-warning-foreground",
+			error: "error border-error-foreground bg-error text-error-foreground",
 		},
 	},
-);
+	defaultVariants: {
+		variant: "default",
+	},
+});
 type ToastVariant = NonNullable<VariantProps<typeof toastVariants>["variant"]>;
 
 type ToastListProps<T extends ValidComponent = "ol"> =

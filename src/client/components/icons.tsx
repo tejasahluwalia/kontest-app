@@ -65,6 +65,16 @@ export function IconArrowDown(props: IconProps) {
 	);
 }
 
+export function IconArrowLeft(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<path d="M5 12l14 0" />
+			<path d="M5 12l6 6" />
+			<path d="M5 12l6 -6" />
+		</Icon>
+	);
+}
+
 export function IconArrowRight(props: IconProps) {
 	return (
 		<Icon {...props}>
@@ -574,6 +584,30 @@ export function IconReplyAll(props: IconProps) {
 			<polyline points="7 17 2 12 7 7" />
 			<polyline points="12 17 7 12 12 7" />
 			<path d="M22 18v-2a4 4 0 0 0-4-4H7" />
+		</Icon>
+	);
+}
+
+export function IconBuilding(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<path d="M3 21h18" />
+			<path d="M9 8h1" />
+			<path d="M9 12h1" />
+			<path d="M9 16h1" />
+			<path d="M14 8h1" />
+			<path d="M14 12h1" />
+			<path d="M14 16h1" />
+			<path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
+		</Icon>
+	);
+}
+
+export function IconPencil(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+			<path d="M13.5 6.5l4 4" />
 		</Icon>
 	);
 }

@@ -4,9 +4,9 @@ import type { ConditionalRule } from "./conditions";
 export type Edges = ConditionalRule[];
 
 export const createEdge = (): ConditionalRule => ({
-	id: nanoid(),
+	id: `edge_${nanoid()}`,
 	condition: {
-		id: nanoid(),
+		id: `grp_${nanoid()}`,
 		operator: "and",
 		conditions: [],
 	},

@@ -1,7 +1,9 @@
-import ArrowLeft from "lucide-solid/icons/arrow-left";
-import ArrowRight from "lucide-solid/icons/arrow-right";
-import CheckCircle from "lucide-solid/icons/check-circle";
 import { type Component, createSignal, createStore, Show } from "solid-js";
+import {
+	IconArrowLeft,
+	IconArrowRight,
+	IconCircleCheck,
+} from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { evaluateConditionalRule } from "../primitives/conditions";
 import type {
@@ -107,7 +109,7 @@ const FormNavigator: Component<FormNavigatorProps> = (props) => {
 						onClick={handlePrevious}
 						disabled={isSubmitting()}
 					>
-						<ArrowLeft class="mr-2 h-4 w-4" />
+						<IconArrowLeft class="mr-2 h-4 w-4" />
 						{currentStep().step.previousButtonLabel || "Previous"}
 					</Button>
 				</Show>
@@ -117,13 +119,13 @@ const FormNavigator: Component<FormNavigatorProps> = (props) => {
 				<Button onClick={handleNext} disabled={isSubmitting()}>
 					{isLastStep() ? (
 						<>
-							<CheckCircle class="mr-2 h-4 w-4" />
+							<IconCircleCheck class="mr-2 h-4 w-4" />
 							Submit
 						</>
 					) : (
 						<>
 							{currentStep().step.nextButtonLabel || "Next"}
-							<ArrowRight class="ml-2 h-4 w-4" />
+							<IconArrowRight class="ml-2 h-4 w-4" />
 						</>
 					)}
 				</Button>

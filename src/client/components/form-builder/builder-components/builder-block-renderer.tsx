@@ -1,5 +1,5 @@
-import Trash from "lucide-solid/icons/trash";
 import { type Component, createSignal, For, storePath } from "solid-js";
+import { IconTrash } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { InlineEdit } from "~/components/ui/inline-edit";
@@ -57,7 +57,7 @@ const BuilderBlockRenderer: Component<{ block: Block }> = ({ block }) => {
 						class="transition-opacity opacity-100"
 						onClick={handleRemoveBlock}
 					>
-						<Trash />
+						<IconTrash />
 					</Button>
 				</div>
 			</CardHeader>

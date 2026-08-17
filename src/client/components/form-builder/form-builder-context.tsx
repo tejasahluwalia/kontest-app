@@ -343,7 +343,10 @@ export const FormBuilderProvider: ParentComponent<{
 		if (!node) throw new Error("Step not found");
 		const block = node.blocks.find((block) => block.id === blockId);
 		if (!block) throw new Error("Block not found");
-		const newBlocks = appendBlock(node.blocks, { ...block, id: nanoid() });
+		const newBlocks = appendBlock(node.blocks, {
+			...block,
+			id: `blk_${nanoid()}`,
+		});
 		setFormSchema((draft) => {
 			const draftNode = draft.graph.find((node) => node.step.id === stepId);
 			if (draftNode) reconcile(newBlocks)(draftNode.blocks);

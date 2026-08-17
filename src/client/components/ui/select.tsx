@@ -1,5 +1,5 @@
 import { cx } from "@client/lib/utils";
-import { Select as SelectPrimitive } from "@opencenter-cloud/kobalte-core/select";
+import { Select as SelectPrimitive } from "@kobalte/core/select";
 import type { ComponentProps, JSX, ValidComponent } from "@solidjs/web";
 import type { VoidProps } from "solid-js";
 import { merge, omit } from "solid-js";

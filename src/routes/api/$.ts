@@ -23,8 +23,6 @@ export const getTreaty = createIsomorphicFn()
 	.client(
 		() =>
 			treaty<typeof app>(
-				typeof window !== "undefined"
-					? window.location.origin
-					: "http://localhost:5173",
+				 "http://localhost:5173",
 			).api,
 	);

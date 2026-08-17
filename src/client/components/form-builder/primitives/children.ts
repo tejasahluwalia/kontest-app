@@ -7,7 +7,7 @@ type Child = InputField | Display;
 type Children = Child[];
 
 const createChild = (): Child => {
-	const id = nanoid();
+	const id = `fld_${nanoid()}`;
 	return {
 		childType: "field",
 		id: id,

@@ -1,5 +1,5 @@
-import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
-import * as SkeletonPrimitive from "@opencenter-cloud/kobalte-core/skeleton";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
+import * as SkeletonPrimitive from "@kobalte/core/skeleton";
 import type { ValidComponent } from "@solidjs/web";
 import { omit } from "solid-js";
 

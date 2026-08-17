@@ -1,4 +1,4 @@
-import { Breadcrumbs as BreadcrumbsPrimitive } from "@opencenter-cloud/kobalte-core/breadcrumbs";
+import { Breadcrumbs as BreadcrumbsPrimitive } from "@kobalte/core/breadcrumbs";
 import type { ComponentProps, ValidComponent } from "@solidjs/web";
 import { createLink, type LinkComponent } from "@tanstack/solid-router";
 import type { VoidProps } from "solid-js";

@@ -17,7 +17,7 @@ type StepGraphNode = { step: Step; blocks: Blocks; edges: Edges };
 type FormGraph = StepGraphNode[];
 
 const createDefaultStepNodeGraph = (): StepGraphNode => {
-	const id = nanoid();
+	const id = `step_${nanoid()}`;
 	return {
 		step: {
 			id,
@@ -67,7 +67,7 @@ interface FormBuilderHistory {
 }
 
 function createDefaultFormSchema(): FormSchema {
-	const id = nanoid();
+	const id = `form_${nanoid()}`;
 	const graph = createDefaultFormGraph();
 	return {
 		id,

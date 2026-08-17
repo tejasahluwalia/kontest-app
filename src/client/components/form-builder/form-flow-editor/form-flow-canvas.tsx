@@ -1,7 +1,5 @@
-import ArrowRight from "lucide-solid/icons/arrow-right";
-import Plus from "lucide-solid/icons/plus";
-import Trash from "lucide-solid/icons/trash";
 import { createEffect, createMemo, createSignal, Errored, For } from "solid-js";
+import { IconArrowRight, IconPlus, IconTrash } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { InlineEdit } from "~/components/ui/inline-edit";
@@ -79,7 +77,7 @@ export function FormFlowCanvas() {
 					onClick={handleAddStep}
 					class="w-full max-w-md"
 				>
-					<Plus class="mr-2 h-4 w-4" />
+					<IconPlus class="mr-2 h-4 w-4" />
 					Add Step
 				</Button>
 			</div>
@@ -98,10 +96,9 @@ function StepNode(props: {
 	onRemoveEdge: (edgeId: string, sourceStepId: string) => void;
 	onUpdate: (stepId: string, edges: Edges) => void;
 }) {
-	const { updateStepInGraph } = useFormBuilder();
-	// State for the connection editor modal
 	const [isConnectionModalOpen, setIsConnectionModalOpen] = createSignal(false);
-	// Get list of available target steps (all steps except this one)
+	const { updateStepInGraph } = useFormBuilder();
+
 	const availableTargets = createMemo(() =>
 		props.allNodes.filter((n) => n.step.id !== props.node.step.id),
 	);
@@ -143,7 +140,7 @@ function StepNode(props: {
 						onClick={props.onRemove}
 						disabled={props.allNodes.length <= 1}
 					>
-						<Trash class="h-4 w-4" />
+						<IconTrash class="h-4 w-4" />
 					</Button>
 				</div>
 
@@ -154,7 +151,7 @@ function StepNode(props: {
 							Connections
 						</h4>
 						<Button variant="ghost" size="icon" onClick={openModal}>
-							<Plus class="h-2 w-2" />
+							<IconPlus class="h-2 w-2" />
 						</Button>
 					</div>
 
@@ -169,7 +166,7 @@ function StepNode(props: {
 								);
 								return (
 									<div class="flex items-center gap-2">
-										<ArrowRight class="h-4 w-4 text-muted-foreground" />
+										<IconArrowRight class="h-4 w-4 text-muted-foreground" />
 										<span class="flex-1">
 											{targetStep ? targetStep.step.label : "Unknown Step"}
 										</span>
@@ -180,7 +177,7 @@ function StepNode(props: {
 												props.onRemoveEdge(edge.action.id, props.node.step.id)
 											}
 										>
-											<Trash class="h-3 w-3" />
+											<IconTrash class="h-3 w-3" />
 										</Button>
 									</div>
 								);

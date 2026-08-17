@@ -1,17 +1,17 @@
-import * as SheetPrimitive from "@opencenter-cloud/kobalte-core/dialog";
-import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
+import * as SheetPrimitive from "@kobalte/core/dialog";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
 import type { ComponentProps, JSX, ValidComponent } from "@solidjs/web";
-import { cva, type VariantProps } from "class-variance-authority";
 import type { Component } from "solid-js";
 import { omit } from "solid-js";
 
-import { cn } from "~/lib/utils";
+import { cn, cva, type VariantProps } from "~/lib/utils";
 
 const Sheet = SheetPrimitive.Root;
 const SheetTrigger = SheetPrimitive.Trigger;
 const SheetClose = SheetPrimitive.CloseButton;
 
-const portalVariants = cva("fixed inset-0 z-50 flex", {
+const portalVariants = cva({
+	base: "fixed inset-0 z-50 flex",
 	variants: {
 		position: {
 			top: "items-start",
@@ -57,24 +57,22 @@ const SheetOverlay = <T extends ValidComponent = "div">(
 	);
 };
 
-const sheetVariants = cva(
-	"fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[closed=]:duration-300 data-[expanded=]:duration-500 data-[expanded=]:animate-in data-[closed=]:animate-out",
-	{
-		variants: {
-			position: {
-				top: "inset-x-0 top-0 border-b data-[closed=]:slide-out-to-top data-[expanded=]:slide-in-from-top",
-				bottom:
-					"inset-x-0 bottom-0 border-t data-[closed=]:slide-out-to-bottom data-[expanded=]:slide-in-from-bottom",
-				left: "inset-y-0 left-0 h-full w-3/4 border-r data-[closed=]:slide-out-to-left data-[expanded=]:slide-in-from-left sm:max-w-sm",
-				right:
-					"inset-y-0 right-0 h-full w-3/4 border-l data-[closed=]:slide-out-to-right data-[expanded=]:slide-in-from-right sm:max-w-sm",
-			},
-		},
-		defaultVariants: {
-			position: "right",
+const sheetVariants = cva({
+	base: "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[closed=]:duration-300 data-[expanded=]:duration-500 data-[expanded=]:animate-in data-[closed=]:animate-out",
+	variants: {
+		position: {
+			top: "inset-x-0 top-0 border-b data-[closed=]:slide-out-to-top data-[expanded=]:slide-in-from-top",
+			bottom:
+				"inset-x-0 bottom-0 border-t data-[closed=]:slide-out-to-bottom data-[expanded=]:slide-in-from-bottom",
+			left: "inset-y-0 left-0 h-full w-3/4 border-r data-[closed=]:slide-out-to-left data-[expanded=]:slide-in-from-left sm:max-w-sm",
+			right:
+				"inset-y-0 right-0 h-full w-3/4 border-l data-[closed=]:slide-out-to-right data-[expanded=]:slide-in-from-right sm:max-w-sm",
 		},
 	},
-);
+	defaultVariants: {
+		position: "right",
+	},
+});
 
 type DialogContentProps<T extends ValidComponent = "div"> =
 	SheetPrimitive.DialogContentProps<T> &

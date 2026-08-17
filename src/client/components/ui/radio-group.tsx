@@ -1,5 +1,5 @@
-import type { PolymorphicProps } from "@opencenter-cloud/kobalte-core/polymorphic";
-import * as RadioGroupPrimitive from "@opencenter-cloud/kobalte-core/radio-group";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
+import * as RadioGroupPrimitive from "@kobalte/core/radio-group";
 import type { JSX, ValidComponent } from "@solidjs/web";
 import { omit } from "solid-js";
 

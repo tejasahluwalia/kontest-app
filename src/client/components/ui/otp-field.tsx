@@ -1,5 +1,5 @@
-import type { DynamicProps, RootProps } from "@corvu-next/otp-field";
-import OtpField from "@corvu-next/otp-field";
+import * as OTPFieldPrimitive from "@kobalte/core/otp-field";
+import type { PolymorphicProps } from "@kobalte/core/polymorphic";
 import type { ComponentProps, ValidComponent } from "@solidjs/web";
 import type { Component } from "solid-js";
 import { omit, Show } from "solid-js";
@@ -10,37 +10,60 @@ export const REGEXP_ONLY_DIGITS = "^\\d*$";
 export const REGEXP_ONLY_CHARS = "^[a-zA-Z]*$";
 export const REGEXP_ONLY_DIGITS_AND_CHARS = "^[a-zA-Z0-9]*$";
 
-type OTPFieldProps<T extends ValidComponent = "div"> = RootProps<T> & {
-	class?: string;
-};
+export type OTPFieldProps<T extends ValidComponent = "div"> =
+	OTPFieldPrimitive.OTPFieldRootProps<T> & {
+		class?: string;
+		onValueChange?: (value: string) => void;
+	};
 
-const OTPField = <T extends ValidComponent = "div">(
-	props: DynamicProps<T, OTPFieldProps<T>>,
+export const OTPField = <T extends ValidComponent = "div">(
+	props: PolymorphicProps<T, OTPFieldProps<T>>,
 ) => {
-	const others = omit(props as OTPFieldProps, "class");
+	const others = omit(
+		props as OTPFieldProps,
+		"class",
+		"onValueChange",
+		"onChange",
+	);
 	return (
-		<OtpField
+		<OTPFieldPrimitive.Root
 			class={cn(
 				"flex items-center gap-2 disabled:cursor-not-allowed has-[:disabled]:opacity-50",
 				props.class,
 			)}
+			onChange={props.onValueChange ?? props.onChange}
 			{...others}
 		/>
 	);
 };
 
-const OTPFieldInput = OtpField.Input;
+export type OTPFieldInputProps<T extends ValidComponent = "input"> =
+	OTPFieldPrimitive.OTPFieldInputProps<T> & {
+		class?: string;
+	};
 
-const OTPFieldGroup: Component<ComponentProps<"div">> = (props) => {
+export const OTPFieldInput = <T extends ValidComponent = "input">(
+	props: PolymorphicProps<T, OTPFieldInputProps<T>>,
+) => {
+	const others = omit(props as OTPFieldInputProps, "class");
+	return (
+		<OTPFieldPrimitive.Input
+			class={cn("disabled:cursor-not-allowed", props.class)}
+			{...others}
+		/>
+	);
+};
+
+export const OTPFieldGroup: Component<ComponentProps<"div">> = (props) => {
 	const others = omit(props, "class");
 	return <div class={cn("flex items-center", props.class)} {...others} />;
 };
 
-const OTPFieldSlot: Component<ComponentProps<"div"> & { index: number }> = (
-	props,
-) => {
+export const OTPFieldSlot: Component<
+	ComponentProps<"div"> & { index: number }
+> = (props) => {
 	const others = omit(props, "class", "index");
-	const context = OtpField.useContext();
+	const context = OTPFieldPrimitive.useOTPFieldContext();
 	const char = () => context.value()[props.index];
 	const showFakeCaret = () =>
 		context.value().length === props.index && context.isInserting();
@@ -70,7 +93,7 @@ const OTPFieldSlot: Component<ComponentProps<"div"> & { index: number }> = (
 	);
 };
 
-const OTPFieldSeparator: Component<ComponentProps<"div">> = (props) => {
+export const OTPFieldSeparator: Component<ComponentProps<"div">> = (props) => {
 	return (
 		<div {...props}>
 			<svg
@@ -89,12 +112,4 @@ const OTPFieldSeparator: Component<ComponentProps<"div">> = (props) => {
 			</svg>
 		</div>
 	);
-};
-
-export {
-	OTPField,
-	OTPFieldGroup,
-	OTPFieldInput,
-	OTPFieldSeparator,
-	OTPFieldSlot,
 };

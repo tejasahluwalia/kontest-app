@@ -9,27 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as HostRouteRouteImport } from './routes/host/route'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as UserRouteRouteImport } from './routes/user/route'
-import { Route as HostRouteRouteImport } from './routes/host/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as UserProfileRouteImport } from './routes/user/profile'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as HostOrgsRouteRouteImport } from './routes/host/orgs/route'
-import { Route as HostOrgsNewRouteImport } from './routes/host/orgs/new'
+import { Route as UserProfileRouteImport } from './routes/user/profile'
 import { Route as HostOrgsOrgSlugRouteRouteImport } from './routes/host/orgs/$orgSlug/route'
-import { Route as HostOrgsOrgSlugMembersRouteImport } from './routes/host/orgs/$orgSlug/members'
+import { Route as HostOrgsNewRouteImport } from './routes/host/orgs/new'
 import { Route as HostOrgsOrgSlugCallsRouteRouteImport } from './routes/host/orgs/$orgSlug/calls/route'
+import { Route as HostOrgsOrgSlugMembersRouteImport } from './routes/host/orgs/$orgSlug/members'
 import { Route as HostOrgsOrgSlugCallsIndexRouteImport } from './routes/host/orgs/$orgSlug/calls/index'
 import { Route as HostOrgsOrgSlugCallsCallSlugRouteRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/route'
-import { Route as HostOrgsOrgSlugCallsCallSlugTeamRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/team'
-import { Route as HostOrgsOrgSlugCallsCallSlugEntriesRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/entries'
 import { Route as HostOrgsOrgSlugCallsCallSlugDashboardRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/dashboard'
+import { Route as HostOrgsOrgSlugCallsCallSlugEntriesRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/entries'
+import { Route as HostOrgsOrgSlugCallsCallSlugTeamRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/team'
 import { Route as HostOrgsOrgSlugCallsCallSlugRoundsIndexRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/index'
 import { Route as HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/route'
-import { Route as HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
 import { Route as HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
+import { Route as HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport } from './routes/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HostRouteRoute = HostRouteRouteImport.update({
+  id: '/host',
+  path: '/host',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -39,21 +49,6 @@ const UserRouteRoute = UserRouteRouteImport.update({
   id: '/user',
   path: '/user',
   getParentRoute: () => rootRouteImport,
-} as any)
-const HostRouteRoute = HostRouteRouteImport.update({
-  id: '/host',
-  path: '/host',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UserProfileRoute = UserProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => UserRouteRoute,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
@@ -65,20 +60,20 @@ const HostOrgsRouteRoute = HostOrgsRouteRouteImport.update({
   path: '/orgs',
   getParentRoute: () => HostRouteRoute,
 } as any)
-const HostOrgsNewRoute = HostOrgsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => HostOrgsRouteRoute,
+const UserProfileRoute = UserProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => UserRouteRoute,
 } as any)
 const HostOrgsOrgSlugRouteRoute = HostOrgsOrgSlugRouteRouteImport.update({
   id: '/$orgSlug',
   path: '/$orgSlug',
   getParentRoute: () => HostOrgsRouteRoute,
 } as any)
-const HostOrgsOrgSlugMembersRoute = HostOrgsOrgSlugMembersRouteImport.update({
-  id: '/members',
-  path: '/members',
-  getParentRoute: () => HostOrgsOrgSlugRouteRoute,
+const HostOrgsNewRoute = HostOrgsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => HostOrgsRouteRoute,
 } as any)
 const HostOrgsOrgSlugCallsRouteRoute =
   HostOrgsOrgSlugCallsRouteRouteImport.update({
@@ -86,6 +81,11 @@ const HostOrgsOrgSlugCallsRouteRoute =
     path: '/calls',
     getParentRoute: () => HostOrgsOrgSlugRouteRoute,
   } as any)
+const HostOrgsOrgSlugMembersRoute = HostOrgsOrgSlugMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => HostOrgsOrgSlugRouteRoute,
+} as any)
 const HostOrgsOrgSlugCallsIndexRoute =
   HostOrgsOrgSlugCallsIndexRouteImport.update({
     id: '/',
@@ -98,10 +98,10 @@ const HostOrgsOrgSlugCallsCallSlugRouteRoute =
     path: '/$callSlug',
     getParentRoute: () => HostOrgsOrgSlugCallsRouteRoute,
   } as any)
-const HostOrgsOrgSlugCallsCallSlugTeamRoute =
-  HostOrgsOrgSlugCallsCallSlugTeamRouteImport.update({
-    id: '/team',
-    path: '/team',
+const HostOrgsOrgSlugCallsCallSlugDashboardRoute =
+  HostOrgsOrgSlugCallsCallSlugDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
     getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
   } as any)
 const HostOrgsOrgSlugCallsCallSlugEntriesRoute =
@@ -110,10 +110,10 @@ const HostOrgsOrgSlugCallsCallSlugEntriesRoute =
     path: '/entries',
     getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
   } as any)
-const HostOrgsOrgSlugCallsCallSlugDashboardRoute =
-  HostOrgsOrgSlugCallsCallSlugDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
+const HostOrgsOrgSlugCallsCallSlugTeamRoute =
+  HostOrgsOrgSlugCallsCallSlugTeamRouteImport.update({
+    id: '/team',
+    path: '/team',
     getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
   } as any)
 const HostOrgsOrgSlugCallsCallSlugRoundsIndexRoute =
@@ -128,16 +128,16 @@ const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute =
     path: '/rounds/$roundSlug',
     getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRouteRoute,
   } as any)
-const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute =
-  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport.update({
-    id: '/judging',
-    path: '/judging',
-    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute,
-  } as any)
 const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRoute =
   HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRouteImport.update({
     id: '/configure',
     path: '/configure',
+    getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute,
+  } as any)
+const HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRoute =
+  HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport.update({
+    id: '/judging',
+    path: '/judging',
     getParentRoute: () => HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute,
   } as any)
 
@@ -285,6 +285,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/solid-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/host': {
+      id: '/host'
+      path: '/host'
+      fullPath: '/host'
+      preLoaderRoute: typeof HostRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -298,27 +312,6 @@ declare module '@tanstack/solid-router' {
       fullPath: '/user'
       preLoaderRoute: typeof UserRouteRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/host': {
-      id: '/host'
-      path: '/host'
-      fullPath: '/host'
-      preLoaderRoute: typeof HostRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/user/profile': {
-      id: '/user/profile'
-      path: '/profile'
-      fullPath: '/user/profile'
-      preLoaderRoute: typeof UserProfileRouteImport
-      parentRoute: typeof UserRouteRoute
     }
     '/api/$': {
       id: '/api/$'
@@ -334,12 +327,12 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof HostOrgsRouteRouteImport
       parentRoute: typeof HostRouteRoute
     }
-    '/host/orgs/new': {
-      id: '/host/orgs/new'
-      path: '/new'
-      fullPath: '/host/orgs/new'
-      preLoaderRoute: typeof HostOrgsNewRouteImport
-      parentRoute: typeof HostOrgsRouteRoute
+    '/user/profile': {
+      id: '/user/profile'
+      path: '/profile'
+      fullPath: '/user/profile'
+      preLoaderRoute: typeof UserProfileRouteImport
+      parentRoute: typeof UserRouteRoute
     }
     '/host/orgs/$orgSlug': {
       id: '/host/orgs/$orgSlug'
@@ -348,18 +341,25 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof HostOrgsOrgSlugRouteRouteImport
       parentRoute: typeof HostOrgsRouteRoute
     }
-    '/host/orgs/$orgSlug/members': {
-      id: '/host/orgs/$orgSlug/members'
-      path: '/members'
-      fullPath: '/host/orgs/$orgSlug/members'
-      preLoaderRoute: typeof HostOrgsOrgSlugMembersRouteImport
-      parentRoute: typeof HostOrgsOrgSlugRouteRoute
+    '/host/orgs/new': {
+      id: '/host/orgs/new'
+      path: '/new'
+      fullPath: '/host/orgs/new'
+      preLoaderRoute: typeof HostOrgsNewRouteImport
+      parentRoute: typeof HostOrgsRouteRoute
     }
     '/host/orgs/$orgSlug/calls': {
       id: '/host/orgs/$orgSlug/calls'
       path: '/calls'
       fullPath: '/host/orgs/$orgSlug/calls'
       preLoaderRoute: typeof HostOrgsOrgSlugCallsRouteRouteImport
+      parentRoute: typeof HostOrgsOrgSlugRouteRoute
+    }
+    '/host/orgs/$orgSlug/members': {
+      id: '/host/orgs/$orgSlug/members'
+      path: '/members'
+      fullPath: '/host/orgs/$orgSlug/members'
+      preLoaderRoute: typeof HostOrgsOrgSlugMembersRouteImport
       parentRoute: typeof HostOrgsOrgSlugRouteRoute
     }
     '/host/orgs/$orgSlug/calls/': {
@@ -376,11 +376,11 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRouteImport
       parentRoute: typeof HostOrgsOrgSlugCallsRouteRoute
     }
-    '/host/orgs/$orgSlug/calls/$callSlug/team': {
-      id: '/host/orgs/$orgSlug/calls/$callSlug/team'
-      path: '/team'
-      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/team'
-      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugTeamRouteImport
+    '/host/orgs/$orgSlug/calls/$callSlug/dashboard': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
+      path: '/dashboard'
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugDashboardRouteImport
       parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
     }
     '/host/orgs/$orgSlug/calls/$callSlug/entries': {
@@ -390,11 +390,11 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugEntriesRouteImport
       parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
     }
-    '/host/orgs/$orgSlug/calls/$callSlug/dashboard': {
-      id: '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
-      path: '/dashboard'
-      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/dashboard'
-      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugDashboardRouteImport
+    '/host/orgs/$orgSlug/calls/$callSlug/team': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/team'
+      path: '/team'
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/team'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugTeamRouteImport
       parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
     }
     '/host/orgs/$orgSlug/calls/$callSlug/rounds/': {
@@ -411,18 +411,18 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRouteImport
       parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRouteRoute
     }
-    '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging': {
-      id: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
-      path: '/judging'
-      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
-      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport
-      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute
-    }
     '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure': {
       id: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
       path: '/configure'
       fullPath: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure'
       preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugConfigureRouteImport
+      parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute
+    }
+    '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging': {
+      id: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
+      path: '/judging'
+      fullPath: '/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/judging'
+      preLoaderRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugJudgingRouteImport
       parentRoute: typeof HostOrgsOrgSlugCallsCallSlugRoundsRoundSlugRouteRoute
     }
   }

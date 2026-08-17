@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-		return (
+	return (
 		<div class="min-h-screen bg-gradient-to-b from-background to-background/90">
 			{/* Hero Section */}
 			<section class="container mx-auto px-4 pt-16 md:pt-24 lg:pt-32">
@@ -65,9 +65,7 @@ function Index() {
 
 				<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
 					{/* Feature 1 */}
-					<div
-						class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md"
-					>
+					<div class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md">
 						<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -93,9 +91,7 @@ function Index() {
 					</div>
 
 					{/* Feature 2 */}
-					<div
-						class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md"
-					>
+					<div class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md">
 						<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -123,9 +119,7 @@ function Index() {
 					</div>
 
 					{/* Feature 3 */}
-					<div
-						class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md"
-					>
+					<div class="rounded-lg border bg-card p-6 shadow-sm transition hover:shadow-md">
 						<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -270,9 +264,7 @@ function Index() {
 			</section>
 
 			{/* CTA Section */}
-			<section
-				class="container mx-auto px-4 py-24 text-center"
-			>
+			<section class="container mx-auto px-4 py-24 text-center">
 				<h2 class="text-3xl font-bold tracking-tight sm:text-4xl mb-6">
 					Ready to Transform Your Submission Process?
 				</h2>

@@ -1,4 +1,3 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
 	boolean,
@@ -10,6 +9,7 @@ import {
 	timestamp,
 	unique,
 } from "drizzle-orm/pg-core";
+import { nanoid } from "nanoid";
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
@@ -69,7 +69,7 @@ export const verification = pgTable("verification", {
 
 export const org = pgTable("org", {
 	id: text("id")
-		.$defaultFn(() => createId())
+		.$defaultFn(() => nanoid())
 		.primaryKey(),
 	name: text("name").notNull(),
 	slug: text("slug").notNull().unique(),
@@ -90,7 +90,7 @@ export const member = pgTable(
 	"member",
 	{
 		id: text("id")
-			.$defaultFn(() => createId())
+			.$defaultFn(() => nanoid())
 			.notNull()
 			.primaryKey(),
 		userId: text("user_id")
@@ -119,7 +119,7 @@ export const memberRelations = relations(member, ({ one }) => ({
 
 export const round = pgTable("round", {
 	id: text("id")
-		.$defaultFn(() => createId())
+		.$defaultFn(() => nanoid())
 		.primaryKey(),
 	name: text("name").notNull(),
 	slug: text("slug").notNull().unique(),
@@ -153,7 +153,7 @@ export const callVisibilityEnum = pgEnum("call_visibility", [
 
 export const call = pgTable("call", {
 	id: text("id")
-		.$defaultFn(() => createId())
+		.$defaultFn(() => nanoid())
 		.primaryKey(),
 	name: text("name").notNull(),
 	slug: text("slug").notNull().unique(),
@@ -211,7 +211,7 @@ export const participant = pgTable(
 	"participant",
 	{
 		id: text("id")
-			.$defaultFn(() => createId())
+			.$defaultFn(() => nanoid())
 			.notNull()
 			.primaryKey(),
 		userId: text("user_id")
@@ -242,7 +242,7 @@ export const juror = pgTable(
 	"juror",
 	{
 		id: text("id")
-			.$defaultFn(() => createId())
+			.$defaultFn(() => nanoid())
 			.notNull()
 			.primaryKey(),
 		userId: text("user_id")
@@ -270,7 +270,7 @@ export const jurorRelations = relations(juror, ({ one, many }) => ({
 
 export const submission = pgTable("submission", {
 	id: text("id")
-		.$defaultFn(() => createId())
+		.$defaultFn(() => nanoid())
 		.notNull()
 		.primaryKey(),
 	roundId: text("round_id")
@@ -300,7 +300,7 @@ export const judgement = pgTable(
 	"judgement",
 	{
 		id: text("id")
-			.$defaultFn(() => createId())
+			.$defaultFn(() => nanoid())
 			.notNull()
 			.primaryKey(),
 		submissionId: text("submission_id")
@@ -333,7 +333,7 @@ export const inviteStatusEnum = pgEnum("invite_status", [
 
 export const memberInvite = pgTable("member_invite", {
 	id: text("id")
-		.$defaultFn(() => createId())
+		.$defaultFn(() => nanoid())
 		.notNull()
 		.primaryKey(),
 	email: text("email").notNull(),
@@ -361,7 +361,7 @@ export const memberInviteRelations = relations(memberInvite, ({ one }) => ({
 
 export const jurorInvite = pgTable("juror_invite", {
 	id: text("id")
-		.$defaultFn(() => createId())
+		.$defaultFn(() => nanoid())
 		.notNull()
 		.primaryKey(),
 	email: text("email").notNull(),

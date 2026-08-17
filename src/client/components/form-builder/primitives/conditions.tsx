@@ -1,5 +1,3 @@
-import PlusCircle from "lucide-solid/icons/plus-circle";
-import Trash from "lucide-solid/icons/trash";
 import { nanoid } from "nanoid";
 import {
 	type Accessor,
@@ -11,6 +9,7 @@ import {
 	type Setter,
 	Show,
 } from "solid-js";
+import { IconCirclePlus, IconTrash } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import {
@@ -410,7 +409,7 @@ const SingleCondition: Component<{
 					onClick={props.onRemove}
 					class="text-destructive"
 				>
-					<Trash class="h-4 w-4" />
+					<IconTrash class="h-4 w-4" />
 				</Button>
 			</Show>
 		</div>
@@ -507,7 +506,7 @@ const ConditionGroupComponent: Component<{
 						onClick={props.onRemove}
 						class="text-destructive ml-auto"
 					>
-						<Trash class="h-4 w-4" />
+						<IconTrash class="h-4 w-4" />
 					</Button>
 				</Show>
 			</div>
@@ -552,7 +551,7 @@ const ConditionGroupComponent: Component<{
 					onClick={addCondition}
 					class="flex items-center gap-1"
 				>
-					<PlusCircle class="h-4 w-4" />
+					<IconCirclePlus class="h-4 w-4" />
 					Add Condition
 				</Button>
 				<Button
@@ -561,7 +560,7 @@ const ConditionGroupComponent: Component<{
 					onClick={addGroup}
 					class="flex items-center gap-1"
 				>
-					<PlusCircle class="h-4 w-4" />
+					<IconCirclePlus class="h-4 w-4" />
 					Add Group
 				</Button>
 			</div>
@@ -584,13 +583,13 @@ export const ConditionalLogic: Component<ConditionalLogicProps> = ({
 }) => {
 	const addRule = () => {
 		const newRule: ConditionalRule = {
-			id: nanoid(),
+			id: `rule_${nanoid()}`,
 			condition: {
-				id: nanoid(),
+				id: `grp_${nanoid()}`,
 				operator: "and",
 				conditions: [
 					{
-						id: nanoid(),
+						id: `cond_${nanoid()}`,
 						leftType: "formValue",
 						leftValue: "",
 						operator: "equals",
@@ -677,7 +676,7 @@ export const ConditionalLogic: Component<ConditionalLogicProps> = ({
 									onClick={() => removeRule(index())}
 									class="text-destructive ml-auto"
 								>
-									<Trash class="h-4 w-4" />
+									<IconTrash class="h-4 w-4" />
 								</Button>
 							</div>
 						</div>
@@ -690,7 +689,7 @@ export const ConditionalLogic: Component<ConditionalLogicProps> = ({
 				onClick={addRule}
 				class="flex items-center gap-1"
 			>
-				<PlusCircle class="h-4 w-4" />
+				<IconCirclePlus class="h-4 w-4" />
 				Add Rule
 			</Button>
 		</div>

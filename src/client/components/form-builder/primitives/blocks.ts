@@ -23,7 +23,7 @@ type Blocks = Block[];
 
 // Create a single empty block
 const createBlock = (): Block => ({
-	id: nanoid(),
+	id: `blk_${nanoid()}`,
 	label: "New Block",
 	children: createChildren(),
 });

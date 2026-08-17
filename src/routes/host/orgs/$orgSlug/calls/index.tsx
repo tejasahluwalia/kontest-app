@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/solid-router";
-import Trash2 from "lucide-solid/icons/trash-2";
 import { createSignal, For, Show, useContext } from "solid-js";
 import NewCallForm from "~/components/forms/new-call-form";
+import { IconTrash } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { Card, CardHeader } from "~/components/ui/card";
 import {
@@ -95,7 +95,7 @@ function RouteComponent() {
 											size="icon"
 											onClick={() => deleteCall(id)}
 										>
-											<Trash2 size={16} />
+											<IconTrash class="size-4" />
 										</Button>
 									</div>
 								);

@@ -1,7 +1,6 @@
-import { cva } from "@client/lib/utils";
-import { Badge as BadgePrimitive } from "@opencenter-cloud/kobalte-core/badge";
+import { cva, type VariantProps } from "@client/lib/utils";
+import { Badge as BadgePrimitive } from "@kobalte/core/badge";
 import type { ComponentProps, ValidComponent } from "@solidjs/web";
-import type { VariantProps } from "cva";
 import { omit } from "solid-js";
 
 export const badgeVariants = cva({

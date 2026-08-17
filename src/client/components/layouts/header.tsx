@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/solid-router";
-import BellIcon from "lucide-solid/icons/bell";
 import type { ParentComponent } from "solid-js";
+import { IconBell } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
@@ -10,7 +10,7 @@ const Header: ParentComponent = (props) => {
 			{props.children}
 			<div class="flex space-x-2">
 				<Button variant="ghost" size="icon" class="size-8">
-					<BellIcon size={16} />
+					<IconBell />
 				</Button>
 				<Link to="/user/profile">
 					<Avatar class="size-8">

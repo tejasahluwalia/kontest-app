@@ -12,7 +12,7 @@ export interface Step {
 export type Steps = Step[];
 
 export const createStep = (): Step => ({
-	id: nanoid(),
+	id: `step_${nanoid()}`,
 	label: "New Step",
 	nextButtonLabel: "Next",
 	previousButtonLabel: "Previous",

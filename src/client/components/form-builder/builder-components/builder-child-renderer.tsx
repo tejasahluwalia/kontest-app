@@ -1,5 +1,5 @@
-import Trash from "lucide-solid/icons/trash";
 import { type Component, Match, Show, Switch } from "solid-js";
+import { IconTrash } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { useFormBuilder } from "../form-builder-context";
 import type { Child } from "../primitives/children";
@@ -70,7 +70,7 @@ const BuilderChildRenderer: Component<BuilderChildRendererProps> = ({
 							class="transition-opacity group-hover/child:opacity-100 opacity-0"
 							onClick={handleOnDelete}
 						>
-							<Trash />
+							<IconTrash />
 						</Button>
 					</div>
 				</div>

@@ -1,6 +1,5 @@
-import CheckCircle from "lucide-solid/icons/check-circle";
-import RefreshCw from "lucide-solid/icons/refresh-cw";
 import { type Component, createSignal, Show } from "solid-js";
+import { IconCircleCheck, IconUpdates } from "~/components/icons";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import {
@@ -55,7 +54,7 @@ const FormPreview: Component<FormPreviewProps> = (props) => {
 						fallback={
 							<div class="space-y-6">
 								<Alert variant="default">
-									<CheckCircle class="h-4 w-4" />
+									<IconCircleCheck class="h-4 w-4" />
 									<AlertTitle>Form Submitted Successfully</AlertTitle>
 									<AlertDescription>
 										Your form has been submitted with the following data:
@@ -70,7 +69,7 @@ const FormPreview: Component<FormPreviewProps> = (props) => {
 
 								<div class="flex justify-between">
 									<Button variant="outline" onClick={handleReset}>
-										<RefreshCw class="mr-2 h-4 w-4" />
+										<IconUpdates class="mr-2 h-4 w-4" />
 										Reset Preview
 									</Button>
 									<Button variant="outline" onClick={props.onClose}>

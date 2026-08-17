@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
-import { defineConfig } from "cva";
+import { defineConfig, type VariantProps } from "cva";
 import { createSignal, onSettled } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
@@ -9,11 +9,13 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export const { cva, cx, compose } = defineConfig({
+export const { cva, cx } = defineConfig({
 	hooks: {
 		onComplete: (className) => twMerge(className),
 	},
 });
+
+export type { VariantProps };
 
 export function useIsMobile(fallback = false) {
 	const [isMobile, setIsMobile] = createSignal(fallback);

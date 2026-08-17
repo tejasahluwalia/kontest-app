@@ -1,6 +1,6 @@
-import PencilIcon from "lucide-solid/icons/pencil";
 import type { Accessor, Component, Setter } from "solid-js";
 import { createSignal, Show } from "solid-js";
+import { IconPencil } from "~/components/icons";
 import { TextField, TextFieldInput } from "./text-field";
 
 type InlineEditProps = {
@@ -53,10 +53,7 @@ export const InlineEdit: Component<InlineEditProps> = (props) => {
 			<div class={"flex space-x-3 group"}>
 				<span>{value()}</span>
 				<button type="button" onClick={startEditing} aria-label="Edit">
-					<PencilIcon
-						size={16}
-						class="text-muted-foreground hover:text-primary transition-colors"
-					/>
+					<IconPencil class="text-muted-foreground hover:text-primary transition-colors size-4" />
 				</button>
 			</div>
 		</Show>

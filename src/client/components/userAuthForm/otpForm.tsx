@@ -1,7 +1,7 @@
-import { createForm } from "@tanstack/solid-form";
+import { createForm, Field, Form, type SubmitHandler } from "@formisch/solid";
 import { useNavigate } from "@tanstack/solid-router";
 import { createSignal } from "solid-js";
-import { z } from "zod";
+import * as v from "valibot";
 import { IconLoader } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import {
@@ -41,6 +41,11 @@ export default function OtpAuthForm() {
 	);
 }
 
+const EmailSchema = v.object({
+	name: v.string(),
+	email: v.pipe(v.string(), v.email()),
+});
+
 function EmailForm({
 	name,
 	setName,
@@ -54,148 +59,115 @@ function EmailForm({
 	setEmail: (email: string) => void;
 	setStage: (stage: "email" | "otp") => void;
 }) {
-	const form = createForm(() => ({
-		defaultValues: {
+	const form = createForm({
+		schema: EmailSchema,
+		initialInput: {
 			name: name,
 			email: email,
 		},
-		onSubmit: async (data) => {
-			setName(data.value.name);
-			setEmail(data.value.email);
-			const { data: res, error } =
-				await authClient.emailOtp.sendVerificationOtp(
-					{
-						email: data.value.email,
-						type: "sign-in",
-					},
-					{
-						onSuccess: () => {
-							setStage("otp");
-						},
-						// TODO: handle error
-					},
-				);
-		},
-	}));
+	});
+
+	const handleSubmit: SubmitHandler<typeof EmailSchema> = async (output) => {
+		setName(output.name);
+		setEmail(output.email);
+		await authClient.emailOtp.sendVerificationOtp(
+			{
+				email: output.email,
+				type: "sign-in",
+			},
+			{
+				onSuccess: () => {
+					setStage("otp");
+				},
+				// TODO: handle error
+			},
+		);
+	};
 
 	return (
-		<form
-			onSubmit={(e) => {
-				e.preventDefault();
-				e.stopPropagation();
-				form.handleSubmit();
-			}}
-		>
+		<Form of={form} onSubmit={handleSubmit}>
 			<div class="grid gap-4">
-				<form.Field
-					name="name"
-					validators={{
-						onChange: z.string(),
-					}}
-				>
+				<Field of={form} path={["name"]}>
 					{(field) => (
 						<TextField class="gap-1">
 							<TextFieldLabel class="sr-only">Name</TextFieldLabel>
-							<TextFieldInput
-								name={field().name}
-								value={field().state.value}
-								onBlur={field().handleBlur}
-								onInput={(e) => field().handleChange(e.currentTarget.value)}
-							/>
+							<TextFieldInput {...field.props} value={field.input ?? ""} />
 						</TextField>
 					)}
-				</form.Field>
-				<form.Field
-					name="email"
-					validators={{
-						onChange: z.string().email(),
-					}}
-				>
+				</Field>
+				<Field of={form} path={["email"]}>
 					{(field) => (
 						<TextField class="gap-1">
 							<TextFieldLabel class="sr-only">Email</TextFieldLabel>
 							<TextFieldInput
-								name={field().name}
-								value={field().state.value}
-								onBlur={field().handleBlur}
-								onInput={(e) => field().handleChange(e.currentTarget.value)}
+								{...field.props}
+								value={field.input ?? ""}
 								type="email"
 								placeholder="me@email.com"
 							/>
 						</TextField>
 					)}
-				</form.Field>
-				<form.Subscribe
-					selector={(state: any) => ({
-						canSubmit: state.canSubmit,
-						isSubmitting: state.isSubmitting,
-					})}
-				>
-					{(state: any) => (
-						<Button type="submit" disabled={state().isSubmitting}>
-							{state().isSubmitting && (
-								<IconLoader class="mr-2 size-4 animate-spin" />
-							)}
-							Send OTP
-						</Button>
-					)}
-				</form.Subscribe>
+				</Field>
+				<Button type="submit" disabled={form.isSubmitting}>
+					{form.isSubmitting && <IconLoader class="mr-2 size-4 animate-spin" />}
+					Send OTP
+				</Button>
 			</div>
-		</form>
+		</Form>
 	);
 }
+
+const OtpSchema = v.object({
+	otp: v.pipe(v.string(), v.minLength(6)),
+});
 
 export function OtpForm({ email, name }: { email: string; name: string }) {
 	const navigate = useNavigate({
 		from: "/login",
 	});
-	const form = createForm(() => ({
-		defaultValues: {
-			name: name,
-			email: email,
+	const form = createForm({
+		schema: OtpSchema,
+		initialInput: {
 			otp: "",
 		},
-		onSubmit: async (data) => {
-			const { data: _res, error: _error } = await authClient.signIn.emailOtp(
-				{
-					email: data.value.email,
-					otp: data.value.otp,
+	});
+
+	const handleSubmit: SubmitHandler<typeof OtpSchema> = async (output) => {
+		await authClient.signIn.emailOtp(
+			{
+				email: email,
+				otp: output.otp,
+			},
+			{
+				onSuccess: async () => {
+					await server.api.user.me.patch({
+						email,
+						name,
+					} as any);
+					navigate({ to: "/host" });
 				},
-				{
-					onSuccess: async () => {
-						await server.api.user.me.patch({
-							email,
-							name,
-						} as any);
-						navigate({ to: "/host" });
-					},
-					// TODO: handle error
-				},
-			);
-		},
-	}));
+				// TODO: handle error
+			},
+		);
+	};
 
 	return (
 		<div class="grid gap-6">
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
-			>
+			<Form of={form} onSubmit={handleSubmit}>
 				<div class="grid gap-4">
-					<form.Field name="otp">
+					<Field of={form} path={["otp"]}>
 						{(field) => (
 							<OTPField
 								maxLength={6}
-								value={field().state.value}
-								onValueChange={field().handleChange}
+								value={field.input ?? ""}
+								onValueChange={(val) => field.onInput(val)}
 							>
 								<OTPFieldInput
+									ref={field.props.ref}
+									name={field.props.name}
+									onBlur={field.props.onBlur}
+									onFocus={field.props.onFocus}
 									pattern={REGEXP_ONLY_DIGITS}
-									name={field().name}
-									onBlur={field().handleBlur}
 								/>
 								<OTPFieldGroup>
 									<OTPFieldSlot index={0} />
@@ -210,24 +182,15 @@ export function OtpForm({ email, name }: { email: string; name: string }) {
 								</OTPFieldGroup>
 							</OTPField>
 						)}
-					</form.Field>
-					<form.Subscribe
-						selector={(state: any) => ({
-							canSubmit: state.canSubmit,
-							isSubmitting: state.isSubmitting,
-						})}
-					>
-						{(state: any) => (
-							<Button type="submit" disabled={state().isSubmitting}>
-								{state().isSubmitting && (
-									<IconLoader class="mr-2 size-4 animate-spin" />
-								)}
-								Enter OTP
-							</Button>
+					</Field>
+					<Button type="submit" disabled={form.isSubmitting}>
+						{form.isSubmitting && (
+							<IconLoader class="mr-2 size-4 animate-spin" />
 						)}
-					</form.Subscribe>
+						Enter OTP
+					</Button>
 				</div>
-			</form>
+			</Form>
 		</div>
 	);
 }
