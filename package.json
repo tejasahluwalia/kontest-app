@@ -1,58 +1,28 @@
 {
-	"name": "kontest",
+	"name": "kontest-monorepo",
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite",
-		"build": "vite build",
-		"start": "vite preview",
-		"lint": "biome check .",
-		"typecheck": "tsc --noEmit",
-		"db-up": "docker compose -f src/db/docker/docker-compose.yml up -d",
-		"db-down": "docker compose -f src/db/docker/docker-compose.yml down"
+		"dev": "pnpm --parallel dev",
+		"dev:client": "pnpm --filter @kontest/client dev",
+		"dev:server": "pnpm --filter @kontest/server dev",
+		"dev:docs": "pnpm --filter @kontest/docs dev",
+		"build": "pnpm --filter \"@kontest/*\" build",
+		"build:client": "pnpm --filter @kontest/client build",
+		"build:server": "pnpm --filter @kontest/server build",
+		"build:docs": "pnpm --filter @kontest/docs build",
+		"preview:docs": "pnpm --filter @kontest/docs preview",
+		"lint": "biome check . --write",
+		"typecheck": "pnpm --filter \"@kontest/*\" typecheck",
+		"db:up": "docker compose -f packages/db/docker/docker-compose.yml up -d",
+		"db:down": "docker compose -f packages/db/docker/docker-compose.yml down",
+		"db:push": "pnpm --filter @kontest/db push",
+		"db:generate": "pnpm --filter @kontest/db generate",
+		"db:studio": "pnpm --filter @kontest/db studio"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.8",
-		"@solidjs/vite-plugin": "^3.0.0-next.28",
-		"@types/bun": "^1.3.14",
-		"@types/pg": "^8.21.0",
-		"tsx": "^4.23.12",
-		"typescript": "^7.0.2",
-		"vite": "^8.2.1"
-	},
-	"dependencies": {
-		"@elysia/cors": "2.0.0-beta.1",
-		"@elysia/eden": "2.0.0-beta.2",
-		"@elysia/static": "2.0.0-beta.1",
-		"@formisch/solid": "^1.0.0-rc.0",
-		"@kobalte/core": "2.0.0-alpha.0",
-		"@kobalte/utils": "2.0.0-alpha.0",
-		"@sinclair/typebox": "0.34.52",
-		"@solidjs/web": "2.0.0-rc.0",
-		"@tailwindcss/vite": "^4.3.3",
-		"@tanstack/solid-query": "6.0.0-rc.0",
-		"@tanstack/solid-router": "2.0.0-rc.0",
-		"@tanstack/solid-start": "2.0.0-rc.0",
-		"better-auth": "^1.6.29",
-		"clsx": "^2.1.1",
-		"cva": "1.0.0-beta.8",
-		"dotenv": "^17.4.2",
-		"drizzle-kit": "^0.31.10",
-		"drizzle-orm": "^0.45.2",
-		"drizzle-typebox": "^0.3.3",
-		"effect": "^3.22.1",
-		"elysia": "2.0.0-beta.1",
-		"nanoid": "^6.0.1",
-		"pg": "^8.23.0",
-		"solid-js": "2.0.0-rc.0",
-		"tailwind-merge": "^3.6.0",
-		"tailwindcss": "^4.3.3",
-		"tw-animate-css": "^1.4.0",
-		"valibot": "^1.4.2"
-	},
-	"trustedDependencies": [
-		"@tailwindcss/oxide",
-		"esbuild"
-	]
+		"typescript": "^7.0.2"
+	}
 }

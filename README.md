@@ -1,33 +1,92 @@
-# Unnamed project
-A submissions acceptance, management and judging platform for open calls, grants, contests, etc.
+# Kontest Monorepo
 
-## App structure
+A submissions acceptance, management, and judging platform for open calls, grants, hackathons, competitions, and awards.
 
-- `src/client` — Solid 2 + TanStack Router frontend
-- `src/server` — Bun server running Elysia 2
-- `src/db` — Postgres schema and Drizzle configuration
+This repository is structured as a modular monorepo managed with **pnpm** and powered by **Bun**, **SolidJS 2**, **ElysiaJS**, and **Drizzle ORM**.
 
-`bun run build` generates the TanStack Router route tree, creates the frontend
-bundle in `dist`, then compiles the Elysia server. Elysia's static plugin serves
-the bundle (including the SPA fallback) from `/`.
+---
 
-## UI Libraries (Solid 2)
+## Workspace Structure
 
-This project runs `solid-js@2.0.0-rc.0`.
-- **Kobalte:** Uses official upstream `@kobalte/core@2.0.0-alpha.0` and `@kobalte/utils@2.0.0-alpha.0`.
+```
+kontest-app/
+├── apps/
+│   ├── client/          # SolidJS 2 Single-Page Application (TanStack Router / Solid 2 Router)
+│   ├── server/          # ElysiaJS Backend API (BetterAuth, Plugins, Typed RPC)
+│   └── docs/            # Marketing & Documentation Website (Statically rendered with Bun + JSX + Markdown)
+├── packages/
+│   └── db/              # PostgreSQL Drizzle ORM Schema, TypeBox Models & Docker Compose
+├── pnpm-workspace.yaml  # pnpm workspace definition
+└── biome.json           # Shared Biome formatting and linting configuration
+```
 
-| Package | Version | Status |
-| --- | --- | --- |
-| `@kobalte/core` | `2.0.0-alpha.0` | Upstream (official alpha) |
-| `@kobalte/utils` | `2.0.0-alpha.0` | Upstream (official alpha) |
+---
 
-## Commands
+## Packages & Components
 
-- `bun run dev` — watch routes, rebuild the client bundle, and run the server
-- `bun run build` — build the client bundle and compiled server
-- `bun run start` — run the server from source
-- `bun run db-up` / `bun run db-down` — manage the local Postgres container
+| Package | Directory | Tech Stack | Description |
+| :--- | :--- | :--- | :--- |
+| **`@kontest/client`** | `apps/client` | SolidJS 2, Vite, Tailwind CSS, Kobalte UI | Interactive frontend app for hosts, jurors, and applicants. |
+| **`@kontest/server`** | `apps/server` | ElysiaJS 2, Bun, BetterAuth | REST/RPC backend with plugin-based architecture and session handling. |
+| **`@kontest/docs`** | `apps/docs` | Bun, Pure JSX, Custom Markdown SSG | High-performance static marketing landing page & documentation. |
+| **`@kontest/db`** | `packages/db` | Drizzle ORM, PostgreSQL, Docker | Centralized database schema, migration scripts, and TypeBox query models. |
 
-## Contributing guidelines
--
--
+---
+
+## Quickstart
+
+### 1. Install Dependencies
+```bash
+pnpm install
+```
+
+### 2. Configure Environment
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+
+### 3. Start Database (PostgreSQL)
+```bash
+# Start PostgreSQL via Docker Compose
+pnpm db:up
+
+# Push schema to database
+pnpm db:push
+```
+
+### 4. Run Development Servers
+```bash
+# Run all apps concurrently
+pnpm dev
+
+# Or run individual apps:
+pnpm dev:client   # SolidJS App on http://localhost:5173
+pnpm dev:server   # ElysiaJS Server on http://localhost:3000
+pnpm dev:docs     # Marketing & Docs on http://localhost:4000
+```
+
+---
+
+## Build Commands
+
+| Command | Action |
+| :--- | :--- |
+| `pnpm build` | Builds all packages across the workspace |
+| `pnpm build:client` | Builds SolidJS client bundle using Vite |
+| `pnpm build:docs` | Statically renders landing page & docs HTML using Bun SSG |
+| `pnpm preview:docs`| Serves the generated static docs site from `apps/docs/dist` |
+| `pnpm lint` | Runs Biome code formatter and linter |
+| `pnpm typecheck` | Validates TypeScript types across the monorepo |
+
+---
+
+## Documentation
+
+Comprehensive guides are available in `apps/docs` and rendered statically:
+- **[Introduction](/docs/introduction.html)**
+- **[Getting Started](/docs/getting-started.html)**
+- **[Architecture Overview](/docs/architecture.html)**
+- **[SolidJS 2 Router Migration Guide](/docs/routing-migration.html)**
+- **[Server API & Eden Treaty](/docs/server-api.html)**
+- **[Database Schema](/docs/database-schema.html)**

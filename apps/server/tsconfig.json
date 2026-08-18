@@ -1,0 +1,15 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"types": ["@types/bun"],
+		"paths": {
+			"@server/*": ["./src/*"],
+			"@kontest/db": ["../../packages/db/src/index.ts"],
+			"@kontest/db/*": ["../../packages/db/src/*"],
+			"@db/*": ["../../packages/db/src/*"]
+		}
+	},
+	"include": ["src/**/*"]
+}

@@ -10,7 +10,9 @@
 		"includes": [
 			"**",
 			"!dist",
+			"!**/dist",
 			"!.tanstack",
+			"!**/node_modules",
 			"!node_modules",
 			"!**/routeTree.gen.ts"
 		]

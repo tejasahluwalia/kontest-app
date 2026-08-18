@@ -1,0 +1,16 @@
+{
+	"name": "@kontest/docs",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "bun run src/build.tsx",
+		"dev": "bun --watch src/dev.ts",
+		"preview": "bun run src/preview.ts",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@types/bun": "^1.3.14",
+		"typescript": "^7.0.2"
+	}
+}

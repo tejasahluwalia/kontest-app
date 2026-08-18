@@ -1,0 +1,17 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"jsx": "preserve",
+		"jsxImportSource": "@solidjs/web",
+		"types": ["bun-types", "vite/client"],
+		"paths": {
+			"~/*": ["./src/*"],
+			"@client/*": ["./src/*"],
+			"@server/*": ["../server/src/*"],
+			"@kontest/db": ["../../packages/db/src/index.ts"],
+			"@kontest/db/*": ["../../packages/db/src/*"],
+			"@db/*": ["../../packages/db/src/*"]
+		}
+	},
+	"include": ["src/**/*", "vite.config.ts"]
+}

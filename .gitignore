@@ -1,38 +1,31 @@
-# dependencies (bun install)
+# dependencies
 node_modules
+.pnpm-store
 
-# tanstack router
+# router
 .tanstack
-src/client/routeTree.gen.ts
+**/routeTree.gen.ts
 
 # output
 out
 dist
+**/dist
 *.tgz
 
-# code coverage
+# logs & coverage
 coverage
 *.lcov
-
-# logs
 logs
-_.log
-report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+*.log
 
-# dotenv environment variable files
+# environment
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+.env.*
+!.env.example
 
-# caches
-.eslintcache
+# cache & IDE
 .cache
 *.tsbuildinfo
-
-# IntelliJ based IDEs
 .idea
-
-# Finder (MacOS) folder config
+.vscode
 .DS_Store

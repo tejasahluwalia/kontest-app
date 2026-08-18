@@ -1,20 +1,9 @@
 {
-	"compilerOptions": {
-		"strict": true,
-		"strictNullChecks": true,
-		"target": "ES2022",
-		"module": "ESNext",
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"jsx": "preserve",
-		"jsxImportSource": "@solidjs/web",
-		"moduleResolution": "Bundler",
-		"types": ["bun-types", "vite/client"],
-		"paths": {
-			"~/*": ["./src/client/*"],
-			"@client/*": ["./src/client/*"],
-			"@server/*": ["./src/server/*"],
-			"@db/*": ["./src/db/*"]
-		}
-	}
+	"files": [],
+	"references": [
+		{ "path": "./apps/client" },
+		{ "path": "./apps/server" },
+		{ "path": "./apps/docs" },
+		{ "path": "./packages/db" }
+	]
 }
