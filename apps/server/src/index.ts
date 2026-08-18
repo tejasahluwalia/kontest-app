@@ -1,5 +1,6 @@
 import { cors } from "@elysia/cors";
 import { Elysia } from "elysia";
+import { env } from "./env";
 import betterAuthView from "./lib/auth-view";
 import { hostPlugin } from "./plugins/host";
 import { jurorPlugin } from "./plugins/juror";
@@ -27,7 +28,7 @@ export const app = new Elysia()
 	)
 	.get("/", () => ({ status: "ok", name: "kontest-server", version: "0.0.0" }));
 
-const port = Number(process.env.PORT || process.env.SERVER_PORT || 3000);
+const port = env.PORT;
 
 if (import.meta.main) {
 	app.listen(port, () => {

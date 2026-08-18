@@ -3,14 +3,14 @@
  * @see https://elysiajs.com/recipe/drizzle.html#utility
  */
 
-import { Kind, type TObject, type TProperties } from "@sinclair/typebox";
 import type { Table } from "drizzle-orm";
 import {
 	type BuildSchema,
 	createInsertSchema,
 	createSelectSchema,
 	createUpdateSchema,
-} from "drizzle-orm/typebox-legacy";
+} from "drizzle-orm/typebox";
+import { type TObject, type TProperties, Type } from "typebox";
 
 type Spread<
 	T extends TObject | Table,
@@ -27,8 +27,8 @@ type Spread<
 					? BuildSchema<"insert", T["_"]["columns"], undefined>["properties"]
 					: Mode extends "update"
 						? BuildSchema<"update", T["_"]["columns"], undefined>["properties"]
-						: {}
-			: {};
+						: Record<string, never>
+			: Record<string, never>;
 
 /**
  * Spread a Drizzle schema into a plain object
@@ -47,7 +47,7 @@ export const spread = <
 		case "insert":
 		case "select":
 		case "update":
-			if (Kind in schema) {
+			if (Type.IsObject(schema)) {
 				table = schema;
 				break;
 			}
@@ -62,7 +62,7 @@ export const spread = <
 			break;
 
 		default:
-			if (!(Kind in schema)) throw new Error("Expect a schema");
+			if (!Type.IsObject(schema)) throw new Error("Expect a schema");
 			table = schema;
 	}
 

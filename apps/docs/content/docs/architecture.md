@@ -17,7 +17,7 @@ Kontest is structured as an integrated, type-safe monorepo. Every layer—from d
 
 ```
 +-------------------------------------------------------------+
-|                     pnpm Workspace Root                     |
+|                     Bun Workspace Root                      |
 +-------------------------------------------------------------+
          |                        |                   |
          v                        v                   v

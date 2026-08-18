@@ -1,8 +1,10 @@
-declare module "bun" {
-	interface Env {
-		DATABASE_URL: string;
-		AUTH_SECRET: string;
-		PUBLIC_SERVER_URL?: string;
-		PUBLIC_AUTH_URL?: string;
-	}
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+	readonly VITE_SERVER_URL?: string;
+	readonly VITE_AUTH_URL?: string;
+}
+
+interface ImportMeta {
+	readonly env: ImportMetaEnv;
 }

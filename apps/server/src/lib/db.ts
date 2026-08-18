@@ -1,10 +1,7 @@
 import * as schema from "@db/schema";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { env } from "../env";
 
-const DATABASE_URL = process.env.DATABASE_URL;
-
-if (!DATABASE_URL) throw Error("DATABASE_URL missing");
-
-export const db = drizzle(DATABASE_URL, {
+export const db = drizzle(env.DATABASE_URL, {
 	relations: schema.relations,
 });

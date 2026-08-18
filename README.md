@@ -2,7 +2,7 @@
 
 A submissions acceptance, management, and judging platform for open calls, grants, hackathons, competitions, and awards.
 
-This repository is structured as a modular monorepo managed with **pnpm** and powered by **Bun**, **SolidJS 2**, **ElysiaJS**, and **Drizzle ORM**.
+This repository is structured as a modular monorepo managed and powered by **Bun**, **SolidJS 2**, **ElysiaJS**, and **Drizzle ORM**.
 
 ---
 
@@ -16,7 +16,7 @@ kontest-app/
 │   └── docs/            # Marketing & Documentation Website (Statically rendered with Bun + JSX + Markdown)
 ├── packages/
 │   └── db/              # PostgreSQL Drizzle ORM Schema, TypeBox Models & Docker Compose
-├── pnpm-workspace.yaml  # pnpm workspace definition
+├── package.json         # Workspace definition, Bun Catalogs & scripts
 └── biome.json           # Shared Biome formatting and linting configuration
 ```
 
@@ -37,7 +37,7 @@ kontest-app/
 
 ### 1. Install Dependencies
 ```bash
-pnpm install
+bun install
 ```
 
 ### 2. Configure Environment
@@ -49,21 +49,21 @@ cp .env.example .env
 ### 3. Start Database (PostgreSQL)
 ```bash
 # Start PostgreSQL via Docker Compose
-pnpm db:up
+bun db:up
 
 # Push schema to database
-pnpm db:push
+bun db:push
 ```
 
 ### 4. Run Development Servers
 ```bash
 # Run all apps concurrently
-pnpm dev
+bun dev
 
 # Or run individual apps:
-pnpm dev:client   # SolidJS App on http://localhost:5173
-pnpm dev:server   # ElysiaJS Server on http://localhost:3000
-pnpm dev:docs     # Marketing & Docs on http://localhost:4000
+bun dev:client   # SolidJS App on http://localhost:5173
+bun dev:server   # ElysiaJS Server on http://localhost:3000
+bun dev:docs     # Marketing & Docs on http://localhost:4000
 ```
 
 ---
@@ -72,12 +72,12 @@ pnpm dev:docs     # Marketing & Docs on http://localhost:4000
 
 | Command | Action |
 | :--- | :--- |
-| `pnpm build` | Builds all packages across the workspace |
-| `pnpm build:client` | Builds SolidJS client bundle using Vite |
-| `pnpm build:docs` | Statically renders landing page & docs HTML using Bun SSG |
-| `pnpm preview:docs`| Serves the generated static docs site from `apps/docs/dist` |
-| `pnpm lint` | Runs Biome code formatter and linter |
-| `pnpm typecheck` | Validates TypeScript types across the monorepo |
+| `bun build` | Builds all packages across the workspace |
+| `bun build:client` | Builds SolidJS client bundle using Vite |
+| `bun build:docs` | Statically renders landing page & docs HTML using Bun SSG |
+| `bun preview:docs`| Serves the generated static docs site from `apps/docs/dist` |
+| `bun lint` | Runs Biome code formatter and linter |
+| `bun typecheck` | Validates TypeScript types across the monorepo |
 
 ---
 

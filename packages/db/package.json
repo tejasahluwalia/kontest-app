@@ -7,6 +7,7 @@
 	"types": "./src/index.ts",
 	"exports": {
 		".": "./src/index.ts",
+		"./env": "./src/env.ts",
 		"./schema": "./src/schema.ts",
 		"./model": "./src/model.ts",
 		"./utils": "./src/utils.ts"
@@ -20,15 +21,17 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@sinclair/typebox": "0.34.52",
-		"drizzle-orm": "1.0.0-rc.4",
-		"elysia": "2.0.0-beta.4",
-		"nanoid": "^6.0.1",
-		"pg": "^8.23.0"
+		"drizzle-orm": "catalog:",
+		"elysia": "catalog:",
+		"nanoid": "catalog:",
+		"pg": "catalog:",
+		"typebox": "catalog:",
+		"valibot": "catalog:"
 	},
 	"devDependencies": {
-		"@types/pg": "^8.23.0",
-		"drizzle-kit": "1.0.0-rc.4",
-		"typescript": "^7.0.2"
+		"@types/bun": "catalog:",
+		"@types/pg": "catalog:",
+		"drizzle-kit": "catalog:",
+		"typescript": "catalog:"
 	}
 }

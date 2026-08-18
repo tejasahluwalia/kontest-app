@@ -91,7 +91,11 @@ function EmailForm({
 					{(field) => (
 						<TextField class="gap-1">
 							<TextFieldLabel class="sr-only">Name</TextFieldLabel>
-							<TextFieldInput {...field.props} value={field.input ?? ""} />
+							<TextFieldInput
+								{...field.props}
+								value={field.input ?? ""}
+								placeholder="name"
+							/>
 						</TextField>
 					)}
 				</Field>
@@ -143,7 +147,7 @@ export function OtpForm({ email, name }: { email: string; name: string }) {
 					await server.api.user.me.patch({
 						email,
 						name,
-					} as any);
+					});
 					navigate({ to: "/host" });
 				},
 				// TODO: handle error

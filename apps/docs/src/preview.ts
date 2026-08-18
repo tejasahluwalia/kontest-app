@@ -1,9 +1,10 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { env } from "./env";
 
 const ROOT_DIR = resolve(import.meta.dirname, "..");
 const DIST_DIR = join(ROOT_DIR, "dist");
-const PORT = Number(process.env.PORT || 4173);
+const PORT = env.PORT;
 
 if (!existsSync(DIST_DIR)) {
 	console.error("❌ dist directory does not exist. Run 'bun run build' first.");

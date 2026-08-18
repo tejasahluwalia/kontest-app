@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"jsx": "preserve",
 		"jsxImportSource": "@solidjs/web",
-		"types": ["bun-types", "vite/client"],
+		"types": ["@types/bun", "vite/client"],
 		"paths": {
 			"~/*": ["./src/*"],
 			"@client/*": ["./src/*"],

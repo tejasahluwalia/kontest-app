@@ -9,7 +9,7 @@ export function Hero() {
 						<span style="color: var(--brand-primary); font-weight: 700;">
 							NEW
 						</span>
-						<span>Modular Monorepo Powered by pnpm &amp; Bun</span>
+						<span>Modular Monorepo Powered by Bun</span>
 					</div>
 
 					<h1 class="hero-title">
@@ -62,20 +62,20 @@ export function Hero() {
 								# 1. Clone &amp; install monorepo
 							</div>
 							<div>
-								<span style="color: var(--brand-primary);">$</span> pnpm install
+								<span style="color: var(--brand-primary);">$</span> bun install
 							</div>
 							<div style="color: var(--text-muted); margin-top: 0.75rem; margin-bottom: 0.5rem;">
 								# 2. Boot PostgreSQL &amp; push schema
 							</div>
 							<div>
-								<span style="color: var(--brand-primary);">$</span> pnpm db:up
-								&amp;&amp; pnpm db:push
+								<span style="color: var(--brand-primary);">$</span> bun db:up
+								&amp;&amp; bun db:push
 							</div>
 							<div style="color: var(--text-muted); margin-top: 0.75rem; margin-bottom: 0.5rem;">
 								# 3. Start development servers
 							</div>
 							<div>
-								<span style="color: var(--brand-primary);">$</span> pnpm dev
+								<span style="color: var(--brand-primary);">$</span> bun dev
 							</div>
 							<div style="margin-top: 1rem; color: #10b981; font-weight: 600;">
 								✓ Client ready on http://localhost:5173

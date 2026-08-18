@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { env } from "./env";
 import { renderToString } from "./lib/jsx";
 import {
 	type DocFrontmatter,
@@ -12,7 +13,7 @@ import { LandingPage } from "./pages/LandingPage";
 const ROOT_DIR = resolve(import.meta.dirname, "..");
 const CONTENT_DIR = join(ROOT_DIR, "content/docs");
 const PUBLIC_DIR = join(ROOT_DIR, "public");
-const PORT = Number(process.env.DOCS_PORT || 4000);
+const PORT = env.DOCS_PORT;
 
 function getAllDocs(): ParsedMarkdown[] {
 	if (!existsSync(CONTENT_DIR)) return [];

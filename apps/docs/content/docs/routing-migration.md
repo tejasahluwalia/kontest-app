@@ -35,8 +35,8 @@ Update `apps/client/package.json` dependencies:
 
 ```bash
 # In apps/client
-pnpm add @solidjs/router@latest
-pnpm remove @tanstack/solid-router @tanstack/solid-start
+bun add @solidjs/router@latest
+bun remove @tanstack/solid-router @tanstack/solid-start
 ```
 
 ---

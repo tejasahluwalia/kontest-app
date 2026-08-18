@@ -18,15 +18,14 @@ Follow this guide to get the complete Kontest monorepo running on your local dev
 Before starting, ensure you have the following installed on your machine:
 
 - **Node.js**: `v20+` or `v22+`
-- **pnpm**: `v9+` or `v10+` (Monorepo package manager)
-- **Bun**: `v1.2+` (High-performance JavaScript runtime)
+- **Bun**: `v1.2+` (High-performance JavaScript runtime & package manager)
 - **Docker**: For running PostgreSQL database container
 
 ---
 
 ## 1. Clone & Install Dependencies
 
-Clone the repository and install all workspace dependencies using `pnpm`:
+Clone the repository and install all workspace dependencies using `bun`:
 
 ```bash
 # Clone the repository
@@ -34,11 +33,11 @@ git clone https://github.com/kontest/kontest-app.git
 cd kontest-app
 
 # Install all workspace packages
-pnpm install
+bun install
 ```
 
 > [!TIP]
-> pnpm automatically links workspace packages such as `@kontest/db` across `@kontest/client` and `@kontest/server` with zero build-step overhead during local development.
+> Bun automatically links workspace packages such as `@kontest/db` across `@kontest/client` and `@kontest/server` with zero build-step overhead during local development.
 
 ---
 
@@ -60,8 +59,8 @@ DATABASE_URL=postgres://user:password@localhost:5432/postgres
 BETTER_AUTH_SECRET=uQXxh1Qq6iepzWc9Raga5IsuLbrWc6uo
 
 # Client & Server base URLs
-PUBLIC_AUTH_URL=http://localhost:3000
-PUBLIC_SERVER_URL=http://localhost:3000
+VITE_SERVER_URL=http://localhost:3000
+VITE_AUTH_URL=http://localhost:3000
 ```
 
 ---
@@ -72,17 +71,17 @@ Start the PostgreSQL instance defined in Docker Compose:
 
 ```bash
 # Start PostgreSQL container in background
-pnpm db:up
+bun db:up
 ```
 
 To run database migrations or push schema changes directly:
 
 ```bash
 # Push schema changes to database
-pnpm db:push
+bun db:push
 
 # Open Drizzle Studio in browser
-pnpm db:studio
+bun db:studio
 ```
 
 ---
@@ -93,19 +92,19 @@ You can launch all applications in parallel or run individual components indepen
 
 ### Run Everything Together
 ```bash
-pnpm dev
+bun dev
 ```
 
 ### Run Individual Components
 ```bash
 # Launch SolidJS Client (http://localhost:5173)
-pnpm dev:client
+bun dev:client
 
 # Launch ElysiaJS Backend Server (http://localhost:3000)
-pnpm dev:server
+bun dev:server
 
 # Launch Marketing & Docs Static Site (http://localhost:4000)
-pnpm dev:docs
+bun dev:docs
 ```
 
 ---
@@ -114,13 +113,13 @@ pnpm dev:docs
 
 | Command | Action |
 | :--- | :--- |
-| `pnpm dev` | Starts all apps in parallel |
-| `pnpm dev:client` | Starts Vite dev server for `@kontest/client` |
-| `pnpm dev:server` | Starts Bun watch server for `@kontest/server` |
-| `pnpm dev:docs` | Starts Bun dev server for `@kontest/docs` |
-| `pnpm build` | Builds all packages across workspace |
-| `pnpm build:docs` | Generates static HTML & CSS files in `apps/docs/dist` |
-| `pnpm lint` | Runs Biome linter across monorepo |
-| `pnpm typecheck` | Validates TypeScript types across all packages |
-| `pnpm db:up` | Boots Postgres Docker container |
-| `pnpm db:down` | Stops Postgres Docker container |
+| `bun dev` | Starts all apps in parallel |
+| `bun dev:client` | Starts Vite dev server for `@kontest/client` |
+| `bun dev:server` | Starts Bun watch server for `@kontest/server` |
+| `bun dev:docs` | Starts Bun dev server for `@kontest/docs` |
+| `bun build` | Builds all packages across workspace |
+| `bun build:docs` | Generates static HTML & CSS files in `apps/docs/dist` |
+| `bun lint` | Runs Biome linter across monorepo |
+| `bun typecheck` | Validates TypeScript types across all packages |
+| `bun db:up` | Boots Postgres Docker container |
+| `bun db:down` | Stops Postgres Docker container |

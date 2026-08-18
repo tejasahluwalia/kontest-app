@@ -2,9 +2,12 @@ import * as schema from "@db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { emailOTP } from "better-auth/plugins";
+import { env } from "../env";
 import { db } from "./db";
 
 export const auth = betterAuth({
+	baseURL: env.VITE_AUTH_URL,
+	secret: env.AUTH_SECRET,
 	database: drizzleAdapter(db, {
 		provider: "pg",
 		schema,

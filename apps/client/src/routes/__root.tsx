@@ -1,6 +1,5 @@
 import {
 	ColorModeProvider,
-	ColorModeScript,
 	createLocalStorageManager,
 } from "@kobalte/core/color-mode";
 import type { QueryClient } from "@tanstack/solid-query";
@@ -9,11 +8,9 @@ import {
 	type ErrorComponentProps,
 	HeadContent,
 	Outlet,
-	Scripts,
 } from "@tanstack/solid-router";
 import { Toaster } from "~/components/ui/toast";
 import type { authClient } from "~/lib/auth-client";
-import "~/styles.css";
 
 interface RootContext {
 	auth: typeof authClient.getSession;
@@ -29,35 +26,27 @@ export const Route = createRootRouteWithContext<RootContext>()({
 		],
 		links: [],
 	}),
-	shellComponent: RootDocument,
+	component: RootComponent,
 	errorComponent: ErrorComponent,
 });
 
-function RootDocument() {
+function RootComponent() {
 	const storageManager = createLocalStorageManager("vite-ui-theme");
 	return (
-		<html lang="en">
-			<head>
-				<HeadContent />
-				<ColorModeScript storageType={storageManager.type} />
-			</head>
-			<body>
-				<ColorModeProvider storageManager={storageManager}>
-					<Outlet />
-					<Toaster />
-				</ColorModeProvider>
-				<Scripts />
-			</body>
-		</html>
+		<ColorModeProvider storageManager={storageManager}>
+			<HeadContent />
+			<Outlet />
+			<Toaster />
+		</ColorModeProvider>
 	);
 }
 
 function ErrorComponent({ error }: ErrorComponentProps) {
 	return (
-		<div>
-			<h1>Error</h1>
-			<p>An error occurred.</p>
-			<p>{error.message}</p>
+		<div class="p-6">
+			<h1 class="text-xl font-bold text-destructive">Error</h1>
+			<p class="text-sm text-muted-foreground">An error occurred.</p>
+			<p class="mt-2 text-sm">{error.message}</p>
 		</div>
 	);
 }

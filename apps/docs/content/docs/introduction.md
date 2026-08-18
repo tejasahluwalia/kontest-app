@@ -12,7 +12,7 @@ slug: introduction
 **Kontest** is a modern, type-safe submission management and evaluation platform designed for organizations hosting hackathons, developer grants, design awards, and multi-stage competitions.
 
 > [!NOTE]
-> Kontest is architected as a clean, high-performance monorepo managed with **pnpm**, utilizing **SolidJS 2** on the frontend, **ElysiaJS** and **Bun** on the backend, and **Drizzle ORM** with PostgreSQL for database persistence.
+> Kontest is architected as a clean, high-performance monorepo managed and powered by **Bun**, utilizing **SolidJS 2** on the frontend, **ElysiaJS** on the backend, and **Drizzle ORM** with PostgreSQL for database persistence.
 
 ---
 
