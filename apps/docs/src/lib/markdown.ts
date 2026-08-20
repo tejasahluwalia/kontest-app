@@ -91,9 +91,21 @@ function highlightCode(code: string, lang: string): string {
 	const escaped = escapeHtml(code);
 	// Basic syntax highlighting for keywords, strings, comments, numbers
 	if (
-		["ts", "tsx", "js", "jsx", "json", "yaml", "yml", "sh", "bash"].includes(
-			lang.toLowerCase(),
-		)
+		[
+			"ts",
+			"typescript",
+			"tsx",
+			"js",
+			"javascript",
+			"jsx",
+			"json",
+			"yaml",
+			"yml",
+			"sh",
+			"bash",
+			"shell",
+			"zsh",
+		].includes(lang.toLowerCase())
 	) {
 		return escaped
 			.replace(

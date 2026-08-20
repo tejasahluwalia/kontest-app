@@ -7,9 +7,6 @@ interface FormBuilderProps {
 }
 
 function FormBuilderContent() {
-	const { formSchema, isPreviewMode, startPreview, stopPreview, saveForm } =
-		useFormBuilder();
-
 	return (
 		<div class="space-y-6">
 			<FormBuilderCanvas />

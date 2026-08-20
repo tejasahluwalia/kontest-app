@@ -10,11 +10,13 @@
 		"./env": "./src/env.ts",
 		"./schema": "./src/schema.ts",
 		"./model": "./src/model.ts",
-		"./utils": "./src/utils.ts"
+		"./utils": "./src/utils.ts",
+		"./seed": "./src/seed.ts"
 	},
 	"scripts": {
 		"generate": "drizzle-kit generate",
 		"push": "drizzle-kit push",
+		"seed": "bun --env-file=../../.env --env-file=.env run src/seed.ts",
 		"studio": "drizzle-kit studio",
 		"db:up": "docker compose -f docker/docker-compose.yml up -d",
 		"db:down": "docker compose -f docker/docker-compose.yml down",
@@ -23,6 +25,7 @@
 	"dependencies": {
 		"drizzle-orm": "catalog:",
 		"elysia": "catalog:",
+		"@kontest/env": "workspace:*",
 		"nanoid": "catalog:",
 		"pg": "catalog:",
 		"typebox": "catalog:",

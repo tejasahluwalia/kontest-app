@@ -21,7 +21,6 @@ export function FormFlowCanvas() {
 		selectedStepId,
 		addEdgeToStep,
 		removeEdgeFromStep,
-		updateEdgeInStep,
 		updateStepInGraph,
 	} = useFormBuilder();
 

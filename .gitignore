@@ -25,6 +25,7 @@ logs
 # cache & IDE
 .cache
 *.tsbuildinfo
-.idea
-.vscode
-.DS_Store
+# artifacts & browser binaries
+artifacts/
+chrome/
+.artifacts/

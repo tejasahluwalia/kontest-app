@@ -13,6 +13,7 @@
 	"dependencies": {
 		"@elysia/cors": "2.0.0-beta.1",
 		"@kontest/db": "workspace:*",
+		"@kontest/env": "workspace:*",
 		"better-auth": "catalog:",
 		"drizzle-orm": "catalog:",
 		"elysia": "catalog:",

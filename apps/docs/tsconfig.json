@@ -6,7 +6,9 @@
 		"jsxFragmentFactory": "Fragment",
 		"types": ["@types/bun"],
 		"paths": {
-			"~/*": ["./src/*"]
+			"~/*": ["./src/*"],
+			"@kontest/env": ["../../packages/env/src/index.ts"],
+			"@kontest/env/*": ["../../packages/env/src/*"]
 		}
 	},
 	"include": ["src/**/*"]

@@ -43,24 +43,43 @@ bun install
 
 ## 2. Configure Environment Variables
 
-Copy the sample `.env.example` file to `.env`:
+Sync the sample `.env.example` file to `.env`:
 
 ```bash
-cp .env.example .env
+bun env:sync
+# or: cp .env.example .env
+```
+
+Validate that your environment configuration passes all Valibot schemas across `@kontest/db`, `@kontest/server`, `@kontest/client`, and `@kontest/docs`:
+
+```bash
+bun env:check
 ```
 
 Ensure your `.env` contains the required keys:
 
 ```env
-# Database connection string
-DATABASE_URL=postgres://user:password@localhost:5432/postgres
+NODE_ENV=development
 
-# BetterAuth secret key
-BETTER_AUTH_SECRET=uQXxh1Qq6iepzWc9Raga5IsuLbrWc6uo
+# Database & PostgreSQL components (DATABASE_URL is constructed automatically)
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=postgres
 
-# Client & Server base URLs
+# Backend server & BetterAuth
+PORT=3000
+SERVER_URL=http://localhost:3000
+AUTH_URL=http://localhost:3000
+AUTH_SECRET=kontest_dev_super_secret_key_1234567890
+
+# Client base URLs (Vite)
 VITE_SERVER_URL=http://localhost:3000
 VITE_AUTH_URL=http://localhost:3000
+
+# Documentation site
+DOCS_PORT=4000
 ```
 
 ---

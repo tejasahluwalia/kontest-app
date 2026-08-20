@@ -22,6 +22,7 @@
 		"@formisch/solid": "1.0.0-rc.0",
 		"@kobalte/core": "2.0.0-alpha.0",
 		"@kontest/db": "workspace:*",
+		"@kontest/env": "workspace:*",
 		"@solidjs/web": "2.0.0-rc.0",
 		"@tanstack/solid-query": "6.0.0-rc.0",
 		"@tanstack/solid-router": "2.0.0-rc.0",

@@ -3,7 +3,11 @@
 	"compilerOptions": {
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
-		"types": ["@types/bun"]
+		"types": ["@types/bun"],
+		"paths": {
+			"@kontest/env": ["../env/src/index.ts"],
+			"@kontest/env/*": ["../env/src/*"]
+		}
 	},
 	"include": ["src/**/*", "drizzle.config.ts"]
 }

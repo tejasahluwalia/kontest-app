@@ -33,6 +33,7 @@ export function Navbar({ activePage }: NavbarProps) {
 
 				<div class="nav-actions">
 					<button
+						type="button"
 						id="theme-toggle"
 						class="theme-toggle"
 						aria-label="Toggle color theme"
@@ -47,7 +48,10 @@ export function Navbar({ activePage }: NavbarProps) {
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
+							role="img"
+							aria-label="Theme toggle icon"
 						>
+							<title>Theme toggle icon</title>
 							<circle cx="12" cy="12" r="4"></circle>
 							<path d="M12 2v2"></path>
 							<path d="M12 20v2"></path>

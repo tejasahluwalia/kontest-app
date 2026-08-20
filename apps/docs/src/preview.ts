@@ -4,7 +4,7 @@ import { env } from "./env";
 
 const ROOT_DIR = resolve(import.meta.dirname, "..");
 const DIST_DIR = join(ROOT_DIR, "dist");
-const PORT = env.PORT;
+const PORT = env.DOCS_PORT;
 
 if (!existsSync(DIST_DIR)) {
 	console.error("❌ dist directory does not exist. Run 'bun run build' first.");

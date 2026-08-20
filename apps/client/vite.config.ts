@@ -76,6 +76,20 @@ export default defineConfig({
 			{ find: "~", replacement: resolve(import.meta.dirname, "./src") },
 			{ find: "@client", replacement: resolve(import.meta.dirname, "./src") },
 			{
+				find: "@kontest/env/client",
+				replacement: resolve(
+					import.meta.dirname,
+					"../../packages/env/src/client.ts",
+				),
+			},
+			{
+				find: "@kontest/env",
+				replacement: resolve(
+					import.meta.dirname,
+					"../../packages/env/src/index.ts",
+				),
+			},
+			{
 				find: "@kontest/db",
 				replacement: resolve(
 					import.meta.dirname,

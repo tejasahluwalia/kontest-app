@@ -8,6 +8,8 @@
 			"~/*": ["./src/*"],
 			"@client/*": ["./src/*"],
 			"@server/*": ["../server/src/*"],
+			"@kontest/env": ["../../packages/env/src/index.ts"],
+			"@kontest/env/*": ["../../packages/env/src/*"],
 			"@kontest/db": ["../../packages/db/src/index.ts"],
 			"@kontest/db/*": ["../../packages/db/src/*"],
 			"@db/*": ["../../packages/db/src/*"]

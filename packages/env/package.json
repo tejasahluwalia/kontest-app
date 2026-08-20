@@ -1,0 +1,28 @@
+{
+	"name": "@kontest/env",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"main": "./src/index.ts",
+	"types": "./src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./server": "./src/server.ts",
+		"./client": "./src/client.ts",
+		"./db": "./src/db.ts",
+		"./docs": "./src/docs.ts",
+		"./schema": "./src/schema.ts",
+		"./check": "./src/check.ts"
+	},
+	"scripts": {
+		"check": "bun --env-file=../../.env --env-file=.env run src/check.ts",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"valibot": "catalog:"
+	},
+	"devDependencies": {
+		"@types/bun": "catalog:",
+		"typescript": "catalog:"
+	}
+}
