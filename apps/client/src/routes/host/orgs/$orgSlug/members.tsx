@@ -164,7 +164,7 @@ function RouteComponent() {
 			await server.api.host
 				.orgs({ orgSlug: orgSlug() })
 				.members({ memberId })
-				.patch({ role: newRole as any });
+				.patch({ role: newRole });
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["members"] });
@@ -333,11 +333,11 @@ function AddMemberDialog(props: { orgSlug: string }) {
 	const createInviteMutation = useMutation(() => ({
 		mutationFn: (newInvite: {
 			email: typeof schema.memberInvite.$inferInsert.email;
-			role: typeof schema.memberInvite.$inferInsert.role;
+			role: typeof schema.member.$inferSelect.role;
 		}) =>
 			server.api.host.orgs({ orgSlug: props.orgSlug }).members.invites.post({
 				email: newInvite.email,
-				role: newInvite.role as any,
+				role: newInvite.role ?? "member",
 			}),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["invites"] });

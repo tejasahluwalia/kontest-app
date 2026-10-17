@@ -25,7 +25,7 @@ const fieldTypes: FieldTypeOption[] = [
 ];
 
 export function FormBuilderToolbox() {
-	const { addBlockToStep } = useFormBuilder();
+	const _formBuilder = useFormBuilder();
 
 	const handleAddField = (_type: FieldType) => {
 		// addBlockToStep({})

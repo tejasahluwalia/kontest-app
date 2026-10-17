@@ -7,7 +7,7 @@ describe("@kontest/server API Endpoints", () => {
 		const res = await app.handle(new Request("http://localhost:3000/"));
 		expect(res.status).toBe(200);
 
-		const json = (await res.json()) as any;
+		const json = (await res.json()) as { status: string; name: string };
 		expect(json.status).toBe("ok");
 		expect(json.name).toBe("kontest-server");
 	});
@@ -18,7 +18,10 @@ describe("@kontest/server API Endpoints", () => {
 		);
 		expect(res.status).toBe(200);
 
-		const calls = (await res.json()) as any[];
+		const calls = (await res.json()) as Array<{
+			id: string;
+			name: string;
+		}>;
 		expect(Array.isArray(calls)).toBe(true);
 		expect(calls.length).toBeGreaterThan(0);
 	});
@@ -78,7 +81,9 @@ describe("@kontest/server API Endpoints", () => {
 		const tokenMatch = setCookie.match(/better-auth\.session_token=([^;]+)/);
 		expect(tokenMatch).toBeDefined();
 
-		const sessionCookie = `better-auth.session_token=${tokenMatch![1]}`;
+		const sessionCookie = tokenMatch
+			? `better-auth.session_token=${tokenMatch[1]}`
+			: "";
 
 		// 4. Verify session
 		const sessionRes = await app.handle(
@@ -87,7 +92,9 @@ describe("@kontest/server API Endpoints", () => {
 			}),
 		);
 		expect(sessionRes.status).toBe(200);
-		const sessionJson = (await sessionRes.json()) as any;
+		const sessionJson = (await sessionRes.json()) as {
+			user: { email: string };
+		};
 		expect(sessionJson.user.email).toBe(testEmail);
 
 		// 5. Test protected host route
@@ -97,7 +104,10 @@ describe("@kontest/server API Endpoints", () => {
 			}),
 		);
 		expect(hostRes.status).toBe(200);
-		const hostProfiles = (await hostRes.json()) as any[];
+		const hostProfiles = (await hostRes.json()) as Array<{
+			id: string;
+			org: { slug: string; name: string };
+		}>;
 		expect(hostProfiles.length).toBeGreaterThan(0);
 	});
 });

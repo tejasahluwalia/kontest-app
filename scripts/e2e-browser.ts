@@ -10,17 +10,13 @@
 
 import { existsSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
-import { chromium, type Page } from "playwright";
+import { chromium } from "playwright";
 import { db } from "../packages/db/src/index";
 
 const CLIENT_URL =
 	process.env.CLIENT_URL ||
 	process.env.VITE_CLIENT_URL ||
 	"http://localhost:5173";
-const SERVER_URL =
-	process.env.SERVER_URL ||
-	process.env.VITE_SERVER_URL ||
-	"http://localhost:3000";
 const SCREENSHOT_DIR = resolve(process.cwd(), "artifacts/screenshots");
 
 if (!existsSync(SCREENSHOT_DIR)) {
@@ -188,10 +184,11 @@ async function runBrowserE2E() {
 			);
 			process.exit(0);
 		}
-	} catch (err: any) {
+	} catch (err) {
 		const errScreenshotPath = resolve(SCREENSHOT_DIR, "error_state.png");
 		await page.screenshot({ path: errScreenshotPath }).catch(() => {});
-		console.error(`\n❌ Browser test execution failed: ${err.message}`);
+		const message = err instanceof Error ? err.message : String(err);
+		console.error(`\n❌ Browser test execution failed: ${message}`);
 		console.error(
 			`📸 Error state screenshot captured at: ${errScreenshotPath}`,
 		);

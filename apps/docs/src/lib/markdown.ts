@@ -9,7 +9,7 @@ export interface DocFrontmatter {
 	order?: number;
 	badge?: string;
 	slug?: string;
-	[key: string]: any;
+	[key: string]: unknown;
 }
 
 export interface TocItem {

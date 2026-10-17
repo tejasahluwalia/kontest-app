@@ -1,6 +1,6 @@
 import { model } from "@db/model";
 import * as schema from "@db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import Elysia, { t } from "elysia";
 import { setup } from "./setup";
 
@@ -40,11 +40,13 @@ export const hostPlugin = new Elysia({
 					}),
 				},
 				async ({ body, user, db }) => {
-					const newOrg = await db.insert(schema.org).values(body).returning();
-					await db
-						.insert(schema.member)
-						.values({ orgId: newOrg[0].id, userId: user.id, role: "admin" });
-					return newOrg;
+					return db.transaction(async (tx) => {
+						const newOrg = await tx.insert(schema.org).values(body).returning();
+						await tx
+							.insert(schema.member)
+							.values({ orgId: newOrg[0].id, userId: user.id, role: "admin" });
+						return newOrg;
+					});
 				},
 			)
 			.get("/checkAvailability/:slug", async ({ params, db }) => {
@@ -73,7 +75,7 @@ export const hostPlugin = new Elysia({
 						}
 						return { org, member };
 					})
-					.get("/", async ({ params, db, member }) => {
+					.get("/", async ({ db, member }) => {
 						const org = await db.query.org.findMany({
 							where: { id: member.orgId },
 							with: {
@@ -98,7 +100,7 @@ export const hostPlugin = new Elysia({
 								{
 									beforeHandle: ({ status, member }) => {
 										if (member.role !== "admin") {
-											return status(401);
+											return status(403);
 										}
 									},
 								},
@@ -114,18 +116,28 @@ export const hostPlugin = new Elysia({
 													]),
 												}),
 											},
-											async ({ db, body, params }) => {
+											async ({ db, body, params, org }) => {
 												await db
 													.update(schema.member)
 													.set(body)
-													.where(eq(schema.member.id, params.memberId));
+													.where(
+														and(
+															eq(schema.member.id, params.memberId),
+															eq(schema.member.orgId, org.id),
+														),
+													);
 												return;
 											},
 										)
-										.delete("/", async ({ db, params }) => {
+										.delete("/", async ({ db, params, org }) => {
 											await db
 												.delete(schema.member)
-												.where(eq(schema.member.id, params.memberId));
+												.where(
+													and(
+														eq(schema.member.id, params.memberId),
+														eq(schema.member.orgId, org.id),
+													),
+												);
 											return;
 										}),
 							)
@@ -135,7 +147,7 @@ export const hostPlugin = new Elysia({
 								{
 									beforeHandle: ({ status, member }) => {
 										if (member.role !== "admin") {
-											return status(401);
+											return status(403);
 										}
 									},
 								},
@@ -179,12 +191,20 @@ export const hostPlugin = new Elysia({
 												return status(204);
 											},
 										)
-										.delete("/:inviteId", async ({ db, params, status }) => {
-											await db
-												.delete(schema.memberInvite)
-												.where(eq(schema.memberInvite.id, params.inviteId));
-											return status(204);
-										}),
+										.delete(
+											"/:inviteId",
+											async ({ db, params, status, org }) => {
+												await db
+													.delete(schema.memberInvite)
+													.where(
+														and(
+															eq(schema.memberInvite.id, params.inviteId),
+															eq(schema.memberInvite.orgId, org.id),
+														),
+													);
+												return status(204);
+											},
+										),
 							),
 					)
 					.group("/calls", (app) =>
@@ -206,17 +226,20 @@ export const hostPlugin = new Elysia({
 										slug: model.insert.call.slug,
 									}),
 								},
-								async ({ body, db, member, org }) => {
-									const newCall = await db
-										.insert(schema.call)
-										.values({ ...body, orgId: org.id })
-										.returning();
-									await db.insert(schema.callToMember).values({
-										callId: newCall[0].id,
-										memberId: member.id,
-										role: "admin",
+								async ({ body, db, member, org, status }) => {
+									if (member.role !== "admin") return status(403);
+									return db.transaction(async (tx) => {
+										const newCall = await tx
+											.insert(schema.call)
+											.values({ ...body, orgId: org.id })
+											.returning();
+										await tx.insert(schema.callToMember).values({
+											callId: newCall[0].id,
+											memberId: member.id,
+											role: "admin",
+										});
+										return newCall;
 									});
-									return newCall;
 								},
 							)
 							.group("/:callId", (app) =>
@@ -238,6 +261,9 @@ export const hostPlugin = new Elysia({
 										if (!callToMember) {
 											return status(401);
 										}
+										if (callToMember.call.orgId !== member.orgId) {
+											return status(404);
+										}
 										return {
 											callToMember,
 										};
@@ -245,15 +271,25 @@ export const hostPlugin = new Elysia({
 									.put(
 										"/",
 										{
-											body: t.Object(model.insert.call),
+											body: t.Object({
+												name: model.insert.call.name,
+												slug: model.insert.call.slug,
+												metadata: t.Optional(t.Any()),
+												visibility: t.Union([
+													t.Literal("public"),
+													t.Literal("private"),
+													t.Literal("restricted"),
+												]),
+											}),
 										},
-										async ({ body, params, status, db }) => {
+										async ({ body, params, status, db, callToMember }) => {
+											if (callToMember.role !== "admin") return status(403);
 											await db
 												.update(schema.call)
 												.set({
 													...body,
 													updatedAt: new Date(),
-												} as any)
+												})
 												.where(eq(schema.call.id, params.callId));
 
 											return status(202);
@@ -262,7 +298,8 @@ export const hostPlugin = new Elysia({
 									.get("/", async ({ callToMember }) => {
 										return { ...callToMember.call };
 									})
-									.delete("/", async ({ db, params, status }) => {
+									.delete("/", async ({ db, params, status, callToMember }) => {
+										if (callToMember.role !== "admin") return status(403);
 										await db
 											.delete(schema.call)
 											.where(eq(schema.call.id, params.callId));
@@ -287,11 +324,29 @@ export const hostPlugin = new Elysia({
 											.post(
 												"/",
 												{
-													body: t.Object(model.insert.callToMember),
+													body: t.Object({ memberId: t.String() }),
 												},
-												async ({ db, body }) => {
-													await db.insert(schema.callToMember).values(body);
-													return;
+												async ({
+													db,
+													body,
+													params,
+													org,
+													callToMember,
+													status,
+												}) => {
+													if (callToMember.role !== "admin") return status(403);
+													const targetMember = await db.query.member.findFirst({
+														where: { id: body.memberId, orgId: org.id },
+													});
+													if (!targetMember)
+														return status(
+															404,
+															"Member not found in this organization",
+														);
+													await db.insert(schema.callToMember).values({
+														callId: params.callId,
+														memberId: targetMember.id,
+													});
 												},
 											),
 									)
@@ -319,7 +374,7 @@ export const hostPlugin = new Elysia({
 														callToMember,
 													}) => {
 														if (callToMember.role !== "admin") {
-															return status(401);
+															return status(403);
 														}
 														const newRound = await db
 															.insert(schema.round)
@@ -378,7 +433,15 @@ export const hostPlugin = new Elysia({
 																	endDate: t.Optional(t.Date()),
 																}),
 															},
-															async ({ body, params, status, db }) => {
+															async ({
+																body,
+																params,
+																status,
+																db,
+																callToMember,
+															}) => {
+																if (callToMember.role !== "admin")
+																	return status(403);
 																await db
 																	.update(schema.round)
 																	.set({
@@ -389,12 +452,17 @@ export const hostPlugin = new Elysia({
 																return status(202);
 															},
 														)
-														.delete("/", async ({ db, params, status }) => {
-															await db
-																.delete(schema.round)
-																.where(eq(schema.round.id, params.roundId));
-															return status(202);
-														}),
+														.delete(
+															"/",
+															async ({ db, params, status, callToMember }) => {
+																if (callToMember.role !== "admin")
+																	return status(403);
+																await db
+																	.delete(schema.round)
+																	.where(eq(schema.round.id, params.roundId));
+																return status(202);
+															},
+														),
 												),
 									),
 							),

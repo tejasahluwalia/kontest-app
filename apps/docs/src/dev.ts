@@ -31,7 +31,7 @@ function getAllDocs(): ParsedMarkdown[] {
 	return parsedDocs;
 }
 
-const server = Bun.serve({
+export const server = Bun.serve({
 	port: PORT,
 	async fetch(req) {
 		const url = new URL(req.url);
@@ -49,7 +49,7 @@ const server = Bun.serve({
 
 		// Landing Page
 		if (path === "/" || path === "/index.html") {
-			const html = "<!DOCTYPE html>\n" + renderToString(LandingPage());
+			const html = `<!DOCTYPE html>\n${renderToString(LandingPage())}`;
 			return new Response(html, {
 				headers: { "Content-Type": "text/html; charset=utf-8" },
 			});
@@ -65,11 +65,9 @@ const server = Bun.serve({
 			const matchedDoc = allDocs.find((d) => d.frontmatter.slug === cleanSlug);
 
 			if (matchedDoc) {
-				const html =
-					"<!DOCTYPE html>\n" +
-					renderToString(
-						DocPage({ doc: matchedDoc, allDocs: allFrontmatters }),
-					);
+				const html = `<!DOCTYPE html>\n${renderToString(
+					DocPage({ doc: matchedDoc, allDocs: allFrontmatters }),
+				)}`;
 				return new Response(html, {
 					headers: { "Content-Type": "text/html; charset=utf-8" },
 				});

@@ -1,5 +1,3 @@
-import { Fragment, h } from "../lib/jsx";
-
 interface NavbarProps {
 	activePage?: string;
 }

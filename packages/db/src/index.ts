@@ -10,7 +10,6 @@ export * from "./utils";
 
 export const createDb = (url: string = env.DATABASE_URL) => {
 	return drizzle(url, {
-		schema,
 		relations: schema.relations,
 	});
 };

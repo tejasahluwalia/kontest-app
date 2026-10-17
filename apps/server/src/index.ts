@@ -8,10 +8,14 @@ import { publicPlugin } from "./plugins/public";
 import { setup } from "./plugins/setup";
 import { userPlugin } from "./plugins/user";
 
+const corsOrigins = env.CORS_ORIGINS.split(",")
+	.map((origin) => origin.trim())
+	.filter(Boolean);
+
 export const app = new Elysia()
 	.use(
 		cors({
-			origin: true,
+			origin: corsOrigins,
 			methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],

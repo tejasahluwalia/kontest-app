@@ -1,7 +1,7 @@
 import { Layout } from "../components/Layout";
 import { Sidebar } from "../components/Sidebar";
 import { TableOfContents } from "../components/TableOfContents";
-import { Fragment, h, RawHtml } from "../lib/jsx";
+import { RawHtml } from "../lib/jsx";
 import type { DocFrontmatter, ParsedMarkdown } from "../lib/markdown";
 
 interface DocPageProps {

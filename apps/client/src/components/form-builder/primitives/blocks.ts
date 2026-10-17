@@ -59,9 +59,9 @@ const moveBlockBefore = (
 	blockId: string,
 	targetId: string,
 ): Blocks => {
-	// Find the nodes for the block to move and the target block
-	const blockNode = list.indexOf(findBlockById(list, blockId)!);
-	const targetNode = list.indexOf(findBlockById(list, targetId)!);
+	// Find the indices for the block to move and the target block
+	const blockNode = list.findIndex((block) => block.id === blockId);
+	const targetNode = list.findIndex((block) => block.id === targetId);
 
 	// If either node is not found, return the unchanged list
 	if (blockNode === -1 || targetNode === -1) return list;
@@ -87,9 +87,9 @@ const moveBlockAfter = (
 	blockId: string,
 	targetId: string,
 ): Blocks => {
-	// Find the nodes for the block to move and the target block
-	const blockNode = list.indexOf(findBlockById(list, blockId)!);
-	const targetNode = list.indexOf(findBlockById(list, targetId)!);
+	// Find the indices for the block to move and the target block
+	const blockNode = list.findIndex((block) => block.id === blockId);
+	const targetNode = list.findIndex((block) => block.id === targetId);
 
 	// If either node is not found, return the unchanged list
 	if (blockNode === -1 || targetNode === -1) return list;
@@ -140,33 +140,35 @@ const appendBlockAfter = (
 
 // Move a block one position up in the list
 const moveBlockUp = (list: Blocks, blockId: string): Blocks => {
-	const blockNode = list.indexOf(findBlockById(list, blockId)!);
+	const blockNode = list.findIndex((block) => block.id === blockId);
 
 	// If node not found or it's already at the top (no previous node), return unchanged
-	if (blockNode === -1 || blockNode === 0) return list;
+	if (blockNode <= 0) return list;
 
-	// Get the previous node
+	// Get the nodes
+	const block = list[blockNode];
 	const prevNode = list[blockNode - 1];
 
 	// Swap the nodes
 	list[blockNode] = prevNode;
-	list[blockNode - 1] = findBlockById(list, blockId)!;
+	list[blockNode - 1] = block;
 	return [...list];
 };
 
 // Move a block one position down in the list
 const moveBlockDown = (list: Blocks, blockId: string): Blocks => {
-	const blockNode = list.indexOf(findBlockById(list, blockId)!);
+	const blockNode = list.findIndex((block) => block.id === blockId);
 
 	// If node not found or it's already at the bottom (no next node), return unchanged
-	if (blockNode === -1 || blockNode === list.length - 1) return list;
+	if (blockNode === -1 || blockNode >= list.length - 1) return list;
 
-	// Get the next node
+	// Get the nodes
+	const block = list[blockNode];
 	const nextNode = list[blockNode + 1];
 
 	// Swap the nodes
 	list[blockNode] = nextNode;
-	list[blockNode + 1] = findBlockById(list, blockId)!;
+	list[blockNode + 1] = block;
 	return [...list];
 };
 

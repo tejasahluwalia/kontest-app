@@ -39,8 +39,8 @@ const createDefaultFormGraph = (): FormGraph => {
 interface FormDiff {
 	type: "add" | "update" | "delete";
 	path: string;
-	oldValue?: any;
-	newValue?: any;
+	oldValue?: unknown;
+	newValue?: unknown;
 }
 
 interface FormVersion {

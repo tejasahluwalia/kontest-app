@@ -13,8 +13,8 @@ export type VNode =
 	| VNode[];
 
 export interface JSXElement {
-	type: string | ((props: any) => VNode);
-	props: Record<string, any>;
+	type: string | ((props: Record<string, unknown>) => VNode);
+	props: Record<string, unknown>;
 	children?: VNode[];
 }
 
@@ -140,7 +140,9 @@ export function renderToString(node: VNode): string {
 					typeof value === "object" &&
 					"__html" in value
 				) {
-					innerHtml = value.__html;
+					innerHtml = String(
+						(value as { __html: string | number | boolean }).__html,
+					);
 					continue;
 				}
 
@@ -151,7 +153,11 @@ export function renderToString(node: VNode): string {
 
 				if (key === "style") {
 					if (typeof value === "object" && value !== null) {
-						attrs.push(`style="${escapeHtml(styleObjectToString(value))}"`);
+						attrs.push(
+							`style="${escapeHtml(
+								styleObjectToString(value as Record<string, string | number>),
+							)}"`,
+						);
 					} else if (typeof value === "string" && value.length > 0) {
 						attrs.push(`style="${escapeHtml(value)}"`);
 					}
@@ -179,7 +185,8 @@ export function renderToString(node: VNode): string {
 			}
 
 			const childrenHtml =
-				innerHtml || (props?.children ? renderToString(props.children) : "");
+				innerHtml ||
+				(props?.children ? renderToString(props.children as VNode) : "");
 			return `<${tag}${attrString}>${childrenHtml}</${tag}>`;
 		}
 	}
@@ -188,11 +195,11 @@ export function renderToString(node: VNode): string {
 }
 
 export function createElement(
-	type: string | ((props: any) => VNode),
-	props: Record<string, any> | null,
+	type: string | ((props: Record<string, unknown>) => VNode),
+	props: Record<string, unknown> | null,
 	...children: VNode[]
 ): JSXElement {
-	const normalizedProps = { ...(props || {}) };
+	const normalizedProps: Record<string, unknown> = { ...(props || {}) };
 	if (children.length === 1) {
 		normalizedProps.children = children[0];
 	} else if (children.length > 1) {
@@ -210,7 +217,7 @@ declare global {
 	namespace JSX {
 		type Element = VNode;
 		interface IntrinsicElements {
-			[elemName: string]: any;
+			[elemName: string]: Record<string, unknown>;
 		}
 	}
 }

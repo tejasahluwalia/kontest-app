@@ -1,5 +1,5 @@
 import { FormBuilderCanvas } from "./form-builder-canvas";
-import { FormBuilderProvider, useFormBuilder } from "./form-builder-context";
+import { FormBuilderProvider } from "./form-builder-context";
 import type { FormSchema } from "./primitives/form";
 
 interface FormBuilderProps {

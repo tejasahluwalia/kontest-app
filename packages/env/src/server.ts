@@ -23,6 +23,10 @@ export const ServerEnvSchema = v.pipe(
 		NODE_ENV: NodeEnvSchema,
 		SERVER_URL: createUrlSchema("SERVER_URL"),
 		AUTH_URL: createUrlSchema("AUTH_URL"),
+		CORS_ORIGINS: v.optional(
+			v.string(),
+			"http://localhost:5173,http://localhost:4173",
+		),
 	}),
 	v.transform((input) => ({
 		...input,

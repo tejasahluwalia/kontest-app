@@ -12,7 +12,7 @@
  * Returns session token, auth cookies, user object, and sample curl command.
  */
 
-import { db, schema } from "../packages/db/src/index";
+import { db } from "../packages/db/src/index";
 
 const targetEmail = process.argv[2] || "host@kontest.dev";
 const serverUrl =
@@ -95,7 +95,9 @@ async function main() {
 	);
 	const sessionToken = sessionTokenMatch ? sessionTokenMatch[1] : "";
 
-	const data = (await signInRes.json()) as any;
+	const data = (await signInRes.json()) as {
+		user?: { id?: string; name?: string; email?: string };
+	};
 
 	console.log("\n================ AUTHENTICATION SUCCESS ================");
 	console.log(`User ID:      ${data.user?.id || existingUser.id}`);

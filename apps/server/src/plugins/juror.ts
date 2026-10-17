@@ -40,6 +40,6 @@ export const jurorPlugin = new Elysia({
 						});
 						return { ...juror, submissions };
 					})
-					.put("/submissions/:submissionId", async ({ db }) => {}),
+					.put("/submissions/:submissionId", async () => {}),
 			),
 	);

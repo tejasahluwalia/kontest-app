@@ -219,7 +219,7 @@ export const FormBuilderProvider: ParentComponent<{
 				draft.version += 1;
 			});
 
-			const { data, error, status } = await server.api.host
+			const { error } = await server.api.host
 				.orgs({ orgSlug: org.slug })
 				.calls({ callId: call.id })
 				.rounds({ roundId: round.id })

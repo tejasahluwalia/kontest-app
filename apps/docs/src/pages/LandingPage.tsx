@@ -2,7 +2,6 @@ import { ArchitectureSection } from "../components/ArchitectureSection";
 import { Features } from "../components/Features";
 import { Hero } from "../components/Hero";
 import { Layout } from "../components/Layout";
-import { Fragment, h } from "../lib/jsx";
 
 export function LandingPage() {
 	return (

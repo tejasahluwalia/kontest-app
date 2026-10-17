@@ -1,5 +1,3 @@
-import { Fragment, h } from "../lib/jsx";
-
 export function ArchitectureSection() {
 	const packages = [
 		{

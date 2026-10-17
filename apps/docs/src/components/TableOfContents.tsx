@@ -1,4 +1,3 @@
-import { Fragment, h } from "../lib/jsx";
 import type { TocItem } from "../lib/markdown";
 
 interface TocProps {

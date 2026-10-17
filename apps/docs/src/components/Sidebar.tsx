@@ -1,4 +1,3 @@
-import { Fragment, h } from "../lib/jsx";
 import type { DocFrontmatter } from "../lib/markdown";
 
 interface SidebarProps {

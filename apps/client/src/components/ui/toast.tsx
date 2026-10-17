@@ -177,10 +177,10 @@ function showToastPromise<T, U>(
 			<Switch>
 				<Match when={props.state === "pending"}>{options.loading}</Match>
 				<Match when={props.state === "fulfilled"}>
-					{options.success?.(props.data!)}
+					{props.data !== undefined ? options.success?.(props.data) : null}
 				</Match>
 				<Match when={props.state === "rejected"}>
-					{options.error?.(props.error!)}
+					{props.error !== undefined ? options.error?.(props.error) : null}
 				</Match>
 			</Switch>
 		</Toast>

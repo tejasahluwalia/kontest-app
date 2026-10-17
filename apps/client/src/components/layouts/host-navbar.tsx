@@ -37,21 +37,19 @@ export default function HostNavbar() {
 	const isMobile = useIsMobile();
 
 	const orgs = () =>
-		(memberProfiles || []).map((memberProfile: any) => memberProfile.org);
+		(memberProfiles || []).map((memberProfile) => memberProfile.org);
 
 	const selectedOrg = () => {
-		return orgs().find((org: any) => org.slug === params().orgSlug);
+		return orgs().find((org) => org.slug === params().orgSlug);
 	};
 
 	const selectedCall = () => {
-		return selectedOrg()?.calls.find(
-			(call: any) => call.slug === params().callSlug,
-		);
+		return selectedOrg()?.calls.find((call) => call.slug === params().callSlug);
 	};
 
 	const selectedRound = () => {
 		return selectedCall()?.rounds.find(
-			(round: any) => round.slug === params().roundSlug,
+			(round) => round.slug === params().roundSlug,
 		);
 	};
 
@@ -91,7 +89,7 @@ export default function HostNavbar() {
 
 												<DropdownSwitcher
 													menuLabel="My Organizations"
-													options={orgs().map((org: any) => ({
+													options={orgs().map((org) => ({
 														to: "/host/orgs/$orgSlug",
 														params: { orgSlug: org.slug },
 														label: org.name,
@@ -123,7 +121,7 @@ export default function HostNavbar() {
 														</BreadcrumbsLink>
 														<DropdownSwitcher
 															menuLabel="Calls"
-															options={currOrg().calls.map((call: any) => ({
+															options={currOrg().calls.map((call) => ({
 																to: "/host/orgs/$orgSlug/calls/$callSlug/dashboard",
 																params: {
 																	orgSlug: currOrg().slug,
@@ -156,17 +154,15 @@ export default function HostNavbar() {
 																	</BreadcrumbsLink>
 																	<DropdownSwitcher
 																		menuLabel="Rounds"
-																		options={currCall().rounds.map(
-																			(round: any) => ({
-																				to: "/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure",
-																				params: {
-																					orgSlug: currOrg().slug,
-																					callSlug: currCall().slug,
-																					roundSlug: round.slug,
-																				},
-																				label: round.name,
-																			}),
-																		)}
+																		options={currCall().rounds.map((round) => ({
+																			to: "/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure",
+																			params: {
+																				orgSlug: currOrg().slug,
+																				callSlug: currCall().slug,
+																				roundSlug: round.slug,
+																			},
+																			label: round.name,
+																		}))}
 																	/>
 																</BreadcrumbsItem>
 															</>

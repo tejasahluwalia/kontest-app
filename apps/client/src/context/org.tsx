@@ -3,6 +3,6 @@ import type { MemberProfilesContextType } from "./memberProfiles";
 
 export type OrgContextType = MemberProfilesContextType[number]["org"];
 
-const OrgContext = createContext<OrgContextType | any>();
+const OrgContext = createContext<OrgContextType>();
 
 export default OrgContext;

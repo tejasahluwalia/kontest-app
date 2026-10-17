@@ -5,6 +5,10 @@ import { emailOTP } from "better-auth/plugins";
 import { env } from "../env";
 import { db } from "./db";
 
+const corsOrigins = env.CORS_ORIGINS.split(",")
+	.map((origin) => origin.trim())
+	.filter(Boolean);
+
 export const auth = betterAuth({
 	baseURL: env.AUTH_URL,
 	secret: env.AUTH_SECRET,
@@ -18,15 +22,13 @@ export const auth = betterAuth({
 	plugins: [
 		emailOTP({
 			async sendVerificationOTP(data) {
-				console.log(data.otp);
+				if (env.NODE_ENV === "development") {
+					console.info(`[AUTH OTP] ${data.email}: ${data.otp}`);
+				}
 			},
 		}),
 	],
-	trustedOrigins: [
-		"http://localhost:3000",
-		"http://localhost:5173",
-		"http://localhost:4173",
-	],
+	trustedOrigins: [env.AUTH_URL, ...corsOrigins],
 	databaseHooks: {
 		user: {
 			create: {

@@ -1,4 +1,6 @@
-import Elysia, { status } from "elysia";
+import * as schema from "@db/schema";
+import { and, eq, inArray } from "drizzle-orm";
+import Elysia, { status, t } from "elysia";
 import { setup } from "./setup";
 
 export const publicPlugin = new Elysia({
@@ -23,11 +25,14 @@ export const publicPlugin = new Elysia({
 			.get(
 				"/:id",
 				{
+					params: t.Object({
+						id: t.String(),
+					}),
 					maybeAuth: true,
 				},
 				async ({ db, params, user }) => {
 					const call = await db.query.call.findFirst({
-						where: { id: (params as any).id },
+						where: { id: params.id },
 						columns: {
 							id: true,
 							name: true,
@@ -52,13 +57,23 @@ export const publicPlugin = new Elysia({
 						);
 					}
 
-					const currentUser = user as any;
-					const isUserHost = await db.query.callToMember.findFirst({
-						where: {
-							callId: call.id,
-							memberId: currentUser.id,
-						},
+					const userMemberships = await db.query.member.findMany({
+						where: { userId: user.id },
+						columns: { id: true },
 					});
+					const memberIds = userMemberships.map((membership) => membership.id);
+					const [isUserHost] = memberIds.length
+						? await db
+								.select()
+								.from(schema.callToMember)
+								.where(
+									and(
+										eq(schema.callToMember.callId, call.id),
+										inArray(schema.callToMember.memberId, memberIds),
+									),
+								)
+								.limit(1)
+						: [];
 
 					if (call.visibility === "private" && !isUserHost) {
 						return status(
@@ -70,13 +85,14 @@ export const publicPlugin = new Elysia({
 					const isUserParticipant = await db.query.participant.findFirst({
 						where: {
 							callId: call.id,
-							userId: currentUser.id,
+							userId: user.id,
 						},
 					});
 
 					if (
 						call.visibility === "restricted" &&
-						(!isUserParticipant || !isUserHost)
+						!isUserParticipant &&
+						!isUserHost
 					) {
 						return status(
 							403,

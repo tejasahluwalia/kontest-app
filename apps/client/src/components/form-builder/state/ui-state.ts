@@ -1,7 +1,9 @@
+import type { InputFormData } from "../primitives/form";
+
 // Preview state for the form builder
 export interface PreviewState {
 	active: boolean;
-	formData: Record<string, any>;
+	formData: InputFormData;
 	currentStepId?: string;
 	validationErrors: Record<string, string>;
 	submitting: boolean;

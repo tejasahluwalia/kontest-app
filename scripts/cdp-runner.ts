@@ -17,12 +17,38 @@ if (!existsSync(SCREENSHOT_DIR)) {
 	mkdirSync(SCREENSHOT_DIR, { recursive: true });
 }
 
+interface CdpConsoleParam {
+	type: string;
+	args?: Array<{ value?: string }>;
+}
+
+interface CdpNetworkParam {
+	request: {
+		url: string;
+		method: string;
+	};
+}
+
 interface CdpMessage {
-	id: number;
+	id?: number;
 	method?: string;
-	params?: any;
-	result?: any;
-	error?: any;
+	params?: {
+		type?: string;
+		args?: Array<{ value?: string }>;
+		request?: { url: string; method: string };
+	};
+	result?: Record<string, unknown>;
+	error?: { message?: string; code?: number };
+}
+
+interface CdpTarget {
+	type: string;
+	webSocketDebuggerUrl: string;
+}
+
+interface CdpMetric {
+	name: string;
+	value: number;
 }
 
 class CdpClient {
@@ -30,49 +56,65 @@ class CdpClient {
 	private msgId = 0;
 	private pending = new Map<
 		number,
-		{ resolve: (val: any) => void; reject: (err: any) => void }
+		{
+			resolve: (val: Record<string, unknown> | undefined) => void;
+			reject: (err: Error) => void;
+		}
 	>();
-	public consoleLogs: any[] = [];
-	public networkRequests: any[] = [];
+	public consoleLogs: CdpConsoleParam[] = [];
+	public networkRequests: CdpNetworkParam["request"][] = [];
 
 	async connect(wsUrl: string) {
 		return new Promise<void>((resolve, reject) => {
 			this.ws = new WebSocket(wsUrl);
 			this.ws.onopen = () => resolve();
-			this.ws.onerror = (err) => reject(err);
+			this.ws.onerror = (err) =>
+				reject(err instanceof Error ? err : new Error(String(err)));
 			this.ws.onmessage = (event) => {
 				const data = JSON.parse(event.data.toString()) as CdpMessage;
 
 				// Handle events
-				if (data.method === "Runtime.consoleAPICalled") {
+				if (data.method === "Runtime.consoleAPICalled" && data.params) {
 					this.consoleLogs.push(data.params);
-					console.log(
-						`  [CDP Console] ${data.params.type}: ${data.params.args.map((a: any) => a.value).join(" ")}`,
-					);
+					const args = (data.params.args || []).map((a) => a.value).join(" ");
+					console.log(`  [CDP Console] ${data.params.type}: ${args}`);
 				}
-				if (data.method === "Network.requestWillBeSent") {
+				if (
+					data.method === "Network.requestWillBeSent" &&
+					data.params?.request
+				) {
 					this.networkRequests.push(data.params.request);
 				}
 
 				// Handle method responses
 				if (data.id && this.pending.has(data.id)) {
-					const { resolve, reject } = this.pending.get(data.id)!;
+					const pendingEntry = this.pending.get(data.id);
 					this.pending.delete(data.id);
-					if (data.error) {
-						reject(new Error(data.error.message || JSON.stringify(data.error)));
-					} else {
-						resolve(data.result);
+					if (pendingEntry) {
+						if (data.error) {
+							pendingEntry.reject(
+								new Error(data.error.message || JSON.stringify(data.error)),
+							);
+						} else {
+							pendingEntry.resolve(data.result);
+						}
 					}
 				}
 			};
 		});
 	}
 
-	async send(method: string, params: Record<string, any> = {}): Promise<any> {
+	async send<T = Record<string, unknown>>(
+		method: string,
+		params: Record<string, unknown> = {},
+	): Promise<T> {
 		const id = ++this.msgId;
 		const payload = JSON.stringify({ id, method, params });
 		return new Promise((resolve, reject) => {
-			this.pending.set(id, { resolve, reject });
+			this.pending.set(id, {
+				resolve: (val) => resolve(val as T),
+				reject,
+			});
 			this.ws.send(payload);
 		});
 	}
@@ -92,7 +134,7 @@ async function main() {
 		"🔍 Fetching CDP targets from http://127.0.0.1:9222/json/list...",
 	);
 	const targetsRes = await fetch("http://127.0.0.1:9222/json/list");
-	const targets = (await targetsRes.json()) as any[];
+	const targets = (await targetsRes.json()) as CdpTarget[];
 
 	let pageTarget = targets.find((t) => t.type === "page");
 	if (!pageTarget) {
@@ -103,7 +145,7 @@ async function main() {
 			"http://127.0.0.1:9222/json/new?http://localhost:5173/login",
 			{ method: "PUT" },
 		);
-		pageTarget = await newRes.json();
+		pageTarget = (await newRes.json()) as CdpTarget;
 	}
 
 	const wsUrl = pageTarget.webSocketDebuggerUrl;
@@ -130,9 +172,12 @@ async function main() {
 
 	// 4. Capture Login Screenshot via Page.captureScreenshot
 	console.log("📸 CDP Command: Page.captureScreenshot (Login Page)...");
-	const screenshot1 = await cdp.send("Page.captureScreenshot", {
-		format: "png",
-	});
+	const screenshot1 = await cdp.send<{ data: string }>(
+		"Page.captureScreenshot",
+		{
+			format: "png",
+		},
+	);
 	const path1 = resolve(SCREENSHOT_DIR, "cdp_01_login.png");
 	writeFileSync(path1, Buffer.from(screenshot1.data, "base64"));
 	console.log(`  ✓ Screenshot saved: ${path1}`);
@@ -141,7 +186,9 @@ async function main() {
 	console.log(
 		"\n⌨️ CDP Command: Runtime.evaluate (Fill form with Host Admin)...",
 	);
-	const evalResult = await cdp.send("Runtime.evaluate", {
+	const evalResult = await cdp.send<{
+		result?: { value?: { success: boolean; error?: string } };
+	}>("Runtime.evaluate", {
 		expression: `
 			(() => {
 				const nameInput = document.querySelector('input[placeholder="name"]');
@@ -171,28 +218,35 @@ async function main() {
 
 	// 6. Capture OTP Stage Screenshot via Page.captureScreenshot
 	console.log("📸 CDP Command: Page.captureScreenshot (OTP Stage)...");
-	const screenshot2 = await cdp.send("Page.captureScreenshot", {
-		format: "png",
-	});
+	const screenshot2 = await cdp.send<{ data: string }>(
+		"Page.captureScreenshot",
+		{
+			format: "png",
+		},
+	);
 	const path2 = resolve(SCREENSHOT_DIR, "cdp_02_otp_stage.png");
 	writeFileSync(path2, Buffer.from(screenshot2.data, "base64"));
 	console.log(`  ✓ Screenshot saved: ${path2}`);
 
 	// 7. Extract Title and Document via DOM.getDocument & Runtime.evaluate
-	const titleResult = await cdp.send("Runtime.evaluate", {
-		expression: "document.title + ' | ' + window.location.href",
-		returnByValue: true,
-	});
+	const titleResult = await cdp.send<{ result?: { value?: string } }>(
+		"Runtime.evaluate",
+		{
+			expression: "document.title + ' | ' + window.location.href",
+			returnByValue: true,
+		},
+	);
 	console.log(`  📄 Active Document via CDP: ${titleResult.result?.value}`);
 
 	// 8. Performance Metrics via Performance.getMetrics
 	console.log("\n⚡ CDP Command: Performance.getMetrics...");
 	await cdp.send("Performance.enable");
-	const metrics = await cdp.send("Performance.getMetrics");
+	const metrics = await cdp.send<{ metrics: CdpMetric[] }>(
+		"Performance.getMetrics",
+	);
 	const jsHeapUsed =
-		metrics.metrics.find((m: any) => m.name === "JSHeapUsedSize")?.value || 0;
-	const domNodes =
-		metrics.metrics.find((m: any) => m.name === "Nodes")?.value || 0;
+		metrics.metrics.find((m) => m.name === "JSHeapUsedSize")?.value || 0;
+	const domNodes = metrics.metrics.find((m) => m.name === "Nodes")?.value || 0;
 	console.log(`  - JS Heap Used: ${(jsHeapUsed / 1024 / 1024).toFixed(2)} MB`);
 	console.log(`  - Active DOM Nodes: ${domNodes}`);
 

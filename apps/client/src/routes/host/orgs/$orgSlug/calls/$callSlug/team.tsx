@@ -1,3 +1,4 @@
+import type * as schema from "@db/schema";
 import { createFileRoute } from "@tanstack/solid-router";
 import { For, Show } from "solid-js";
 import {
@@ -14,7 +15,7 @@ export const Route = createFileRoute(
 )({
 	component: RouteComponent,
 	beforeLoad: async ({ params, context }) => {
-		const call = (context as any).call;
+		const call = (context as { call: typeof schema.call.$inferSelect }).call;
 		const { data, error } = await server.api.host
 			.orgs({ orgSlug: params.orgSlug })
 			.calls({ callId: call.id })
@@ -26,7 +27,7 @@ export const Route = createFileRoute(
 		return { team: data };
 	},
 	loader: ({ context }) => {
-		return { team: (context as any).team };
+		return { team: context.team };
 	},
 });
 

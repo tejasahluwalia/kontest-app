@@ -1,4 +1,4 @@
-import { Fragment, h, raw, type VNode } from "../lib/jsx";
+import { raw, type VNode } from "../lib/jsx";
 import { Footer } from "./Footer";
 import { Navbar } from "./Navbar";
 

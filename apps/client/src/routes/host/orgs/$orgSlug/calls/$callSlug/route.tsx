@@ -9,7 +9,7 @@ export const Route = createFileRoute("/host/orgs/$orgSlug/calls/$callSlug")({
 			.orgs({ orgSlug: params.orgSlug })
 			.get();
 		const org = Array.isArray(orgData) ? orgData[0] : orgData;
-		const callItem = org?.calls?.find((c: any) => c.slug === params.callSlug);
+		const callItem = org?.calls?.find((c) => c.slug === params.callSlug);
 		if (!callItem) throw notFound({ data: { message: "Call not found" } });
 		const { data, error, status } = await server.api.host
 			.orgs({ orgSlug: params.orgSlug })
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/host/orgs/$orgSlug/calls/$callSlug")({
 		if (status !== 200) {
 			throw new Error(`Failed to fetch call: ${status}`);
 		}
-		return { call: data } as any;
+		return { call: data };
 	},
 	loader(ctx) {
 		return { call: ctx.context.call };

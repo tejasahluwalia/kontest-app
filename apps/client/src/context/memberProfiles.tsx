@@ -5,6 +5,6 @@ export type MemberProfilesContextType = Awaited<
 	ReturnType<typeof fetchMemberProfiles>
 >;
 
-const MemberProfilesContext = createContext<MemberProfilesContextType | any>();
+const MemberProfilesContext = createContext<MemberProfilesContextType>();
 
 export default MemberProfilesContext;

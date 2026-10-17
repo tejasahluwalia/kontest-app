@@ -8,7 +8,7 @@
  *   or: bun run test:smoke
  */
 
-import { db, schema } from "../packages/db/src/index";
+import { db } from "../packages/db/src/index";
 
 const SERVER_URL =
 	process.env.SERVER_URL ||
@@ -31,7 +31,7 @@ const results: TestResult[] = [];
 
 async function runCheck(
 	name: string,
-	fn: () => Promise<string | void>,
+	fn: () => Promise<string | undefined>,
 	critical = true,
 ) {
 	const start = performance.now();
@@ -40,16 +40,17 @@ async function runCheck(
 		const durationMs = Math.round(performance.now() - start);
 		results.push({ name, status: "PASS", durationMs, details });
 		console.log(`  ✓ [PASS] ${name} (${durationMs}ms)`);
-	} catch (err: any) {
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err);
 		const durationMs = Math.round(performance.now() - start);
 		results.push({
 			name,
 			status: critical ? "FAIL" : "WARN",
 			durationMs,
-			details: err?.message || String(err),
+			details: message,
 		});
 		console.error(
-			`  ✗ [${critical ? "FAIL" : "WARN"}] ${name} (${durationMs}ms): ${err?.message}`,
+			`  ✗ [${critical ? "FAIL" : "WARN"}] ${name} (${durationMs}ms): ${message}`,
 		);
 	}
 }
@@ -86,7 +87,11 @@ async function main() {
 	await runCheck("GET / (Root Server Health)", async () => {
 		const res = await fetch(`${SERVER_URL}/`);
 		if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-		const json = (await res.json()) as any;
+		const json = (await res.json()) as {
+			status?: string;
+			name?: string;
+			version?: string;
+		};
 		if (json.status !== "ok" || json.name !== "kontest-server") {
 			throw new Error(`Unexpected payload: ${JSON.stringify(json)}`);
 		}
@@ -100,7 +105,11 @@ async function main() {
 	await runCheck("GET /api/calls (Public Calls List)", async () => {
 		const res = await fetch(`${SERVER_URL}/api/calls`);
 		if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-		const calls = (await res.json()) as any[];
+		const calls = (await res.json()) as Array<{
+			id: string;
+			slug: string;
+			name: string;
+		}>;
 		if (!Array.isArray(calls) || calls.length === 0) {
 			throw new Error("Expected at least one public call");
 		}
@@ -110,7 +119,7 @@ async function main() {
 	await runCheck("GET /api/calls/:id (Public Call Details)", async () => {
 		const res = await fetch(`${SERVER_URL}/api/calls/call_global_ai_2026`);
 		if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-		const call = (await res.json()) as any;
+		const call = (await res.json()) as { slug: string; name: string };
 		if (call.slug !== "global-ai-hackathon-2026") {
 			throw new Error(
 				`Expected slug global-ai-hackathon-2026, got ${call.slug}`,
@@ -148,7 +157,7 @@ async function main() {
 			},
 		);
 		if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-		const json = (await res.json()) as any;
+		const json = (await res.json()) as { success?: boolean };
 		if (!json.success) throw new Error("Expected success: true");
 		return `OTP requested for ${testEmail}`;
 	});
@@ -187,7 +196,9 @@ async function main() {
 
 		sessionToken = tokenMatch[1];
 		testUserCookie = `better-auth.session_token=${sessionToken}`;
-		const json = (await res.json()) as any;
+		const json = (await res.json()) as {
+			user?: { name?: string; email?: string };
+		};
 		return `Logged in as '${json.user?.name}' (${json.user?.email})`;
 	});
 
@@ -198,7 +209,10 @@ async function main() {
 				headers: { Cookie: testUserCookie },
 			});
 			if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-			const json = (await res.json()) as any;
+			const json = (await res.json()) as {
+				user?: { id: string };
+				session?: { id: string };
+			};
 			if (!json.user || !json.session) {
 				throw new Error("Invalid session response payload");
 			}
@@ -233,11 +247,16 @@ async function main() {
 				headers: { Cookie: testUserCookie },
 			});
 			if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-			const memberProfiles = (await res.json()) as any[];
+			const memberProfiles = (await res.json()) as Array<{
+				org?: { name?: string };
+			}>;
 			if (!Array.isArray(memberProfiles) || memberProfiles.length === 0) {
 				throw new Error("Expected at least one host org membership");
 			}
-			const orgNames = memberProfiles.map((m) => m.org?.name).join(", ");
+			const orgNames = memberProfiles
+				.map((m) => m.org?.name)
+				.filter(Boolean)
+				.join(", ");
 			return `Managed orgs: ${orgNames}`;
 		},
 	);
@@ -252,7 +271,7 @@ async function main() {
 				},
 			);
 			if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-			const members = (await res.json()) as any[];
+			const members = (await res.json()) as Array<{ id: string }>;
 			return `Found ${members.length} member(s) in acme-innovations`;
 		},
 	);
@@ -266,7 +285,7 @@ async function main() {
 			},
 		);
 		if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-		const json = (await res.json()) as any;
+		const json = (await res.json()) as { isAvailable?: boolean };
 		if (json.isAvailable !== true) {
 			throw new Error(`Expected isAvailable to be true for ${testSlug}`);
 		}

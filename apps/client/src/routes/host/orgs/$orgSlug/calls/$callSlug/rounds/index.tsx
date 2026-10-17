@@ -42,7 +42,7 @@ function RouteComponent() {
 						<Link
 							to="/host/orgs/$orgSlug/calls/$callSlug/rounds/$roundSlug/configure"
 							from="/host/orgs/$orgSlug/calls/$callSlug/rounds/"
-							params={(prev: any) => ({ ...prev, roundSlug: round.slug })}
+							params={(prev) => ({ ...prev, roundSlug: round.slug })}
 						>
 							<Card class="p-4">
 								<CardHeader>
@@ -53,8 +53,10 @@ function RouteComponent() {
 					)}
 				</For>
 			</div>
-			<Show when={org && call}>
-				<NewCallDialog orgSlug={org!.slug} callId={call!.id} />
+			<Show when={org && call ? { org, call } : undefined}>
+				{(ctx) => (
+					<NewCallDialog orgSlug={ctx().org.slug} callId={ctx().call.id} />
+				)}
 			</Show>
 		</div>
 	);

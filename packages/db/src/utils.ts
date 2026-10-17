@@ -40,7 +40,7 @@ export const spread = <
 	schema: T,
 	mode?: Mode,
 ): Spread<T, Mode> => {
-	const newSchema: Record<string, unknown> = {};
+	const newSchema: TProperties = {};
 	let table: TObject<TProperties>;
 
 	switch (mode) {
@@ -69,7 +69,7 @@ export const spread = <
 	for (const key of Object.keys(table.properties))
 		newSchema[key] = table.properties[key];
 
-	return newSchema as any;
+	return newSchema as Spread<T, Mode>;
 };
 
 /**
@@ -88,10 +88,12 @@ export const spreads = <
 ): {
 	[K in keyof T]: Spread<T[K], Mode>;
 } => {
-	const newSchema: Record<string, unknown> = {};
-	const keys = Object.keys(models);
+	const newSchema = {} as {
+		[K in keyof T]: Spread<T[K], Mode>;
+	};
+	const keys = Object.keys(models) as (keyof T)[];
 
 	for (const key of keys) newSchema[key] = spread(models[key], mode);
 
-	return newSchema as any;
+	return newSchema;
 };

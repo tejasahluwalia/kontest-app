@@ -62,18 +62,26 @@ describe("@kontest/db Isolated CRUD & Relational Lifecycle", () => {
 	});
 
 	it("enforces database unique constraint on organization slug", async () => {
-		let duplicateError: any = null;
+		let duplicateError: Error | null = null;
 		try {
 			await db.insert(schema.org).values({
 				name: `Duplicate Org ${testId}`,
 				slug: testOrgSlug, // Already inserted in previous test
 			});
-		} catch (err: any) {
-			duplicateError = err;
+		} catch (err) {
+			duplicateError = err instanceof Error ? err : new Error(String(err));
 		}
 
 		expect(duplicateError).not.toBeNull();
-		const errStr = `${duplicateError?.message || ""} ${duplicateError?.cause?.message || ""}`;
+		const cause =
+			duplicateError &&
+			"cause" in duplicateError &&
+			typeof duplicateError.cause === "object" &&
+			duplicateError.cause !== null &&
+			"message" in duplicateError.cause
+				? String((duplicateError.cause as { message?: string }).message || "")
+				: "";
+		const errStr = `${duplicateError?.message || ""} ${cause}`;
 		expect(errStr.toLowerCase()).toMatch(/unique|duplicate/);
 	});
 
@@ -99,7 +107,7 @@ describe("@kontest/db Isolated CRUD & Relational Lifecycle", () => {
 				orgId: createdOrgId,
 				name: `Test Call ${testId}`,
 				slug: testCallSlug,
-				description: "Automated test call description",
+				metadata: { description: "Automated test call description" },
 				visibility: "public",
 			})
 			.returning();

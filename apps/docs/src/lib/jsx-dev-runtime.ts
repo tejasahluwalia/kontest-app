@@ -1,15 +1,18 @@
-import { createElement, Fragment, type VNode } from "./jsx";
+import { Fragment, type VNode } from "./jsx";
 
 export function jsxDEV(
-	type: any,
-	props: any,
-	key?: any,
+	type: string | ((props: Record<string, unknown>) => VNode),
+	props: Record<string, unknown> | null,
+	key?: string | number,
 	_isStaticChildren?: boolean,
-	_source?: any,
-	_self?: any,
+	_source?: unknown,
+	_self?: unknown,
 ): VNode {
 	const { children, ...rest } = props || {};
-	const elementProps = { ...rest, ...(key !== undefined ? { key } : {}) };
+	const elementProps: Record<string, unknown> = {
+		...rest,
+		...(key !== undefined ? { key } : {}),
+	};
 	if (children !== undefined) {
 		elementProps.children = children;
 	}
@@ -22,12 +25,8 @@ export function jsxDEV(
 export { Fragment };
 
 export namespace JSX {
-	export interface Element {
-		type: any;
-		props: any;
-		children?: any;
-	}
+	export type Element = VNode;
 	export interface IntrinsicElements {
-		[elemName: string]: any;
+		[elemName: string]: Record<string, unknown>;
 	}
 }

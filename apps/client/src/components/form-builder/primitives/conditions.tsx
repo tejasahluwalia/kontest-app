@@ -4,7 +4,6 @@ import {
 	type Component,
 	createSignal,
 	createUniqueId,
-	Errored,
 	For,
 	type Setter,
 	Show,
@@ -76,7 +75,7 @@ interface FormValue {
 // Function to evaluate a conditional rule against form data
 export function evaluateConditionalRule(
 	rule: ConditionalRule,
-	formData: Record<string, any>,
+	formData: Record<string, unknown>,
 ): boolean {
 	return evaluateConditionGroup(rule.condition, formData);
 }
@@ -84,7 +83,7 @@ export function evaluateConditionalRule(
 // Function to evaluate a condition group (handles nested conditions with AND/OR logic)
 function evaluateConditionGroup(
 	group: ConditionGroup,
-	formData: Record<string, any>,
+	formData: Record<string, unknown>,
 ): boolean {
 	if (group.conditions.length === 0) return true;
 
@@ -112,7 +111,7 @@ function evaluateConditionGroup(
 // Function to evaluate a single condition
 function evaluateSingleCondition(
 	condition: Condition,
-	formData: Record<string, any>,
+	formData: Record<string, unknown>,
 ): boolean {
 	// Get the left and right values
 	const leftValue = getConditionValue(
@@ -173,8 +172,8 @@ function evaluateSingleCondition(
 function getConditionValue(
 	type: ValueType,
 	value: string,
-	formData: Record<string, any>,
-): any {
+	formData: Record<string, unknown>,
+): unknown {
 	if (type === "formValue") {
 		return formData[value];
 	} else {
@@ -510,39 +509,37 @@ const ConditionGroupComponent: Component<{
 					</Button>
 				</Show>
 			</div>
-			<Errored fallback={null}>
-				<For each={props.group().conditions}>
-					{(condition, index) => (
-						<Show
-							when={LOGICAL_OPERATORS.some(
-								(op) => op.value === condition.operator,
-							)}
-							fallback={
-								<SingleCondition
-									condition={() => condition as Condition}
-									formValues={props.formValues}
-									onUpdate={(updatedCondition) =>
-										updateCondition(index(), updatedCondition)
-									}
-									onRemove={() => removeCondition(index())}
-									isRemovable={props.group().conditions.length > 1}
-								/>
-							}
-						>
-							<ConditionGroupComponent
-								group={() => condition as ConditionGroup}
+			<For each={props.group().conditions}>
+				{(condition, index) => (
+					<Show
+						when={LOGICAL_OPERATORS.some(
+							(op) => op.value === condition.operator,
+						)}
+						fallback={
+							<SingleCondition
+								condition={() => condition as Condition}
 								formValues={props.formValues}
-								onUpdate={(updatedGroup) =>
-									updateCondition(index(), updatedGroup)
+								onUpdate={(updatedCondition) =>
+									updateCondition(index(), updatedCondition)
 								}
 								onRemove={() => removeCondition(index())}
-								isRemovable={true}
-								level={level + 1}
+								isRemovable={props.group().conditions.length > 1}
 							/>
-						</Show>
-					)}
-				</For>
-			</Errored>
+						}
+					>
+						<ConditionGroupComponent
+							group={() => condition as ConditionGroup}
+							formValues={props.formValues}
+							onUpdate={(updatedGroup) =>
+								updateCondition(index(), updatedGroup)
+							}
+							onRemove={() => removeCondition(index())}
+							isRemovable={true}
+							level={level + 1}
+						/>
+					</Show>
+				)}
+			</For>
 
 			<div class="flex gap-2 mt-4">
 				<Button

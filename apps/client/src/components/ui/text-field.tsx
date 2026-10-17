@@ -35,8 +35,8 @@ export const TextFieldLabel = <T extends ValidComponent = "label">(
 			data-slot="text-field-label"
 			class={cx(
 				"select-none text-sm font-medium",
-				"data-[disabled]:pointer-events-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
-				"data-[invalid]:text-destructive",
+				"data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
+				"data-invalid:text-destructive",
 				props.class,
 			)}
 			{...rest}

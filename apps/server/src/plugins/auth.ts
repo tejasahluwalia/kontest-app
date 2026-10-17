@@ -24,11 +24,9 @@ export const betterAuth = new Elysia({ name: "better-auth" })
 					headers,
 				});
 
-				if (!session) return { user: null, session: null };
-
 				return {
-					user: session.user,
-					session: session.session,
+					user: session?.user ?? null,
+					session: session?.session ?? null,
 				};
 			},
 		},

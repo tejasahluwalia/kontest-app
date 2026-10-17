@@ -1,3 +1,4 @@
+import type * as schema from "@db/schema";
 import { createFileRoute, notFound, Outlet } from "@tanstack/solid-router";
 import RoundContext from "~/context/round";
 import server from "~/lib/server-api";
@@ -7,9 +8,15 @@ export const Route = createFileRoute(
 )({
 	component: RouteComponent,
 	beforeLoad: async ({ params, context }) => {
-		const call = (context as any).call;
+		const call = (
+			context as {
+				call: typeof schema.call.$inferSelect & {
+					rounds?: (typeof schema.round.$inferSelect)[];
+				};
+			}
+		).call;
 		const round = call?.rounds?.find(
-			(round: any) => round.slug === params.roundSlug,
+			(round) => round.slug === params.roundSlug,
 		);
 		if (!round) {
 			throw notFound();
@@ -24,7 +31,7 @@ export const Route = createFileRoute(
 		}
 		return {
 			round: data,
-		} as any;
+		};
 	},
 	loader(ctx) {
 		return { round: ctx.context.round };

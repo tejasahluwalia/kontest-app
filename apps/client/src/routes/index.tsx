@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/solid-router";
-import { createSignal, onSettled } from "solid-js";
 import { Button } from "~/components/ui/button";
 
 export const Route = createFileRoute("/")({
